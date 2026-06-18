@@ -1,0 +1,144 @@
+---
+// WhiteLines.astro
+
+export interface Props {
+  class?: string;
+  opacity?: number;
+  strokeWidth?: number;
+  animated?: boolean;
+}
+
+const {
+  class: className = "",
+  opacity = 0.6,
+  strokeWidth = 1.2,
+  animated = true,
+} = Astro.props;
+
+// 7 bespoke lines converging toward a central pinch point.
+const lines = [
+  {
+    path: "M -50 450 Q 450 450, 900 350 T 1600 150",
+    opacityMultiplier: 0.2,
+  },
+  {
+    path: "M -50 525 Q 475 500, 900 350 T 1600 75",
+    opacityMultiplier: 0.4,
+  },
+  {
+    path: "M -50 600 Q 500 550, 900 350 T 1600 0",
+    opacityMultiplier: 0.6,
+  },
+  {
+    path: "M -50 675 Q 525 600, 900 350 T 1600 -75",
+    opacityMultiplier: 0.8,
+  },
+  {
+    path: "M -50 750 Q 550 650, 900 350 T 1600 -150",
+    opacityMultiplier: 1.0,
+  },
+  {
+    path: "M -50 825 Q 575 700, 900 350 T 1600 -225",
+    opacityMultiplier: 0.7,
+  },
+  {
+    path: "M -50 900 Q 600 750, 900 350 T 1600 -300",
+    opacityMultiplier: 0.3,
+  },
+];
+---
+
+<div
+  class:list={["white-lines", className, { "is-static": !animated }]}
+  style={`--white-lines-opacity:${opacity}; --white-lines-stroke:${strokeWidth};`}
+  aria-hidden="true"
+>
+  <svg
+    class="white-lines__svg"
+    viewBox="0 0 1440 900"
+    preserveAspectRatio="none"
+    focusable="false"
+  >
+    <g class="white-lines__drift-group">
+      {lines.map((line) => (
+        <path
+          d={line.path}
+          class="white-lines__path"
+          style={`stroke-opacity: calc(var(--white-lines-opacity) * ${line.opacityMultiplier});`}
+        />
+      ))}
+    </g>
+  </svg>
+</div>
+
+<style>
+  .white-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    /* Only occupy the top portion of the hero */
+    height: 35%;
+
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 70%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 70%,
+      transparent 100%
+    );
+  }
+
+  .white-lines__svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+
+    /* Less zoomed since container is smaller */
+    transform: scale(1.05) rotate(-3deg);
+    transform-origin: center;
+  }
+
+  .white-lines__path {
+    fill: none;
+    stroke: rgb(255 255 255);
+    stroke-width: var(--white-lines-stroke);
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .white-lines__drift-group {
+    will-change: transform;
+    transform-origin: center;
+    animation: drift 28s ease-in-out infinite alternate;
+  }
+
+  .is-static .white-lines__drift-group {
+    animation: none;
+  }
+
+  @keyframes drift {
+    from {
+      transform: translateY(-5px) rotate(-0.5deg);
+    }
+    to {
+      transform: translateY(8px) rotate(0.5deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .white-lines__drift-group {
+      animation: none;
+    }
+  }
+</style>
