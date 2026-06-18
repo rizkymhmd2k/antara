@@ -12,11 +12,41 @@ const {
 } = Astro.props;
 
 const lines = [
-  "M -100 240 Q 500 240, 900 180 T 1600 60",
-  "M -100 320 Q 520 300, 900 180 T 1600 0",
-  "M -100 400 Q 540 360, 900 180 T 1600 -60",
-  "M -100 480 Q 560 420, 900 180 T 1600 -120",
-  "M -100 560 Q 580 480, 900 180 T 1600 -180",
+  {
+    d: "M -100 240 Q 500 240, 900 180 T 1600 60",
+    wave:
+      "M -100 224 Q 560 268, 900 180 T 1600 28;M -100 256 Q 440 212, 900 180 T 1600 96;M -100 240 Q 500 240, 900 180 T 1600 60",
+    dur: "10s",
+    begin: "-2s",
+  },
+  {
+    d: "M -100 320 Q 520 300, 900 180 T 1600 0",
+    wave:
+      "M -100 304 Q 570 332, 900 180 T 1600 -38;M -100 340 Q 470 268, 900 180 T 1600 34;M -100 320 Q 520 300, 900 180 T 1600 0",
+    dur: "12s",
+    begin: "-8s",
+  },
+  {
+    d: "M -100 400 Q 540 360, 900 180 T 1600 -60",
+    wave:
+      "M -100 384 Q 600 402, 900 180 T 1600 -104;M -100 420 Q 480 320, 900 180 T 1600 -20;M -100 400 Q 540 360, 900 180 T 1600 -60",
+    dur: "11s",
+    begin: "-5s",
+  },
+  {
+    d: "M -100 480 Q 560 420, 900 180 T 1600 -120",
+    wave:
+      "M -100 462 Q 620 470, 900 180 T 1600 -168;M -100 504 Q 500 374, 900 180 T 1600 -74;M -100 480 Q 560 420, 900 180 T 1600 -120",
+    dur: "13s",
+    begin: "-11s",
+  },
+  {
+    d: "M -100 560 Q 580 480, 900 180 T 1600 -180",
+    wave:
+      "M -100 540 Q 640 540, 900 180 T 1600 -232;M -100 588 Q 520 430, 900 180 T 1600 -128;M -100 560 Q 580 480, 900 180 T 1600 -180",
+    dur: "14s",
+    begin: "-15s",
+  },
 ];
 ---
 
@@ -30,11 +60,22 @@ const lines = [
     viewBox="0 0 1440 600"
     preserveAspectRatio="none"
   >
-    <g class="white-lines__drift-group">
-      {lines.map((path) => (
-        <path d={path} class="white-lines__path" />
+      {lines.map((line) => (
+        <path d={line.d} class="white-lines__path">
+          {animated && (
+            <animate
+              attributeName="d"
+              dur={line.dur}
+              begin={line.begin}
+              repeatCount="indefinite"
+              calcMode="spline"
+              keyTimes="0;0.5;1"
+              keySplines="0.42 0 0.58 1;0.42 0 0.58 1"
+              values={line.wave}
+            />
+          )}
+        </path>
       ))}
-    </g>
   </svg>
 </div>
 
@@ -56,25 +97,12 @@ const lines = [
 
   .white-lines__path {
     fill: none;
-    stroke: rgb(255 255 255 / 0.15);
+    stroke: rgb(255 255 255 / 0.82);
     stroke-width: var(--white-lines-stroke);
     vector-effect: non-scaling-stroke;
   }
 
-  .white-lines__drift-group {
-    animation: drift 20s ease-in-out infinite alternate;
-  }
-
-  .is-static .white-lines__drift-group {
-    animation: none;
-  }
-
-  @keyframes drift {
-    from {
-      transform: translateY(-4px);
-    }
-    to {
-      transform: translateY(4px);
-    }
+  .is-static animate {
+    display: none;
   }
 </style>
