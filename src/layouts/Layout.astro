@@ -1,5 +1,8 @@
 ---
+import ScreenWidth from "../components/ui/ScreenWidth.astro";
 import "../styles/global.css";
+
+const { class: className = "" } = Astro.props;
 ---
 
 <!doctype html>
@@ -13,7 +16,10 @@ import "../styles/global.css";
 		<title>Astro Basics</title>
 	</head>
 	<body>
-		<slot />
+		<ScreenWidth />
+		<main class={className}>
+			<slot />
+		</main>
 	</body>
 </html>
 

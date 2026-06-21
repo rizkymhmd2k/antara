@@ -1,0 +1,28 @@
+<div
+  id="screen-width"
+  class="fixed left-2 top-2 z-50 rounded bg-black/70 px-2 py-1 font-mono text-xs text-white"
+  aria-live="polite"
+>
+  0px / xs
+</div>
+
+<script>
+  const tracker = document.getElementById("screen-width");
+  const screens = [
+    [1536, "2xl"],
+    [1280, "xl"],
+    [1024, "lg"],
+    [768, "md"],
+    [640, "sm"],
+  ];
+
+  const update = () => {
+    const width = window.innerWidth;
+    const screen = screens.find(([min]) => width >= min)?.[1] ?? "xs";
+
+    if (tracker) tracker.textContent = `${width}px / ${screen}`;
+  };
+
+  update();
+  window.addEventListener("resize", update);
+</script>

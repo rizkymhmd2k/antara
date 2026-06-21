@@ -1,0 +1,21 @@
+---
+const stats = [
+  { value: "$4.7B", label: "Global assets advised" },
+  { value: "15+", label: "Years advising wealth" },
+  { value: "34", label: "Advisory professionals" },
+  { value: "120", label: "Families served selectively" },
+];
+---
+
+<section class="container-padding">
+  <div class="grid grid-cols-2 gap-y-24 lg:flex lg:justify-between lg:gap-x-16">
+    {
+      stats.map((stat) => (
+        <div class="flex flex-col items-center gap-2 text-center">
+          <h3 class="display-text">{stat.value}</h3>
+          <p class="title-text">{stat.label}</p>
+        </div>
+      ))
+    }
+  </div>
+</section>

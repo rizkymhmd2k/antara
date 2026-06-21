@@ -1,0 +1,46 @@
+---
+import SectionHeading from "../ui/SectionHeading.astro";
+
+const ebTitel =
+  "Tailored financial guidance for life's most important decisions.";
+const eyebrow = "Who we serve";
+const items = [
+  {
+    title: "Founders",
+    body: "From enterprise value to enduring personal wealth.",
+  },
+  {
+    title: "Families",
+    body: "Clarity, continuity, and shared purpose across generations.",
+  },
+  {
+    title: "Sports & Entertainment Professionals",
+    body: "Structure for uncommon careers, irregular income, and compressed opportunity windows.",
+  },
+  {
+    title: "Executives",
+    body: "Guidance for concentrated equity, compensation complexity, and transition planning.",
+  },
+];
+---
+
+<section class="container-padding min-h-screen">
+  <SectionHeading eyebrow={eyebrow} title={ebTitel} />
+
+  <div class="grid grid-cols-2 gap-4 md:gap-8 lg:grid-cols-4 gap-y-12">
+    {
+      items.map((item) => (
+        <article class="flex flex-col gap-4">
+          <div class="aspect-square rounded-2xl bg-white" />
+
+          <div class="space-y-2">
+            <h2 class="title-text">{item.title}</h2>
+            <p class="caption-text">
+              {item.body}
+            </p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>

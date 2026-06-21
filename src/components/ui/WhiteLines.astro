@@ -18,35 +18,35 @@ const lines = [
     d: "M -100 240 Q 500 240, 900 180 T 1600 80",
     wave:
       "M -100 232 Q 560 260, 900 180 T 1600 60;M -100 248 Q 440 220, 900 180 T 1600 100;M -100 232 Q 560 260, 900 180 T 1600 60",
-    dur: "10s",
+    dur: "7s",
     begin: "-2s",
   },
   {
     d: "M -100 320 Q 520 320, 900 180 T 1600 0",
     wave:
       "M -100 312 Q 570 340, 900 180 T 1600 -20;M -100 328 Q 470 300, 900 180 T 1600 20;M -100 312 Q 570 340, 900 180 T 1600 -20",
-    dur: "12s",
+    dur: "8.5s",
     begin: "-8s",
   },
   {
     d: "M -100 400 Q 540 400, 900 180 T 1600 -80",
     wave:
       "M -100 392 Q 600 420, 900 180 T 1600 -100;M -100 408 Q 480 380, 900 180 T 1600 -60;M -100 392 Q 600 420, 900 180 T 1600 -100",
-    dur: "11s",
+    dur: "8s",
     begin: "-5s",
   },
   {
     d: "M -100 480 Q 560 480, 900 180 T 1600 -160",
     wave:
       "M -100 472 Q 620 500, 900 180 T 1600 -180;M -100 488 Q 500 460, 900 180 T 1600 -140;M -100 472 Q 620 500, 900 180 T 1600 -180",
-    dur: "13s",
+    dur: "9.5s",
     begin: "-11s",
   },
   {
     d: "M -100 560 Q 580 560, 900 180 T 1600 -240",
     wave:
       "M -100 552 Q 640 580, 900 180 T 1600 -260;M -100 568 Q 520 540, 900 180 T 1600 -220;M -100 552 Q 640 580, 900 180 T 1600 -260",
-    dur: "14s",
+    dur: "10s",
     begin: "-15s",
   },
 ];
@@ -79,6 +79,9 @@ const lines = [
         </path>
       ))}
   </svg>
+  <p class="white-lines__anchor-text text-xs sm:text-sm">
+    Modern wealth advisory <br /> for founders and families
+  </p>
 </div>
 
 <style>
@@ -86,6 +89,7 @@ const lines = [
     position: absolute;
     inset: 0 0 auto 0;
     height: 30%;
+    opacity: 0.82;
     overflow: hidden;
     pointer-events: none;
     z-index: 0;
@@ -106,5 +110,15 @@ const lines = [
 
   .is-static animate {
     display: none;
+  }
+
+  .white-lines__anchor-text {
+    position: absolute;
+    left: 62.5%;
+    top: 30%;
+    transform: translateY(12px);
+    color: rgb(255 255 255 / 0.82);
+    margin: 0;
+    text-align: left;
   }
 </style>

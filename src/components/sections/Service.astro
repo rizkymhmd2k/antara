@@ -1,0 +1,21 @@
+---
+import Eyebrow from "../ui/Eyebrow.astro";
+const text = "Our Service";
+const title = "Sophisticated planning for the future you're building.";
+---
+
+<section
+  class="container-padding min-h-screen flex items-start justify-start border border-yellow-600"
+>
+  <div class="grid md:grid-cols-3 bg-red-500 w-full gap-24">
+    <div class="md:col-span-3 md:col-start-2">
+      <h1 class="text-5xl">{title}</h1>
+    </div>
+    <div>
+      <div class="md:col-span-1 border">
+        <Eyebrow text={text} />
+      </div>
+      
+    </div>
+  </div>
+</section>

@@ -1,0 +1,57 @@
+---
+import SectionHeading from "../ui/SectionHeading.astro";
+
+const ebTitel = "A Different Standard of Wealth Advisory";
+const eyebrow = "Our Difference";
+const items = [
+  {
+    number: "01",
+    title: "Fiduciary, always",
+    body: "Legally and ethically bound to put your interests first every recommendation, every day. No exceptions.",
+  },
+  {
+    number: "02",
+    title: "We invest our own capital",
+    body: "Every strategy we recommend is one we believe in enough to invest our own money alongside yours.",
+  },
+  {
+    number: "01",
+    title: "Institutional access",
+    body: "Over 25 years building private market relationships delivering institutional-grade alternatives to individual portfolios.",
+  },
+  {
+    number: "01",
+    title: "Fiduciary, always",
+    body: "Legally and ethically bound to put your interests first every recommendation, every day. No exceptions.",
+  },
+  {
+    number: "02",
+    title: "We invest our own capital",
+    body: "Every strategy we recommend is one we believe in enough to invest our own money alongside yours.",
+  },
+  {
+    number: "01",
+    title: "Institutional access",
+    body: "Over 25 years building private market relationships delivering institutional-grade alternatives to individual portfolios.",
+  },
+];
+---
+
+<section class="container-padding">
+  <SectionHeading eyebrow={eyebrow} title={ebTitel} />
+
+  <div class="grid grid-cols-1 gap-px bg-white/60 p-px md:grid-cols-3 xl:grid-cols-3">
+    {
+      items.map((item) => (
+        <article class="flex min-h-72 flex-col justify-between gap-10 bg-background p-6 sm:p-8 xl:min-h-80">
+          <span class="headline-text">{item.number}</span>
+
+          <div class="">
+            <h2 class="title-text">{item.title}</h2>
+            <p class="body-text mt-4">{item.body}</p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>

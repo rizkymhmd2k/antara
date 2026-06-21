@@ -40,3 +40,100 @@
   font-family: "Alte Haas Grotesk", sans-serif;
   color: #fff;
 }
+
+body {
+  background-color: var(--color-background);
+}
+
+@utility hero-padding {
+  @apply px-4 sm:px-8 py-8 sm:p-8;
+  --grid-padding-x: 0.5rem;
+  --grid-padding-third: 0.167rem;
+}
+
+@utility container-padding {
+  @apply px-4 py-20 sm:px-8 lg:py-24;
+  --grid-padding-x: 1rem;
+  --grid-padding-third: 0.333rem;
+}
+
+@utility grid-cols-3-helper {
+  @apply grid grid-cols-3 border border-white/60;
+  --grid-padding-x: 1rem;
+  --grid-padding-third: 0.333rem;
+  background-image:
+    linear-gradient(to right, transparent calc(var(--grid-padding-x) - 0.5px), rgb(255 255 255 / 0.6) calc(var(--grid-padding-x) - 0.5px), rgb(255 255 255 / 0.6) calc(var(--grid-padding-x) + 0.5px), transparent calc(var(--grid-padding-x) + 0.5px)),
+    linear-gradient(to right, transparent calc(33.333% + var(--grid-padding-third) - 0.5px), rgb(255 255 255 / 0.6) calc(33.333% + var(--grid-padding-third) - 0.5px), rgb(255 255 255 / 0.6) calc(33.333% + var(--grid-padding-third) + 0.5px), transparent calc(33.333% + var(--grid-padding-third) + 0.5px)),
+    linear-gradient(to right, transparent calc(66.666% - var(--grid-padding-third) - 0.5px), rgb(255 255 255 / 0.6) calc(66.666% - var(--grid-padding-third) - 0.5px), rgb(255 255 255 / 0.6) calc(66.666% - var(--grid-padding-third) + 0.5px), transparent calc(66.666% - var(--grid-padding-third) + 0.5px)),
+    linear-gradient(to right, transparent calc(100% - var(--grid-padding-x) - 0.5px), rgb(255 255 255 / 0.6) calc(100% - var(--grid-padding-x) - 0.5px), rgb(255 255 255 / 0.6) calc(100% - var(--grid-padding-x) + 0.5px), transparent calc(100% - var(--grid-padding-x) + 0.5px));
+}
+
+.grid-3-helper > section {
+  --grid-padding-x: 1rem;
+  --grid-padding-third: 0.333rem;
+  background-image:
+    linear-gradient(to right, transparent calc(var(--grid-padding-x) - 0.5px), rgb(255 255 255 / 0.6) calc(var(--grid-padding-x) - 0.5px), rgb(255 255 255 / 0.6) calc(var(--grid-padding-x) + 0.5px), transparent calc(var(--grid-padding-x) + 0.5px)),
+    linear-gradient(to right, transparent calc(33.333% + var(--grid-padding-third) - 0.5px), rgb(255 255 255 / 0.6) calc(33.333% + var(--grid-padding-third) - 0.5px), rgb(255 255 255 / 0.6) calc(33.333% + var(--grid-padding-third) + 0.5px), transparent calc(33.333% + var(--grid-padding-third) + 0.5px)),
+    linear-gradient(to right, transparent calc(66.666% - var(--grid-padding-third) - 0.5px), rgb(255 255 255 / 0.6) calc(66.666% - var(--grid-padding-third) - 0.5px), rgb(255 255 255 / 0.6) calc(66.666% - var(--grid-padding-third) + 0.5px), transparent calc(66.666% - var(--grid-padding-third) + 0.5px)),
+    linear-gradient(to right, transparent calc(100% - var(--grid-padding-x) - 0.5px), rgb(255 255 255 / 0.6) calc(100% - var(--grid-padding-x) - 0.5px), rgb(255 255 255 / 0.6) calc(100% - var(--grid-padding-x) + 0.5px), transparent calc(100% - var(--grid-padding-x) + 0.5px));
+}
+
+@media (min-width: 40rem) {
+  .grid-3-helper > section,
+  .grid-cols-3-helper {
+    --grid-padding-x: 2rem;
+    --grid-padding-third: 0.667rem;
+  }
+}
+
+@utility display-text {
+  @apply text-6xl  leading-tight tracking-tight sm:text-7xl md:text-8xl;
+}
+
+@utility headline-text {
+  @apply text-2xl  leading-tight md:text-3xl lg:text-4xl;
+}
+
+@utility title-text {
+  @apply text-lg  leading-snug md:text-xl;
+}
+
+@utility body-text {
+  @apply text-base leading-relaxed text-white/80;
+}
+
+@utility caption-text {
+  @apply text-sm leading-normal text-white/80;
+}
+
+@utility bg-grid-3 {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2)),
+    linear-gradient(to right, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2)),
+    linear-gradient(to right, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2)),
+    linear-gradient(to right, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2));
+
+  background-size:
+    1px 100%,
+    1px 100%,
+    1px 100%,
+    1px 100%;
+
+  background-position:
+    1rem 0,
+    calc(33.333% + 0.333rem) 0,
+    calc(66.666% - 0.333rem) 0,
+    calc(100% - 1rem) 0;
+
+  background-repeat: no-repeat;
+}
+
+@media (min-width: 40rem) {
+  .bg-grid-3 {
+    background-position:
+      2rem 0,
+      calc(33.333% + 0.667rem) 0,
+      calc(66.666% - 0.667rem) 0,
+      calc(100% - 2rem) 0;
+  }
+}

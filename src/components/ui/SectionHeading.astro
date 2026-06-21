@@ -1,0 +1,10 @@
+---
+import Eyebrow from "./Eyebrow.astro";
+
+const { eyebrow, title, class: className = "" } = Astro.props;
+---
+
+<div class:list={["mb-12 flex flex-col items-start gap-2 lg:gap-4", className]}>
+  <Eyebrow text={eyebrow} />
+  <h1 class="text-2xl leading-tight md:text-3xl lg:text-4xl">{title}</h1>
+</div>

@@ -1,0 +1,31 @@
+---
+import Button from "../ui/Button.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+
+const headline =
+  "Antara Private Wealth helps clients bring order, intention, and confidence to the decisions that surround significant capital.";
+---
+
+<section
+  class="container-padding flex items-center md:pt-48"
+>
+  <div class="items-start grid grid-cols-12 gap-12 sm:gap-0">
+    <!-- Eyebrow -->
+    <div class="col-span-12 flex sm:col-span-3 xl:col-span-6">
+      <Eyebrow text="Who we are" />
+    </div>
+
+    <!-- Content -->
+    <div
+      class="col-span-12 grid gap-6 sm:col-span-8 xl:col-span-6"
+    >
+      <h2 class="headline-text">
+        {headline}
+      </h2>
+
+      <div>
+        <Button text="Learn more" />
+      </div>
+    </div>
+  </div>
+</section>
