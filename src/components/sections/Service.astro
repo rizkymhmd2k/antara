@@ -2,6 +2,34 @@
 import Eyebrow from "../ui/Eyebrow.astro";
 const text = "Our Service";
 const title = "Sophisticated planning for the future you're building.";
+
+const servicesText = [
+  {
+    number: "01",
+    title: "Wealth Planning",
+    description: "We build a living strategy around liquidity, lifestyle, family needs, and long-term independence. As your life changes, the plan changes with it, giving each major decision a clearer financial context."
+  },
+  {
+    number: "02",
+    title: "Investment Management",
+    description: "We design portfolios with a clear assignment: growth, preservation, income, access, liquidity, or resilience. Every allocation is considered in relation to the rest of your financial life, not only market performance."
+  },
+  {
+    number: "03",
+    title: "Reporting & Balance Sheet Clarity",
+    description: "We organize accounts, entities, private holdings, real estate, liabilities, and cash reserves into one view. The goal is simple: make the full picture easier to understand, discuss, and act on."
+  },
+  {
+    number: "04",
+    title: "Legacy Coordination",
+    description: "We help align family priorities, legal structures, beneficiaries, philanthropic intent, and investment strategy. Working alongside your outside professionals, we keep the broader wealth strategy connected to the people it is meant to serve."
+  },
+  {
+    number: "05",
+    title: "Lending & Liquidity",
+    description: "We evaluate credit and liquidity solutions with restraint, context, and purpose. The aim is flexibility without weakening the long-term strength of the balance sheet."
+  }
+];
 ---
 
 <section
@@ -15,7 +43,10 @@ const title = "Sophisticated planning for the future you're building.";
       <div class="md:col-span-1 border">
         <Eyebrow text={text} />
       </div>
-      
+      <div>
+        <!-- servicesText -->
+      </div>
+
     </div>
   </div>
 </section>
