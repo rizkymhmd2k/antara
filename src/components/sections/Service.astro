@@ -1,63 +1,96 @@
 ---
 import Eyebrow from "../ui/Eyebrow.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
 const text = "Our Service";
 const title = "Sophisticated planning for the future you're building.";
 
 const servicesText = [
-  { number: "01", title: "Wealth Planning", description: "We build a living strategy around liquidity, lifestyle, family needs, and long-term independence. As your life changes, the plan changes with it, giving each major decision a clearer financial context." },
-  { number: "02", title: "Investment Management", description: "We design portfolios with a clear assignment: growth, preservation, income, access, liquidity, or resilience. Every allocation is considered in relation to the rest of your financial life, not only market performance." },
-  { number: "03", title: "Reporting & Balance Sheet Clarity", description: "We organize accounts, entities, private holdings, real estate, liabilities, and cash reserves into one view. The goal is simple: make the full picture easier to understand, discuss, and act on." },
-  { number: "04", title: "Legacy Coordination", description: "We help align family priorities, legal structures, beneficiaries, philanthropic intent, and investment strategy. Working alongside your outside professionals, we keep the broader wealth strategy connected to the people it is meant to serve." },
-  { number: "05", title: "Lending & Liquidity", description: "We evaluate credit and liquidity solutions with restraint, context, and purpose. The aim is flexibility without weakening the long-term strength of the balance sheet." }
+  {
+    number: "01",
+    title: "Wealth Planning",
+    description:
+      "We build a living strategy around liquidity, lifestyle, family needs, and long-term independence. As your life changes, the plan changes with it, giving each major decision a clearer financial context.",
+  },
+  {
+    number: "02",
+    title: "Investment Management",
+    description:
+      "We design portfolios with a clear assignment: growth, preservation, income, access, liquidity, or resilience. Every allocation is considered in relation to the rest of your financial life, not only market performance.",
+  },
+  {
+    number: "03",
+    title: "Reporting & Balance Sheet Clarity",
+    description:
+      "We organize accounts, entities, private holdings, real estate, liabilities, and cash reserves into one view. The goal is simple: make the full picture easier to understand, discuss, and act on.",
+  },
+  {
+    number: "04",
+    title: "Legacy Coordination",
+    description:
+      "We help align family priorities, legal structures, beneficiaries, philanthropic intent, and investment strategy. Working alongside your outside professionals, we keep the broader wealth strategy connected to the people it is meant to serve.",
+  },
+  {
+    number: "05",
+    title: "Lending & Liquidity",
+    description:
+      "We evaluate credit and liquidity solutions with restraint, context, and purpose. The aim is flexibility without weakening the long-term strength of the balance sheet.",
+  },
 ];
 ---
 
 <div class="relative" data-sticky-wrapper>
   <section
-    class="container-padding sticky top-0 min-h-screen flex items-start justify-start border border-yellow-300"
+    class="container-padding flex items-start justify-start  md:sticky md:top-0 md:min-h-screen"
   >
-    <div class="grid w-full md:grid-cols-3 md:gap-y-24">
-      <div class="md:col-span-2 md:col-start-2 max-w-3xl">
-        <h1 class="headline-text max-w-2xl md:text-5xl">{title}</h1>
+    <div class="grid w-full grid-cols-3 md:gap-y-24  ">
+
+     <SectionHeading eyebrow={text} title={title} class="md:hidden col-span-3 " />
+
+
+      <div class="hidden md:block md:col-span-2 md:col-start-2 max-w-3xl col-span-3">
+        <h1 class="text-4xl md:text-5xl">{title}</h1>
       </div>
 
-      <div class="md:col-span-1 md:self-start">
+      <div class="hidden md:block md:col-span-1 md:self-start">
         <Eyebrow text={text} />
       </div>
 
       <div
-        class="md:col-span-2  translate-x-[-1rem] relative overflow-hidden h-[55vh] md:h-[60vh]"
+        class="md:col-span-2 translate-x-[-1rem] relative overflow-visible h-auto md:overflow-hidden md:h-[60vh] col-span-3"
         data-frame
       >
         <div
           aria-hidden="true"
-          class="absolute bottom-0 left-4 top-0 hidden w-px bg-white/20 sm:block z-10"
+          class="absolute bottom-0 left-4 top-0 block w-px bg-white/20 z-10"
         >
           <div
             class="w-full origin-top bg-white"
             style="height:100%; transform: scaleY(0);"
             data-line-fill
-          />
+          >
+          </div>
         </div>
 
         <div class="space-y-14 pb-10 md:space-y-32" data-track>
-          {servicesText.map((service) => (
-            <article class="grid gap-4 sm:grid-cols-[auto_1fr] sm:gap-x-6">
-              <div class="flex sm:block">
-                <span class="inline-flex h-8 min-w-8 items-center justify-center rounded-sm bg-white px-2 text-xs text-black">
-                  {service.number}
-                </span>
-              </div>
-              <div class="space-y-3">
-                <h2 class="title-text text-2xl text-white md:text-[2.1rem] md:leading-tight">
-                  {service.title}
-                </h2>
-                <p class="max-w-xl text-sm leading-snug text-white/80 md:text-base">
-                  {service.description}
-                </p>
-              </div>
-            </article>
-          ))}
+          {
+            servicesText.map((service) => (
+              <article class="grid gap-4 sm:grid-cols-[auto_1fr] sm:gap-x-6">
+                <div class="flex sm:block">
+                  <span class="inline-flex h-8 min-w-8 items-center justify-center rounded-sm bg-white px-2 text-xs text-black">
+                    {service.number}
+                  </span>
+                </div>
+                <div class="space-y-3">
+                  <h2 class="title-text text-2xl text-white md:text-[2.1rem] md:leading-tight">
+                    {service.title}
+                  </h2>
+                  <p class="max-w-xl text-sm leading-snug text-white/80 md:text-base">
+                    {service.description}
+                  </p>
+                </div>
+              </article>
+            ))
+          }
         </div>
       </div>
     </div>
@@ -72,6 +105,8 @@ const servicesText = [
     const lineFill = document.querySelector("[data-line-fill]");
     if (!wrapper || !frame || !track) return;
 
+    const isDesktop = () => window.matchMedia("(min-width: 768px)").matches;
+
     let maxTranslate = 0;
     let wrapperHeight = 0;
     let targetProgress = 0;
@@ -79,23 +114,43 @@ const servicesText = [
     let rafId = null;
 
     function measure() {
-      const frameHeight = frame.clientHeight;
-      const trackHeight = track.scrollHeight;
-      maxTranslate = Math.max(trackHeight - frameHeight, 0);
-      wrapperHeight = window.innerHeight + maxTranslate;
-      wrapper.style.height = `${wrapperHeight}px`;
+      if (isDesktop()) {
+        const frameHeight = frame.clientHeight;
+        const trackHeight = track.scrollHeight;
+        maxTranslate = Math.max(trackHeight - frameHeight, 0);
+        wrapperHeight = window.innerHeight + maxTranslate;
+        wrapper.style.height = `${wrapperHeight}px`;
+      } else {
+        // No pinning on mobile: let the section sit in normal flow.
+        maxTranslate = 0;
+        wrapperHeight = 0;
+        wrapper.style.height = "";
+        track.style.transform = "translateY(0px)";
+      }
     }
 
     function onScroll() {
-      const rect = wrapper.getBoundingClientRect();
-      const scrolled = -rect.top;
-      const total = wrapperHeight - window.innerHeight;
-      targetProgress = total > 0 ? Math.min(Math.max(scrolled / total, 0), 1) : 0;
+      if (isDesktop()) {
+        const rect = wrapper.getBoundingClientRect();
+        const scrolled = -rect.top;
+        const total = wrapperHeight - window.innerHeight;
+        targetProgress =
+          total > 0 ? Math.min(Math.max(scrolled / total, 0), 1) : 0;
+      } else {
+        // Mobile: progress is just "how far has the frame scrolled past the viewport".
+        const rect = frame.getBoundingClientRect();
+        const total = rect.height + window.innerHeight;
+        const scrolled = window.innerHeight - rect.top;
+        targetProgress =
+          total > 0 ? Math.min(Math.max(scrolled / total, 0), 1) : 0;
+      }
     }
 
     function loop() {
       currentProgress += (targetProgress - currentProgress) * 0.15;
-      track.style.transform = `translateY(${-currentProgress * maxTranslate}px)`;
+      if (isDesktop()) {
+        track.style.transform = `translateY(${-currentProgress * maxTranslate}px)`;
+      }
       if (lineFill) lineFill.style.transform = `scaleY(${currentProgress})`;
       rafId = requestAnimationFrame(loop);
     }
