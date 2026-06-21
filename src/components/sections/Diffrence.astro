@@ -35,22 +35,29 @@ const items = [
     body: "Over 25 years building private market relationships delivering institutional-grade alternatives to individual portfolios.",
   },
 ];
+const rows = [items.slice(0, 3), items.slice(3, 6)];
 ---
 
 <section class="container-padding">
   <SectionHeading eyebrow={eyebrow} title={ebTitel} />
 
-  <div class="grid grid-cols-1 gap-px bg-white/60 p-px md:grid-cols-3 xl:grid-cols-3">
+  <div class="border-y border-white/20">
     {
-      items.map((item) => (
-        <article class="flex min-h-72 flex-col justify-between gap-10 bg-background p-6 sm:p-8 xl:min-h-80">
-          <span class="headline-text">{item.number}</span>
+      rows.map((row, rowIndex) => (
+        <div class:list={["grid grid-cols-1 md:grid-cols-3", rowIndex > 0 && "border-t border-white/20"]}>
+          {
+            row.map((item) => (
+              <article class="flex min-h-72 flex-col justify-between gap-10 p-6 sm:p-8 xl:min-h-80">
+                <span class="headline-text">{item.number}</span>
 
-          <div class="">
-            <h2 class="title-text">{item.title}</h2>
-            <p class="body-text mt-4">{item.body}</p>
-          </div>
-        </article>
+                <div>
+                  <h2 class="title-text">{item.title}</h2>
+                  <p class="body-text mt-4">{item.body}</p>
+                </div>
+              </article>
+            ))
+          }
+        </div>
       ))
     }
   </div>

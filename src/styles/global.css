@@ -78,10 +78,10 @@ body {
   --grid-third: 0.333rem;
 
   background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2)),
-    linear-gradient(to right, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2)),
-    linear-gradient(to right, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2)),
-    linear-gradient(to right, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2));
+    linear-gradient(to right, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08)),
+    linear-gradient(to right, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08)),
+    linear-gradient(to right, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08)),
+    linear-gradient(to right, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08));
   background-size: 1px 100%;
   background-position:
     var(--grid-edge) 0,
