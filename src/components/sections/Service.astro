@@ -74,13 +74,13 @@ const servicesText = [
         <div class="space-y-14 pb-10 md:space-y-32" data-track>
           {
             servicesText.map((service) => (
-              <article class="grid gap-4 sm:grid-cols-[auto_1fr] sm:gap-x-6">
+              <article class="grid grid-cols-[auto_minmax(0,1fr)] gap-4 gap-x-6">
                 <div class="flex sm:block">
                   <span class="inline-flex h-8 min-w-8 items-center justify-center rounded-sm bg-white px-2 text-xs text-black">
                     {service.number}
                   </span>
                 </div>
-                <div class="space-y-3">
+                <div class="min-w-0 space-y-3">
                   <h2 class="title-text text-2xl text-white md:text-[2.1rem] md:leading-tight">
                     {service.title}
                   </h2>

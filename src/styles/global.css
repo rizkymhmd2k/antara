@@ -45,6 +45,13 @@ body {
   background-color: var(--color-background);
 }
 
+@media (max-width: 39.999rem) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+}
+
 @utility hero-padding {
   @apply px-4 sm:px-8 py-8 sm:p-8;
 }

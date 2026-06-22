@@ -1,0 +1,137 @@
+---
+import SectionHeading from "../ui/SectionHeading.astro";
+
+const ebTitel = "Here at every step";
+const eyebrow = "The Antara Methods";
+const items = [
+  {
+    title: "Clarify",
+    body: "Bring every moving part of your wealth into focus, from capital and commitments to family priorities and future decisions.",
+    shape: "clarify",
+  },
+  {
+    title: "Align",
+    body: "Shape the strategy so your investments, liquidity, legacy, giving, and lifestyle work toward the same larger purpose.",
+    shape: "align",
+  },
+  {
+    title: "Evolve",
+    body: "Keep the plan responsive as markets shift, opportunities emerge, and life asks something new of your wealth.",
+    shape: "evolve",
+  },
+];
+---
+
+<section class="container-padding flex min-h-screen flex-col justify-between">
+  <SectionHeading
+    eyebrow={eyebrow}
+    title={ebTitel}
+    class="mb-16 max-w-xl md:mb-24 lg:mb-28"
+  />
+
+  <div class="grid grid-cols-1 md:grid-cols-3">
+    {
+      items.map((item, index) => (
+        <article
+          class:list={[
+            "flex min-h-[28rem] flex-col justify-between border-white/35 py-6 pl-8 pr-6 md:min-h-[31rem] md:py-2 md:pl-8 md:pr-10 lg:min-h-[34rem]",
+            "border-l",
+            index === items.length - 1 && "md:border-r",
+          ]}
+        >
+          <div class="max-w-[19rem] space-y-3">
+            <h2 class="text-[2.1rem] leading-none md:text-[2.3rem]">
+              {item.title}
+            </h2>
+            <p class="text-[1.05rem] leading-[1.25] text-white/85 md:text-[1.1rem]">
+              {item.body}
+            </p>
+          </div>
+
+          <div class:list={["diagram", `diagram-${item.shape}`]} aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .diagram {
+    position: relative;
+    width: min(13rem, 58vw);
+    max-width: 100%;
+    aspect-ratio: 1;
+    align-self: center;
+    margin-top: 3rem;
+  }
+
+  .diagram span {
+    position: absolute;
+    aspect-ratio: 1;
+    border: 1.5px solid rgb(255 255 255 / 0.95);
+    border-radius: 50%;
+  }
+
+  .diagram-clarify span:nth-child(1) {
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .diagram-clarify span:nth-child(2) {
+    left: 8%;
+    top: 8%;
+    width: 84%;
+  }
+
+  .diagram-clarify span:nth-child(3) {
+    left: 16%;
+    top: 16%;
+    width: 68%;
+  }
+
+  .diagram-align span:nth-child(1) {
+    left: 0;
+    top: 16%;
+    width: 68%;
+  }
+
+  .diagram-align span:nth-child(2) {
+    right: 0;
+    top: 16%;
+    width: 68%;
+  }
+
+  .diagram-align span:nth-child(3) {
+    display: none;
+  }
+
+  .diagram-evolve span:nth-child(1) {
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .diagram-evolve span:nth-child(2) {
+    left: 8%;
+    top: 8%;
+    width: 84%;
+  }
+
+  .diagram-evolve span:nth-child(3) {
+    left: 16%;
+    top: 16%;
+    width: 68%;
+  }
+
+  @media (min-width: 48rem) {
+    .diagram {
+      width: min(15rem, 100%);
+      margin-top: 4rem;
+    }
+  }
+</style>
