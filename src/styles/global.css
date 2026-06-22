@@ -93,13 +93,53 @@ body {
     linear-gradient(to right, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08)),
     linear-gradient(to right, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08)),
     linear-gradient(to right, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08));
-  background-size: 1px 100%;
+  
+  /* Initial state: lines are 1px wide but 0% tall */
+  background-size: 
+    1px 0%,
+    1px 0%,
+    1px 0%,
+    1px 0%;
+    
   background-position:
     var(--grid-edge) 0,
     calc(33.333% + var(--grid-third)) 0,
     calc(66.666% - var(--grid-third)) 0,
     calc(100% - var(--grid-edge)) 0;
+  
   background-repeat: no-repeat;
+  
+  /* 3-second slow animation */
+  animation: bg-grid-draw 4s ease-in-out 0.5s forwards;
+}
+
+@keyframes bg-grid-draw {
+  0% {
+    background-size: 
+      1px 0%,
+      1px 0%,
+      1px 0%,
+      1px 0%;
+  }
+  100% {
+    background-size: 
+      1px 100%,
+      1px 100%,
+      1px 100%,
+      1px 100%;
+  }
+}
+
+/* Best practice: show fully drawn lines instantly for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .bg-grid-3 {
+    animation: none;
+    background-size: 
+      1px 100%,
+      1px 100%,
+      1px 100%,
+      1px 100%;
+  }
 }
 
 @media (min-width: 40rem) {
