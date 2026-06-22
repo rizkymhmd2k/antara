@@ -23,19 +23,16 @@ const items = [
 ---
 
 <section class="container-padding flex min-h-screen flex-col justify-between">
-  <SectionHeading
-    eyebrow={eyebrow}
-    title={ebTitel}
-    class="mb-16 max-w-xl md:mb-24 lg:mb-28"
-  />
+  <SectionHeading eyebrow={eyebrow} title={ebTitel} class="" />
 
   <div class="grid grid-cols-1 md:grid-cols-3">
     {
       items.map((item, index) => (
         <article
           class:list={[
-            "flex min-h-[28rem] flex-col justify-between border-white/35 py-6 pl-8 pr-6 md:min-h-[31rem] md:py-2 md:pl-8 md:pr-10 lg:min-h-[34rem]",
-            "border-l",
+            "flex min-h-[22rem] flex-col justify-between border-white/35 p-6 md:min-h-[31rem] md:py-2 md:pl-8 md:pr-10 lg:min-h-[34rem]",
+            "border-x md:border-r-0",
+            index !== items.length - 1 && "border-b md:border-b-0",
             index === items.length - 1 && "md:border-r",
           ]}
         >
@@ -48,10 +45,13 @@ const items = [
             </p>
           </div>
 
-          <div class:list={["diagram", `diagram-${item.shape}`]} aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
+          <div
+            class:list={["diagram", `diagram-${item.shape} `]}
+            aria-hidden="true"
+          >
+            <span />
+            <span />
+            <span />
           </div>
         </article>
       ))
@@ -63,7 +63,6 @@ const items = [
   .diagram {
     position: relative;
     width: min(13rem, 58vw);
-    max-width: 100%;
     aspect-ratio: 1;
     align-self: center;
     margin-top: 3rem;
@@ -74,20 +73,21 @@ const items = [
     aspect-ratio: 1;
     border: 1.5px solid rgb(255 255 255 / 0.95);
     border-radius: 50%;
+    opacity: 0;
   }
+
+  /* ---------- resting positions ---------- */
 
   .diagram-clarify span:nth-child(1) {
     left: 0;
     top: 0;
     width: 100%;
   }
-
   .diagram-clarify span:nth-child(2) {
     left: 8%;
     top: 8%;
     width: 84%;
   }
-
   .diagram-clarify span:nth-child(3) {
     left: 16%;
     top: 16%;
@@ -99,13 +99,11 @@ const items = [
     top: 16%;
     width: 68%;
   }
-
   .diagram-align span:nth-child(2) {
     right: 0;
     top: 16%;
     width: 68%;
   }
-
   .diagram-align span:nth-child(3) {
     display: none;
   }
@@ -115,13 +113,11 @@ const items = [
     top: 0;
     width: 100%;
   }
-
   .diagram-evolve span:nth-child(2) {
     left: 8%;
     top: 8%;
     width: 84%;
   }
-
   .diagram-evolve span:nth-child(3) {
     left: 16%;
     top: 16%;
@@ -134,4 +130,198 @@ const items = [
       margin-top: 4rem;
     }
   }
+
+  /* ---------- CLARIFY: rack focus loop (blur/scatter <-> sharp/centered) ---------- */
+
+  /* ---------- CLARIFY: focus breathing (blur + scale loop) ---------- */
+  /* ---------- CLARIFY: elegant focus breath (minimal blur, long clarity) ---------- */
+
+  @keyframes clarify-1 {
+    0% {
+      transform: scale(0.94);
+      filter: blur(3px);
+      opacity: 0.55;
+    }
+    18% {
+      transform: scale(1);
+      filter: blur(0px);
+      opacity: 1;
+    }
+    82% {
+      transform: scale(1);
+      filter: blur(0px);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(0.94);
+      filter: blur(3px);
+      opacity: 0.55;
+    }
+  }
+
+  @keyframes clarify-2 {
+    0% {
+      transform: scale(0.92);
+      filter: blur(3px);
+      opacity: 0.5;
+    }
+    18% {
+      transform: scale(1);
+      filter: blur(0px);
+      opacity: 0.95;
+    }
+    82% {
+      transform: scale(1);
+      filter: blur(0px);
+      opacity: 0.95;
+    }
+    100% {
+      transform: scale(0.92);
+      filter: blur(3px);
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes clarify-3 {
+    0% {
+      transform: scale(0.9);
+      filter: blur(3px);
+      opacity: 0.45;
+    }
+    18% {
+      transform: scale(1);
+      filter: blur(0px);
+      opacity: 0.9;
+    }
+    82% {
+      transform: scale(1);
+      filter: blur(0px);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(0.9);
+      filter: blur(3px);
+      opacity: 0.45;
+    }
+  }
+
+  /* staggered with slower, more meditative timing */
+  .diagram-clarify.is-visible span:nth-child(1) {
+    animation: clarify-1 5.2s ease-in-out infinite;
+  }
+
+  .diagram-clarify.is-visible span:nth-child(2) {
+    animation: clarify-2 5.2s ease-in-out infinite 0.15s;
+  }
+
+  .diagram-clarify.is-visible span:nth-child(3) {
+    animation: clarify-3 5.2s ease-in-out infinite 0.3s;
+  }
+
+  /* ---------- ALIGN: continuous separate / rejoin loop (untouched) ---------- */
+
+  /* ---------- ALIGN: separate / rejoin (contained) ---------- */
+
+  /* use custom properties so we can adjust the travel per breakpoint */
+  .diagram-align.is-visible span:nth-child(1) {
+    --tx: -42px;
+    animation: align-loop-1 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+  .diagram-align.is-visible span:nth-child(2) {
+    --tx: 42px;
+    animation: align-loop-2 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+
+  @keyframes align-loop-1 {
+    0% {
+      opacity: 0.6;
+      transform: translateX(var(--tx));
+    }
+    50% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0.6;
+      transform: translateX(var(--tx));
+    }
+  }
+  @keyframes align-loop-2 {
+    0% {
+      opacity: 0.6;
+      transform: translateX(var(--tx));
+    }
+    50% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0.6;
+      transform: translateX(var(--tx));
+    }
+  }
+
+  /* on md+ reduce the travel so the circles feel more contained */
+  @media (min-width: 48rem) {
+    .diagram-align.is-visible span:nth-child(1) {
+      --tx: -20px;
+    }
+    .diagram-align.is-visible span:nth-child(2) {
+      --tx: 20px;
+    }
+  }
+
+  /* ---------- EVOLVE: staggered outward ripple, continuous (untouched) ---------- */
+
+  @keyframes evolve-ripple {
+    0% {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    20% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.25);
+    }
+  }
+
+  .diagram-evolve.is-visible span:nth-child(1) {
+    animation: evolve-ripple 3s ease-out infinite 0s;
+  }
+  .diagram-evolve.is-visible span:nth-child(2) {
+    animation: evolve-ripple 3s ease-out infinite 1s;
+  }
+  .diagram-evolve.is-visible span:nth-child(3) {
+    animation: evolve-ripple 3s ease-out infinite 2s;
+  }
+
+  /* ---------- respect reduced motion ---------- */
+
+  @media (prefers-reduced-motion: reduce) {
+    .diagram span {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
 </style>
+
+<script>
+  const diagrams = document.querySelectorAll(".diagram");
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.35 },
+  );
+
+  diagrams.forEach((el) => observer.observe(el));
+</script>

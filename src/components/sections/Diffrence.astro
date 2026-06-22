@@ -35,34 +35,42 @@ const items = [
     body: "Over 25 years building private market relationships delivering institutional-grade alternatives to individual portfolios.",
   },
 ];
-const rows = [items.slice(0, 3), items.slice(3, 6)];
 ---
 
 <section class="container-padding">
   <SectionHeading eyebrow={eyebrow} title={ebTitel} />
 
-  <div class="border border-white/20">
-  {
-    rows.map((row, rowIndex) => (
-      <div
-        class:list={[
-          "grid grid-cols-1 divide-y divide-white/20 md:grid-cols-3 md:divide-y-0",
-          rowIndex > 0 && "border border-white/20",
-        ]}
-      >
-        {
-          row.map((item) => (
-            <article class="flex min-h-72 flex-col justify-between gap-10 p-6 sm:p-8 xl:min-h-80">
-              <span class="headline-text">{item.number}</span>
-              <div>
-                <h2 class="title-text">{item.title}</h2>
-                <p class="body-text mt-4">{item.body}</p>
-              </div>
-            </article>
-          ))
-        }
-      </div>
-    ))
-  }
-</div>
+  <div class="difference-grid grid grid-cols-1 sm:grid-cols-3">
+    {
+      items.map((item) => (
+        <article class="flex min-h-72 flex-col justify-between gap-10 p-6 sm:p-8 xl:min-h-80">
+          <span class="headline-text">{item.number}</span>
+          <div>
+            <h2 class="title-text">{item.title}</h2>
+            <p class="body-text mt-4">{item.body}</p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
 </section>
+
+<style>
+  .difference-grid > * + * {
+    border-top: 1px solid rgb(255 255 255 / 0.35);
+  }
+
+  @media (min-width: 40rem) {
+    .difference-grid > * + * {
+      border-top: 0;
+    }
+
+    .difference-grid > *:nth-child(n + 4) {
+      border-top: 1px solid rgb(255 255 255 / 0.35);
+    }
+
+    .difference-grid > *:not(:nth-child(3n + 1)) {
+      border-left: 1px solid rgb(255 255 255 / 0.35);
+    }
+  }
+</style>

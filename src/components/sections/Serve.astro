@@ -27,11 +27,11 @@ const items = [
 <section class="container-padding min-h-screen">
   <SectionHeading eyebrow={eyebrow} title={ebTitel} />
 
-  <div class="grid grid-cols-2 gap-4 md:gap-8 lg:grid-cols-4 gap-y-12">
+  <div class="grid grid-cols-1 gap-6 min-[480px]:grid-cols-2 md:gap-8 lg:grid-cols-4">
     {
       items.map((item) => (
         <article class="flex flex-col gap-4">
-          <div class="aspect-square rounded-2xl bg-white" />
+          <div class="aspect-[4/3] rounded-sm bg-white" />
 
           <div class="space-y-2">
             <h2 class="title-text">{item.title}</h2>

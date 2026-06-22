@@ -1,0 +1,59 @@
+---
+import Eyebrow from "../ui/Eyebrow.astro";
+import Button from "../ui/Button.astro";
+const headline =
+  "Antara Private Wealth helps clients bring order, intention, and confidence to the decisions that surround significant capital.";
+const email = "hello@antara.com";
+const navText = [
+  {
+    name: "Home",
+    href: "/",
+  },
+  {
+    name: "About",
+    href: "/about",
+  },
+  {
+    name: "Services",
+    href: "/services",
+  },
+  {
+    name: "Contact",
+    href: "/contact",
+  },
+];
+---
+
+<section class="container-padding flex flex-col gap-12 sm:gap-20 md:gap-48">
+  <div class="flex max-w-full flex-col gap-6 sm:w-fit">
+    <Eyebrow text="Contact" />
+
+    <h1 class="max-w-full text-[clamp(2rem,10.5vw,8rem)] leading-none [overflow-wrap:anywhere] sm:w-max">
+      {email}
+    </h1>
+    <nav>
+      <ul class="flex w-full flex-wrap gap-x-6 gap-y-3 sm:justify-between">
+        {
+          navText.map((item) => (
+            <li key={item.href}>
+              <a href={item.href} class="body-text">
+                {item.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+  <div class="flex w-full flex-col items-start gap-4 sm:items-end">
+    <div class="flex max-w-[450px] flex-col gap-4">
+      <h2 class="body-text">
+        {headline}
+      </h2>
+
+      <div class="inline-flex flex-col gap-6">
+        <Button text="Learn more" />
+      </div>
+    </div>
+  </div>
+</section>

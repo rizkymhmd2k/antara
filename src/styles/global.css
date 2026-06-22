@@ -14,15 +14,19 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: local("Cormorant Garamond");
+  font-weight: 400 700;
+  font-style: normal;
+}
+
 @theme {
   /* COLORS */
   --color-background: #004cbb;
 
   /* TYPOGRAPHY */
-  --font-heading: "Poppins", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --text-hero: clamp(4rem, 10vw, 8rem);
-  --text-h2: 2rem;
+  --font-cormorant: "Cormorant Garamond", serif;
 
   /* SPACING */
   --spacing-xs: 8px;
@@ -57,11 +61,11 @@ body {
 }
 
 @utility container-padding {
-  @apply px-4 py-20 sm:px-8 lg:py-24;
+  @apply px-4 py-14 sm:px-8 sm:py-20 lg:py-24;
 }
 
 @utility display-text {
-  @apply text-6xl  leading-tight tracking-tight sm:text-7xl md:text-8xl;
+  @apply text-5xl leading-tight tracking-tight sm:text-7xl md:text-8xl;
 }
 
 @utility headline-text {
