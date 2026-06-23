@@ -1,5 +1,43 @@
+---
+import antaraLogo from "../../../public/icon/AntaraSVG.svg";
+const socmed = [
+  {
+    name: "LinkedIn",
+    url: "https://linkedin.com/company/yourcompany",
+    icon: "linkedin",
+  },
+  {
+    name: "Instagram",
+    url: "https://instagram.com/yourcompany",
+    icon: "instagram",
+  },
+  {
+    name: "YouTube",
+    url: "https://youtube.com/@yourcompany",
+    icon: "youtube",
+  },
+  {
+    name: "Facebook",
+    url: "https://facebook.com/yourcompany",
+    icon: "facebook",
+  },
+];
+---
 
-
-<section class="container-padding">
-    <h1 class="text-[clamp(2rem,29.5vw,18rem)] leading-none font-cormorant">Antara</h1>
+<section class="px-4 pt-24 md:pt-48  flex flex-col gap-6">
+  <div class="flex justify-between">
+    {
+      socmed.map((item) => (
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm font-medium hover:opacity-70 transition"
+        >
+          {item.name}
+        </a>
+      ))
+    }
+  </div>
+  <img src={antaraLogo.src} alt="Antara" class="w-[90%] trasnlate-y-[29]" />
 </section>

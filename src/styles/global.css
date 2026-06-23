@@ -69,7 +69,7 @@ body {
 }
 
 @utility headline-text {
-  @apply text-2xl  leading-tight md:text-3xl lg:text-4xl;
+  @apply text-xl sm:text-2xl  leading-tight md:text-3xl lg:text-4xl;
 }
 
 @utility title-text {

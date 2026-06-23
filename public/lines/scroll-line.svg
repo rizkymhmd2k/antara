@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="none">
+  <path
+    d="M -80 130 C 260 250, 660 330, 990 300 S 1330 230, 1520 70"
+    fill="none"
+    stroke="rgba(255,255,255,.5)"
+    stroke-width="1"
+    vector-effect="non-scaling-stroke"
+  />
+</svg>
