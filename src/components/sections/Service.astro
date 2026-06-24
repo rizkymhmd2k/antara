@@ -1,6 +1,7 @@
 ---
 import Eyebrow from "../ui/Eyebrow.astro";
 import SectionHeading from "../ui/SectionHeading.astro";
+import ScrollLine from "../ui/ScrollLine.astro";
 const text = "Our Service";
 const title = "Sophisticated planning for the future you're building.";
 
@@ -38,9 +39,10 @@ const servicesText = [
 ];
 ---
 
-<div class="relative " data-sticky-wrapper>
+<div class="relative" data-sticky-wrapper>
+
   <section
-    class="container-padding md:pt-8  flex items-start justify-start  md:sticky md:top-0 md:min-h-screen"
+    class="container-padding relative z-10 flex items-start justify-start md:sticky md:top-0 md:min-h-screen md:pt-8"
   >
     <div class="grid w-full grid-cols-3 md:gap-y-24  ">
 

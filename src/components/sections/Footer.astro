@@ -1,5 +1,7 @@
 ---
-import antaraLogo from "../../../public/icon/AntaraSVG.svg";
+import antaraLogoUrl from "../../assets/icon/AntaraSVG.svg?url";
+import FooterLines from "../ui/FooterLines.astro";
+
 const socmed = [
   {
     name: "LinkedIn",
@@ -24,8 +26,9 @@ const socmed = [
 ];
 ---
 
-<section class="px-4 pt-24 md:pt-48  flex flex-col gap-6">
-  <div class="flex justify-between">
+<section class="relative overflow-hidden px-4 pt-24 md:pt-48 flex flex-col gap-6">
+  <FooterLines />
+  <div class="relative z-10 flex justify-between">
     {
       socmed.map((item) => (
         <a
@@ -39,5 +42,9 @@ const socmed = [
       ))
     }
   </div>
-  <img src={antaraLogo.src} alt="Antara" class="w-[90%] trasnlate-y-[29]" />
+  <img
+    src={antaraLogoUrl}
+    alt="Antara"
+    class="relative z-10 w-[90%] "
+  />
 </section>

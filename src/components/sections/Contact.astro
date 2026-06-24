@@ -1,6 +1,8 @@
 ---
 import Eyebrow from "../ui/Eyebrow.astro";
 import Button from "../ui/Button.astro";
+import ScrollLine from "../ui/ScrollLine.astro";
+import scrollLineUrl from "../../assets/lines/scroll-line-3.svg?url";
 const headline =
   "Antara Private Wealth helps clients bring order, intention, and confidence to the decisions that surround significant capital.";
 const email = "hello@antara.com";
@@ -24,14 +26,23 @@ const navText = [
 ];
 ---
 
-<section class="container-padding flex flex-col gap-12 sm:gap-20 md:gap-24 lg:gap-20">
-  <div class="flex max-w-full flex-col gap-6 sm:w-fit">
+<section
+  class="container-padding relative flex flex-col gap-12 sm:gap-20 md:gap-24 lg:gap-20"
+>
+  <ScrollLine
+    src={scrollLineUrl}
+    class="pointer-events-none absolute inset-x-0 top-8 md:top-0 z-0 h-[min(120vh,72rem)] w-full"
+    imgClass="h-[min(120vh,72rem)] w-full max-w-none "
+  />
+  <div class="relative z-10 flex max-w-full flex-col gap-6 sm:w-fit">
     <Eyebrow text="Contact" />
 
-    <h1 class="max-w-full text-[clamp(2rem,10.5vw,8rem)] leading-none [overflow-wrap:anywhere] sm:w-max">
+    <h1
+      class="max-w-full text-[clamp(2rem,10.5vw,8rem)] leading-none [overflow-wrap:anywhere] sm:w-max"
+    >
       {email}
     </h1>
-    <nav>
+    <!-- <nav>
       <ul class="flex w-full flex-wrap gap-x-6 gap-y-3 sm:justify-between">
         {
           navText.map((item) => (
@@ -43,9 +54,9 @@ const navText = [
           ))
         }
       </ul>
-    </nav>
+    </nav> -->
   </div>
-  <div class="flex w-full flex-col items-start gap-4 sm:items-end">
+  <div class="relative z-10 flex w-full flex-col items-start gap-4 sm:items-end">
     <div class="flex max-w-[450px] flex-col gap-4">
       <h2 class="body-text">
         {headline}

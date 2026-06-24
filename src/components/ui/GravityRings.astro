@@ -1,0 +1,79 @@
+---
+const VIEW_W = 1440;
+const VIEW_H = 900;
+
+const center = { x: VIEW_W / 2, y: VIEW_H / 2 };
+
+const RX_MAX = 900;
+const RX_MIN = 18;
+
+const N_RINGS = 38;
+
+const rings = Array.from({ length: N_RINGS }, (_, index) => {
+  const t = index / (N_RINGS - 1);
+  const eased = Math.pow(t, 1.35);
+
+  const rx = RX_MAX - eased * (RX_MAX - RX_MIN);
+  const ry = rx * (0.32 - t * 0.16);
+  const cy = center.y + 78 + Math.pow(t, 1.85) * 148;
+
+  return {
+    rx,
+    ry,
+    cy,
+    opacity: 0.16 + t * 0.5,
+  };
+});
+---
+
+<div class="gravity-rings" aria-hidden="true">
+  <svg
+    class="gravity-rings__svg"
+    viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+    preserveAspectRatio="xMidYMid slice"
+  >
+    <g class="gravity-rings__field">
+      {
+        rings.map((ring) => (
+          <ellipse
+            class="gravity-rings__ring"
+            cx={center.x}
+            cy={ring.cy}
+            rx={ring.rx}
+            ry={ring.ry}
+            pathLength="100"
+            style={`--ring-opacity:${ring.opacity};`}
+          />
+        ))
+      }
+    </g>
+  </svg>
+</div>
+
+<style>
+  .gravity-rings {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .gravity-rings__svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .gravity-rings__field {
+    shape-rendering: geometricPrecision;
+  }
+
+  .gravity-rings__ring {
+    fill: none;
+    stroke: rgb(255 255 255);
+    stroke-width: 1.35;
+    stroke-opacity: var(--ring-opacity);
+    vector-effect: non-scaling-stroke;
+  }
+</style>

@@ -1,4 +1,9 @@
 ---
+import { Image } from "astro:assets";
+import foundersImage from "../../assets/images/Founders.png";
+import familyImage from "../../assets/images/family.png";
+import sportsImage from "../../assets/images/tennis.png";
+import executivesImage from "../../assets/images/executives.png";
 import SectionHeading from "../ui/SectionHeading.astro";
 
 const ebTitel =
@@ -8,18 +13,26 @@ const items = [
   {
     title: "Founders",
     body: "From enterprise value to enduring personal wealth.",
+    image: foundersImage,
+    alt: "Two founders seated together in conversation.",
   },
   {
     title: "Families",
     body: "Clarity, continuity, and shared purpose across generations.",
+    image: familyImage,
+    alt: "A family spending time together outdoors.",
   },
   {
     title: "Sports & Entertainment Professionals",
     body: "Structure for uncommon careers, irregular income, and compressed opportunity windows.",
+    image: sportsImage,
+    alt: "A tennis player competing on court.",
   },
   {
     title: "Executives",
     body: "Guidance for concentrated equity, compensation complexity, and transition planning.",
+    image: executivesImage,
+    alt: "An executive in a professional office setting.",
   },
 ];
 ---
@@ -31,7 +44,14 @@ const items = [
     {
       items.map((item) => (
         <article class="flex flex-col gap-4">
-          <div class="aspect-[4/3] rounded-sm bg-white" />
+          <Image
+            src={item.image}
+            alt={item.alt}
+            format="webp"
+            widths={[640, 960]}
+            sizes="(min-width: 1024px) 25vw, (min-width: 480px) 50vw, 100vw"
+            class="aspect-[4/3] w-full rounded-sm object-cover"
+          />
 
           <div class="space-y-2">
             <h2 class="title-text">{item.title}</h2>

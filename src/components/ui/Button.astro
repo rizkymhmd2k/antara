@@ -1,14 +1,35 @@
 ---
 import { Icon } from "astro-icon/components";
-const { text } = Astro.props;
+const { text, href } = Astro.props;
+
+const className =
+  "inline-flex w-fit items-center justify-between gap-4 rounded-sm bg-white px-4 py-2 sm:gap-12";
 ---
 
-<button
-  class="inline-flex w-fit items-center justify-between gap-4 rounded-sm bg-white px-4 py-2 sm:gap-12"
->
-  <p class="text-xl  text-black sm:text-md">{text}</p>
+{
+  href ? (
+    <a href={href} class={className}>
+      <span class="text-xl text-black sm:text-md">{text}</span>
 
-  <div class="rounded-sm border bg-background">
-    <Icon name="arrow-up-right" class="size-6 text-white" aria-hidden="true" />
-  </div>
-</button>
+      <span class="rounded-sm border bg-background">
+        <Icon
+          name="arrow-up-right"
+          class="size-6 text-white"
+          aria-hidden="true"
+        />
+      </span>
+    </a>
+  ) : (
+    <button type="button" class={className}>
+      <span class="text-xl text-black sm:text-md">{text}</span>
+
+      <span class="rounded-sm border bg-background">
+        <Icon
+          name="arrow-up-right"
+          class="size-6 text-white"
+          aria-hidden="true"
+        />
+      </span>
+    </button>
+  )
+}

@@ -1,0 +1,129 @@
+<div class="footer-lines" aria-hidden="true">
+  <svg
+    class="footer-lines__svg footer-lines__svg--back"
+    viewBox="0 0 1440 560"
+    preserveAspectRatio="none"
+  >
+    <g class="footer-lines__group footer-lines__group--slow">
+      <path d="M-360 56C180 188 458 306 732 372C1004 438 1234 472 1800 520" />
+      <path d="M-360 88C172 214 448 324 724 392C1004 462 1238 496 1800 540" />
+      <path d="M-360 126C164 246 438 344 718 416C1002 490 1240 518 1800 556" />
+      <path d="M-360 172C154 286 428 376 710 440C998 506 1242 532 1800 566" />
+      <path d="M-360 226C144 332 418 410 704 468C996 526 1244 548 1800 578" />
+      <path d="M-360 292C136 390 408 454 700 500C994 546 1248 564 1800 590" />
+    </g>
+  </svg>
+
+  <svg
+    class="footer-lines__svg footer-lines__svg--front"
+    viewBox="0 0 1440 560"
+    preserveAspectRatio="none"
+  >
+    <g class="footer-lines__group footer-lines__group--fast">
+      <path d="M-360 70C204 202 496 304 770 360C1040 416 1270 454 1800 496" />
+      <path d="M-360 98C198 224 486 320 764 378C1038 438 1272 472 1800 514" />
+      <path d="M-360 132C188 250 476 340 758 398C1034 462 1274 492 1800 534" />
+      <path d="M-360 174C178 286 466 366 752 422C1032 484 1278 512 1800 550" />
+      <path d="M-360 226C170 332 456 400 748 452C1030 506 1280 530 1800 566" />
+      <path d="M-360 288C160 388 448 442 742 486C1028 534 1282 556 1800 588" />
+      <path d="M-360 356C152 448 438 492 738 528C1026 562 1284 580 1800 606" />
+    </g>
+  </svg>
+</div>
+
+<style>
+  .footer-lines {
+    position: absolute;
+    inset-block: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    pointer-events: none;
+    overflow: hidden;
+    contain: paint;
+  }
+
+  .footer-lines__svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .footer-lines__svg--back {
+    opacity: 0.32;
+    animation: footer-lines-drift-slow 12s ease-in-out infinite;
+  }
+
+  .footer-lines__svg--front {
+    opacity: 0.62;
+    animation: footer-lines-drift-fast 7s ease-in-out infinite;
+  }
+
+  .footer-lines__group path {
+    fill: none;
+    stroke: rgb(255 255 255 / 0.9);
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .footer-lines__group--slow path {
+    stroke-width: 1.4;
+  }
+
+  .footer-lines__group--fast path {
+    stroke-width: 1.1;
+  }
+
+  .footer-lines__group--slow path:nth-child(1) { opacity: 0.18; }
+  .footer-lines__group--slow path:nth-child(2) { opacity: 0.22; }
+  .footer-lines__group--slow path:nth-child(3) { opacity: 0.28; }
+  .footer-lines__group--slow path:nth-child(4) { opacity: 0.32; }
+  .footer-lines__group--slow path:nth-child(5) { opacity: 0.22; }
+  .footer-lines__group--slow path:nth-child(6) { opacity: 0.14; }
+
+  .footer-lines__group--fast path:nth-child(1) { opacity: 0.46; }
+  .footer-lines__group--fast path:nth-child(2) { opacity: 0.54; }
+  .footer-lines__group--fast path:nth-child(3) { opacity: 0.66; }
+  .footer-lines__group--fast path:nth-child(4) { opacity: 0.72; }
+  .footer-lines__group--fast path:nth-child(5) { opacity: 0.48; }
+  .footer-lines__group--fast path:nth-child(6) { opacity: 0.28; }
+  .footer-lines__group--fast path:nth-child(7) { opacity: 0.16; }
+
+  @keyframes footer-lines-drift-slow {
+    0% {
+      transform: translate3d(0, -1%, 0);
+    }
+    50% {
+      transform: translate3d(0, 1.5%, 0);
+    }
+    100% {
+      transform: translate3d(0, -1%, 0);
+    }
+  }
+
+  @keyframes footer-lines-drift-fast {
+    0% {
+      transform: translate3d(0, -0.75%, 0);
+    }
+    35% {
+      transform: translate3d(0, 1.5%, 0);
+    }
+    65% {
+      transform: translate3d(0, 2.25%, 0);
+    }
+    100% {
+      transform: translate3d(0, -0.75%, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .footer-lines__svg--back,
+    .footer-lines__svg--front {
+      animation: none;
+      transform: none;
+    }
+  }
+</style>
