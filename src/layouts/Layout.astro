@@ -5,8 +5,13 @@ import "lenis/dist/lenis.css";
 import "../styles/global.css";
 import faviconSvgUrl from "../assets/favicon.svg?url";
 import faviconIcoUrl from "../assets/favicon.ico?url";
+import regularFontUrl from "../assets/fonts/AlteHaasGroteskRegular.ttf?url";
 
-const { class: className = "" } = Astro.props;
+const {
+	class: className = "",
+	title = "Antara Private Wealth",
+	description = "Private wealth advisory for clients whose capital carries consequence.",
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -14,10 +19,13 @@ const { class: className = "" } = Astro.props;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
+		<meta name="description" content={description} />
+		<meta name="theme-color" content="#004cbb" />
+		<link rel="preload" href={regularFontUrl} as="font" type="font/ttf" crossorigin />
 		<link rel="icon" type="image/svg+xml" href={faviconSvgUrl} />
 		<link rel="icon" href={faviconIcoUrl} />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>{title}</title>
 		<ClientRouter />
 	</head>
 	<body>

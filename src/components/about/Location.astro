@@ -1,8 +1,8 @@
 ---
 import { Image } from "astro:assets";
 import SectionHeading from "../ui/SectionHeading.astro"
-import Jakarta from '../../assets/images/jakartaa.png'
-import Banjarmasin from '../../assets/images/bjm.png'
+import Jakarta from '../../assets/images/jakartaa.webp'
+import Banjarmasin from '../../assets/images/bjm.webp'
 
 const locations = [
   {
@@ -32,8 +32,11 @@ const locations = [
               src={location.image}
               alt={location.alt}
               format="webp"
-              widths={[768, 1024, 1536]}
+              quality={72}
+              widths={[640, 960, 1280]}
               sizes="(min-width: 768px) 50vw, 100vw"
+              loading="lazy"
+              decoding="async"
               class="h-full w-full object-cover"
             />
 
