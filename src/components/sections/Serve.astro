@@ -43,15 +43,19 @@ const items = [
   <div class="grid grid-cols-1 gap-6 min-[480px]:grid-cols-2 md:gap-8 lg:grid-cols-4">
     {
       items.map((item) => (
-        <article class="flex flex-col gap-4">
-          <Image
-            src={item.image}
-            alt={item.alt}
-            format="webp"
-            widths={[640, 960]}
-            sizes="(min-width: 1024px) 25vw, (min-width: 480px) 50vw, 100vw"
-            class="aspect-[4/3] w-full rounded-sm object-cover"
-          />
+        <article class="group flex flex-col gap-4">
+          <div class="relative aspect-[4/3] w-full overflow-hidden rounded-sm">
+            <Image
+              src={item.image}
+              alt={item.alt}
+              format="webp"
+              widths={[640, 960]}
+              sizes="(min-width: 1024px) 25vw, (min-width: 480px) 50vw, 100vw"
+              class="h-full w-full object-cover"
+            />
+
+            <div class="absolute inset-0 translate-y-full bg-gradient-to-t from-blue-600/80 via-blue-500/30 to-transparent transition-transform duration-500 ease-out group-hover:translate-y-0" />
+          </div>
 
           <div class="space-y-2">
             <h2 class="title-text">{item.title}</h2>

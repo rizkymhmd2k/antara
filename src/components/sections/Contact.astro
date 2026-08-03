@@ -27,10 +27,11 @@ const navText = [
 ---
 
 <section
-  class="container-padding relative flex flex-col gap-12 sm:gap-20 md:gap-24 lg:gap-20"
+  class="container-padding relative flex flex-col gap-12 overflow-hidden sm:gap-20 md:gap-24 lg:gap-20"
 >
   <ScrollLine
     src={scrollLineUrl}
+    mobileEndOffset={0.7}
     class="pointer-events-none absolute inset-x-0 top-8 md:top-0 z-0 h-[min(120vh,72rem)] w-full"
     imgClass="h-[min(120vh,72rem)] w-full max-w-none "
   />
@@ -63,7 +64,7 @@ const navText = [
       </h2>
 
       <div class="inline-flex flex-col gap-6">
-        <Button text="Learn more" />
+        <Button text="Start Now" />
       </div>
     </div>
   </div>

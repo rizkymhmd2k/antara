@@ -1,20 +1,27 @@
 ---
 import Eyebrow from "../ui/Eyebrow.astro";
 import GravityRings from "../ui/GravityRings.astro";
+import Button from "../ui/Button.astro";
 
-const headline = "Built for the Weight of Wealth";
 const subtext = "For clients whose capital carries consequence.";
 ---
 
-<section class="hero-padding relative flex min-h-screen overflow-hidden">
+<section
+  class="hero-padding relative flex min-h-screen h-[110vh] pb-16 sm:pb-44"
+>
   <GravityRings />
   <div class="relative z-10 flex w-full flex-col">
     <div class="flex w-full flex-col">
       <Eyebrow text="Who we are" />
-      <h1 class="display-text max-w-[11ch] leading-[0.95] sm:max-w-5xl">
-        {headline}
+      <h1 class="display-text max-w-[11ch] leading-[0.95] sm:max-w-5xl pt-4">
+        Built for the
+        <br />
+        Weight of Wealth
       </h1>
-      <h2>{subtext}</h2>
+      <div class="pt-4 md:pt-6 gap-2 flex flex-col">
+        <h2>{subtext}</h2>
+        <Button text="Get Started" />
+      </div>
     </div>
   </div>
 </section>

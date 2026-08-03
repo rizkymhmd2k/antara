@@ -1,9 +1,9 @@
 ---
 const stats = [
-  { value: "$4.7B", label: "Global assets advised" },
-  { value: "15+", label: "Years advising wealth" },
-  { value: "34", label: "Advisory professionals" },
-  { value: "120", label: "Families served selectively" },
+  { value: "$4.7B", number: 4.7, prefix: "$", suffix: "B", label: "Global assets advised" },
+  { value: "15+", number: 15, suffix: "+", label: "Years advising wealth" },
+  { value: "34", number: 34, label: "Advisory professionals" },
+  { value: "120", number: 120, label: "Families served selectively" },
 ];
 ---
 
@@ -12,10 +12,71 @@ const stats = [
     {
       stats.map((stat) => (
         <div class="flex flex-col items-center gap-2 text-center">
-          <h3 class="display-text">{stat.value}</h3>
+          <h3
+            class="display-text"
+            data-countup
+            data-value={stat.number}
+            data-prefix={stat.prefix}
+            data-suffix={stat.suffix}
+          >
+            {stat.value}
+          </h3>
           <p class="title-text">{stat.label}</p>
         </div>
       ))
     }
   </div>
 </section>
+
+<script>
+  const numbers = document.querySelectorAll<HTMLElement>("[data-countup]");
+
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const formatNumber = (value: number, target: number) =>
+      target % 1 === 0 ? Math.round(value).toString() : value.toFixed(1);
+
+    const animateNumber = (el: HTMLElement) => {
+      const target = Number(el.dataset.value);
+      const prefix = el.dataset.prefix ?? "";
+      const suffix = el.dataset.suffix ?? "";
+      const duration = 1200;
+      const start = performance.now();
+
+      const tick = (now: number) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+
+        el.textContent = `${prefix}${formatNumber(target * eased, target)}${suffix}`;
+
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          el.textContent = `${prefix}${formatNumber(target, target)}${suffix}`;
+        }
+      };
+
+      requestAnimationFrame(tick);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            animateNumber(entry.target as HTMLElement);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -40% 0px" },
+    );
+
+    numbers.forEach((number) => {
+      const target = Number(number.dataset.value);
+      const prefix = number.dataset.prefix ?? "";
+      const suffix = number.dataset.suffix ?? "";
+
+      number.textContent = `${prefix}${formatNumber(0, target)}${suffix}`;
+      observer.observe(number);
+    });
+  }
+</script>

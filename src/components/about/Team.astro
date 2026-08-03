@@ -1,0 +1,61 @@
+---
+import { Image } from "astro:assets";
+import foundersImage from "../../assets/images/Founders.png";
+import Eyebrow from "../ui/Eyebrow.astro";
+
+const members = [
+  {
+    name: "Alya Pratama",
+    role: "Managing Partner",
+  },
+  {
+    name: "Raka Wirawan",
+    role: "Investment Advisor",
+  },
+  {
+    name: "Nadia Santoso",
+    role: "Wealth Strategist",
+  },
+  {
+    name: "Dimas Hartono",
+    role: "Client Relationship Lead",
+  },
+];
+---
+
+<section class="container-padding grid grid-cols-1 gap-12 lg:grid-cols-12">
+  <div class="lg:col-span-6">
+    <Eyebrow text="Team" />
+    <h2 class="mt-4 text-[clamp(2rem,4vw,3.5rem)] leading-[0.98]">
+      A Different Standard of Wealth Advisory
+    </h2>
+  </div>
+
+  <div
+    class="grid grid-cols-1 gap-6 min-[480px]:grid-cols-2 md:gap-8 lg:col-span-6"
+  >
+    {
+      members.map((member) => (
+        <article class="group flex min-w-0 flex-col gap-4">
+          <div class="relative aspect-square w-full overflow-hidden rounded-sm bg-white">
+            <Image
+              src={foundersImage}
+              alt={`${member.name} portrait.`}
+              format="webp"
+              widths={[640, 960]}
+              sizes="(min-width: 1024px) 18vw, (min-width: 480px) 50vw, 100vw"
+              class="h-full w-full object-contain"
+            />
+
+            <div class="absolute inset-0 translate-y-full bg-gradient-to-t from-blue-600/80 via-blue-500/30 to-transparent transition-transform duration-500 ease-out group-hover:translate-y-0" />
+          </div>
+
+          <div class="space-y-2">
+            <h2 class="title-text">{member.name}</h2>
+            <p class="caption-text">{member.role}</p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>

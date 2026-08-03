@@ -3,12 +3,14 @@ interface Props {
   src: string;
   class?: string;
   imgClass?: string;
+  mobileEndOffset?: number;
 }
 
 const {
   src,
   class: className = "",
   imgClass = "h-full w-full max-w-none",
+  mobileEndOffset = 1,
 } = Astro.props as Props;
 
 const instanceId = `scroll-line-${Math.random().toString(36).slice(2, 10)}`;
@@ -23,7 +25,7 @@ const instanceId = `scroll-line-${Math.random().toString(36).slice(2, 10)}`;
   <div class="scroll-line__canvas h-full w-full"></div>
 </div>
 
-<script define:vars={{ instanceId, src, imgClass }}>
+<script define:vars={{ instanceId, src, imgClass, mobileEndOffset }}>
   const line = document.getElementById(instanceId);
   const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   const mobileQuery = window.matchMedia("(max-width: 767px)");
@@ -48,7 +50,8 @@ const instanceId = `scroll-line-${Math.random().toString(36).slice(2, 10)}`;
     const getProgress = () => {
       const rect = line.getBoundingClientRect();
       const startPx = window.innerHeight * (1 - START_OFFSET);
-      const endPx = window.innerHeight * (1 - END_OFFSET);
+      const endOffset = mobileQuery.matches ? mobileEndOffset : END_OFFSET;
+      const endPx = window.innerHeight * (1 - endOffset);
       const distance = startPx - endPx;
 
       if (distance === 0) {

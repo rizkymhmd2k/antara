@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   Fonts
+   ========================================================================== */
+
 @font-face {
   font-family: "Alte Haas Grotesk";
   src: url("../assets/fonts/AlteHaasGroteskRegular.ttf") format("truetype");
@@ -21,59 +25,56 @@
   font-style: normal;
 }
 
+/* ==========================================================================
+   Theme
+   ========================================================================== */
+
 @theme {
-  /* COLORS */
+  /* Colors */
   --color-background: #004cbb;
 
-  /* TYPOGRAPHY */
+  /* Fonts */
   --font-cormorant: "Cormorant Garamond", serif;
 
-  /* SPACING */
+  /* Spacing */
   --spacing-xs: 8px;
   --spacing-sm: 16px;
   --spacing-md: 24px;
   --spacing-lg: 32px;
   --spacing-section: 96px;
 
-  /* RADIUS */
+  /* Radius */
   --radius-md: 12px;
   --radius-full: 9999px;
 }
 
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
 :root {
   font-family: "Alte Haas Grotesk", sans-serif;
-  color: #fff;
+  color: white;
 }
 
 body {
-  background-color: var(--color-background);
+  background: var(--color-background);
 }
 
-@media (max-width: 39.999rem) {
-  html,
-  body {
-    overflow-x: clip;
-  }
-}
-
-@utility hero-padding {
-  @apply px-4 sm:px-8 py-8 sm:p-8;
-}
-
-@utility container-padding {
-  @apply px-4 py-14 sm:px-8 sm:py-20 lg:py-24;
-}
+/* ==========================================================================
+   Typography Utilities
+   ========================================================================== */
 
 @utility display-text {
   @apply text-5xl leading-tight tracking-tight sm:text-7xl md:text-8xl;
 }
 
 @utility headline-text {
-  @apply text-xl sm:text-2xl  leading-tight md:text-3xl lg:text-4xl;
+  @apply text-xl leading-tight sm:text-2xl md:text-3xl lg:text-4xl;
 }
 
 @utility title-text {
-  @apply text-lg  leading-snug md:text-xl;
+  @apply text-lg leading-snug md:text-xl;
 }
 
 @utility body-text {
@@ -84,59 +85,168 @@ body {
   @apply text-sm leading-normal text-white/80;
 }
 
+/* ==========================================================================
+   Layout Utilities
+   ========================================================================== */
+
+@utility hero-padding {
+  @apply px-4 py-8 sm:p-8;
+}
+
+@utility container-padding {
+  @apply px-4 py-14 sm:px-8 sm:py-20 lg:py-24;
+}
+
+/* ==========================================================================
+   Decorative Utilities
+   ========================================================================== */
+
 @utility bg-grid-3 {
-  --grid-edge: 1rem;
-  --grid-third: 0.333rem;
   position: relative;
 }
 
-.bg-grid-3::before {
+.bg-grid-3,
+.page-transition {
+  --grid-edge: 1rem;
+  --grid-third: 0.333rem;
+  --grid-line-color: rgb(255 255 255 / 8%);
+}
+
+.bg-grid-3::before,
+.page-transition::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
+
   background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08)),
-    linear-gradient(to right, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08)),
-    linear-gradient(to right, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08)),
-    linear-gradient(to right, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08));
-  background-size:
-    1px 100%,
-    1px 100%,
-    1px 100%,
-    1px 100%;
+    linear-gradient(to right, var(--grid-line-color), var(--grid-line-color)),
+    linear-gradient(to right, var(--grid-line-color), var(--grid-line-color)),
+    linear-gradient(to right, var(--grid-line-color), var(--grid-line-color)),
+    linear-gradient(to right, var(--grid-line-color), var(--grid-line-color));
+
+  background-size: 1px 100%;
+  background-repeat: no-repeat;
+
   background-position:
     var(--grid-edge) 0,
     calc(33.333% + var(--grid-third)) 0,
     calc(66.666% - var(--grid-third)) 0,
     calc(100% - var(--grid-edge)) 0;
-  background-repeat: no-repeat;
-  transform: scaleY(0);
-  transform-origin: top;
+
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+.page-transition {
+  --grid-line-2: calc(33.333% + var(--grid-third));
+  --grid-line-3: calc(66.666% - var(--grid-third));
+
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.page-transition::before {
+  z-index: 1;
+}
+
+.page-transition span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+  background: var(--color-background);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 900ms cubic-bezier(.76, 0, .24, 1);
   will-change: transform;
-  animation: bg-grid-draw 4s ease-in-out 0.5s forwards;
 }
 
-@keyframes bg-grid-draw {
-  from {
-    transform: scaleY(0);
-  }
-
-  to {
-    transform: scaleY(1);
-  }
+.page-transition span:nth-child(1) {
+  left: 0;
+  width: var(--grid-line-2);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .bg-grid-3::before {
-    animation: none;
-    transform: scaleY(1);
+.page-transition span:nth-child(2) {
+  left: var(--grid-line-2);
+  width: calc(var(--grid-line-3) - var(--grid-line-2));
+}
+
+.page-transition span:nth-child(3) {
+  left: var(--grid-line-3);
+  right: 0;
+}
+
+.page-transition[data-state="cover"],
+.page-transition[data-state="reveal"] {
+  visibility: visible;
+}
+
+body[data-transition="active"] .bg-grid-3::before {
+  opacity: 0;
+}
+
+.page-transition[data-state="cover"] span {
+  transform: scaleX(1);
+}
+
+.page-transition[data-state="cover"] span:nth-child(2),
+.page-transition[data-state="reveal"] span:nth-child(2) {
+  transition-delay: 220ms;
+}
+
+.page-transition[data-state="cover"] span:nth-child(3),
+.page-transition[data-state="reveal"] span:nth-child(3) {
+  transition-delay: 440ms;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 39.999rem) {
+  html,
+  body {
+    overflow-x: clip;
   }
+
+  .bg-grid-3::before,
+  .page-transition::before {
+    opacity: .5;
+  }
+
 }
 
 @media (min-width: 40rem) {
-  .bg-grid-3 {
+  .bg-grid-3,
+  .page-transition {
     --grid-edge: 2rem;
     --grid-third: 0.667rem;
   }
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+
+  .page-transition {
+    display: none;
+  }
+
 }

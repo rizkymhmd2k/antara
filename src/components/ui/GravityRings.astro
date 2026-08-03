@@ -21,7 +21,9 @@ const rings = Array.from({ length: N_RINGS }, (_, index) => {
     rx,
     ry,
     cy,
-    opacity: 0.16 + t * 0.5,
+    opacity: 0.035 + t * 0.12,
+    delay: `${-index * 0.18}s`,
+    duration: `${(18 - t * 8).toFixed(2)}s`,
   };
 });
 ---
@@ -35,15 +37,26 @@ const rings = Array.from({ length: N_RINGS }, (_, index) => {
     <g class="gravity-rings__field">
       {
         rings.map((ring) => (
-          <ellipse
-            class="gravity-rings__ring"
-            cx={center.x}
-            cy={ring.cy}
-            rx={ring.rx}
-            ry={ring.ry}
-            pathLength="100"
-            style={`--ring-opacity:${ring.opacity};`}
-          />
+          <>
+            <ellipse
+              class="gravity-rings__ring"
+              cx={center.x}
+              cy={ring.cy}
+              rx={ring.rx}
+              ry={ring.ry}
+              pathLength="100"
+              style={`--ring-opacity:${ring.opacity};`}
+            />
+            <ellipse
+              class="gravity-rings__ring gravity-rings__ring--flow"
+              cx={center.x}
+              cy={ring.cy}
+              rx={ring.rx}
+              ry={ring.ry}
+              pathLength="100"
+              style={`--ring-delay:${ring.delay};--ring-duration:${ring.duration};`}
+            />
+          </>
         ))
       }
     </g>
@@ -53,7 +66,10 @@ const rings = Array.from({ length: N_RINGS }, (_, index) => {
 <style>
   .gravity-rings {
     position: absolute;
-    inset: 0;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 900px;
     z-index: 0;
     overflow: hidden;
     pointer-events: none;
@@ -63,6 +79,7 @@ const rings = Array.from({ length: N_RINGS }, (_, index) => {
     width: 100%;
     height: 100%;
     display: block;
+    transform: translateY(10px);
   }
 
   .gravity-rings__field {
@@ -75,5 +92,25 @@ const rings = Array.from({ length: N_RINGS }, (_, index) => {
     stroke-width: 1.35;
     stroke-opacity: var(--ring-opacity);
     vector-effect: non-scaling-stroke;
+  }
+
+  .gravity-rings__ring--flow {
+    stroke-opacity: 0.08;
+    stroke-dasharray: 8 92;
+    stroke-dashoffset: 0;
+    animation: gravity-ring-loop var(--ring-duration) linear infinite;
+    animation-delay: var(--ring-delay);
+  }
+
+  @keyframes gravity-ring-loop {
+    to {
+      stroke-dashoffset: -100;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gravity-rings__ring--flow {
+      animation: none;
+    }
   }
 </style>

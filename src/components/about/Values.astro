@@ -1,0 +1,45 @@
+---
+import Eyebrow from "../ui/Eyebrow.astro";
+
+const items = [
+  {
+    number: "01",
+    title: "Discretion",
+    body: "Privacy is foundational. Clients trust us with information that is financial, personal, and often generational.",
+  },
+  {
+    number: "02",
+    title: "Judgment",
+    body: "Good advice requires more than analysis. It requires timing, perspective, restraint, and the courage to be clear.",
+  },
+  {
+    number: "03",
+    title: "Partnership",
+    body: "We work closely with clients and their broader professional teams, keeping the right people aligned around the right priorities.",
+  },
+];
+---
+
+<section
+  class="flex min-h-screen flex-col justify-between px-4 py-14 md:px-8 md:py-20 lg:py-24"
+>
+  <Eyebrow text="Our Values" />
+
+  <div
+    class="grid grid-cols-1 divide-y divide-white/35 md:grid-cols-3 md:divide-x md:divide-y-0"
+  >
+    {
+      items.map((item) => (
+        <article class="flex min-h-72 flex-col justify-between gap-16 py-10 md:min-h-[32rem] md:px-10 md:py-28 lg:px-14">
+          <span class="title-text ">{item.number}</span>
+
+          <div>
+            <h2 class="headline-text">{item.title}</h2>
+
+            <p class="body-text mt-3">{item.body}</p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>

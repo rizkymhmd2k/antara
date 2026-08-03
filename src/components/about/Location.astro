@@ -1,0 +1,48 @@
+---
+import { Image } from "astro:assets";
+import SectionHeading from "../ui/SectionHeading.astro"
+import Jakarta from '../../assets/images/jakartaa.png'
+import Banjarmasin from '../../assets/images/bjm.png'
+
+const locations = [
+  {
+    name: "Jakarta",
+    address: "Jl. Sudirman No. 42, Jakarta 10210 · -6.2088, 106.8456",
+    image: Jakarta,
+    alt: "Jakarta city skyline.",
+  },
+  {
+    name: "Banjarmasin",
+    address: "Jl. Lambung Mangkurat No. 17, Banjarmasin 70111 · -3.3186, 114.5944",
+    image: Banjarmasin,
+    alt: "Banjarmasin city view.",
+  },
+];
+---
+
+<section class="container-padding">
+  <SectionHeading eyebrow="Locations" title="Present Wherever Decisions Are Made" />
+
+  <div class="grid gap-6 md:grid-cols-2 md:gap-8">
+    {
+      locations.map((location) => (
+        <article class="group space-y-4">
+          <div class="relative aspect-[3/2] w-full overflow-hidden rounded-sm">
+            <Image
+              src={location.image}
+              alt={location.alt}
+              format="webp"
+              widths={[768, 1024, 1536]}
+              sizes="(min-width: 768px) 50vw, 100vw"
+              class="h-full w-full object-cover"
+            />
+
+            <div class="absolute inset-0 translate-y-full bg-gradient-to-t from-blue-600/80 via-blue-500/30 to-transparent transition-transform duration-500 ease-out group-hover:translate-y-0" />
+          </div>
+          <h2 class="title-text">{location.name}</h2>
+          <p class="text-sm text-muted">{location.address}</p>
+        </article>
+      ))
+    }
+  </div>
+</section>
