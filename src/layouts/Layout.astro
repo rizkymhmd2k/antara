@@ -3,8 +3,7 @@ import { ClientRouter } from "astro:transitions";
 import ScreenWidth from "../components/ui/ScreenWidth.astro";
 import "lenis/dist/lenis.css";
 import "../styles/global.css";
-import faviconSvgUrl from "../assets/favicon.svg?url";
-import faviconIcoUrl from "../assets/favicon.ico?url";
+import faviconUrl from "../assets/icon/AntaraFavicon.svg?url";
 import regularFontUrl from "../assets/fonts/AlteHaasGroteskRegular.ttf?url";
 
 const {
@@ -22,8 +21,7 @@ const {
 		<meta name="description" content={description} />
 		<meta name="theme-color" content="#004cbb" />
 		<link rel="preload" href={regularFontUrl} as="font" type="font/ttf" crossorigin />
-		<link rel="icon" type="image/svg+xml" href={faviconSvgUrl} />
-		<link rel="icon" href={faviconIcoUrl} />
+		<link rel="icon" type="image/svg+xml" href={faviconUrl} />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<ClientRouter />
