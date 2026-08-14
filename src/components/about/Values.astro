@@ -1,29 +1,18 @@
 ---
 import Eyebrow from "../ui/Eyebrow.astro";
+import { getCollection, getEntry } from "astro:content";
 
-const items = [
-  {
-    number: "01",
-    title: "Discretion",
-    body: "Privacy is foundational. Clients trust us with information that is financial, personal, and often generational.",
-  },
-  {
-    number: "02",
-    title: "Judgment",
-    body: "Good advice requires more than analysis. It requires timing, perspective, restraint, and the courage to be clear.",
-  },
-  {
-    number: "03",
-    title: "Partnership",
-    body: "We work closely with clients and their broader professional teams, keeping the right people aligned around the right priorities.",
-  },
-];
+const section = await getEntry("site", "about-values");
+const data = section?.data as { eyebrow: string };
+const items = (await getCollection("values"))
+  .map((entry) => entry.data)
+  .sort((a, b) => a.order - b.order);
 ---
 
 <section
   class="flex min-h-screen flex-col justify-between px-4 py-14 md:px-8 md:py-20 lg:py-24"
 >
-  <Eyebrow text="Our Values" />
+  <Eyebrow text={data.eyebrow} />
 
   <div
     class="grid grid-cols-1 divide-y divide-white/35 md:grid-cols-3 md:divide-x md:divide-y-0"

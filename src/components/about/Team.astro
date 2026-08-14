@@ -2,32 +2,23 @@
 import { Image } from "astro:assets";
 import foundersImage from "../../assets/images/Founders.png";
 import Eyebrow from "../ui/Eyebrow.astro";
+import { getCollection, getEntry } from "astro:content";
 
-const members = [
-  {
-    name: "Alya Pratama",
-    role: "Managing Partner",
-  },
-  {
-    name: "Raka Wirawan",
-    role: "Investment Advisor",
-  },
-  {
-    name: "Nadia Santoso",
-    role: "Wealth Strategist",
-  },
-  {
-    name: "Dimas Hartono",
-    role: "Client Relationship Lead",
-  },
-];
+const section = await getEntry("site", "about-team");
+const data = section?.data as { eyebrow: string; title: string };
+const images = {
+  founders: foundersImage,
+};
+const members = (await getCollection("team-members"))
+  .map((entry) => ({ ...entry.data, image: images[entry.data.image] }))
+  .sort((a, b) => a.order - b.order);
 ---
 
 <section class="container-padding grid grid-cols-1 gap-12 lg:grid-cols-12">
   <div class="lg:col-span-6">
-    <Eyebrow text="Team" />
+    <Eyebrow text={data.eyebrow} />
     <h2 class="mt-4 text-[clamp(2rem,4vw,3.5rem)] leading-[0.98]">
-      A Different Standard of Wealth Advisory
+      {data.title}
     </h2>
   </div>
 
@@ -39,7 +30,7 @@ const members = [
         <article class="group flex min-w-0 flex-col gap-4">
           <div class="relative aspect-square w-full overflow-hidden rounded-sm bg-white">
             <Image
-              src={foundersImage}
+              src={member.image}
               alt={`${member.name} portrait.`}
               format="webp"
               quality={75}

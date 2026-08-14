@@ -1,44 +1,16 @@
 ---
 import SectionHeading from "../ui/SectionHeading.astro";
+import { getCollection, getEntry } from "astro:content";
 
-const ebTitel = "A Different Standard of Wealth Advisory";
-const eyebrow = "Our Difference";
-const items = [
-  {
-    number: "01",
-    title: "Fiduciary, always",
-    body: "Legally and ethically bound to put your interests first every recommendation, every day. No exceptions.",
-  },
-  {
-    number: "02",
-    title: "We invest our own capital",
-    body: "Every strategy we recommend is one we believe in enough to invest our own money alongside yours.",
-  },
-  {
-    number: "01",
-    title: "Institutional access",
-    body: "Over 25 years building private market relationships delivering institutional-grade alternatives to individual portfolios.",
-  },
-  {
-    number: "01",
-    title: "Fiduciary, always",
-    body: "Legally and ethically bound to put your interests first every recommendation, every day. No exceptions.",
-  },
-  {
-    number: "02",
-    title: "We invest our own capital",
-    body: "Every strategy we recommend is one we believe in enough to invest our own money alongside yours.",
-  },
-  {
-    number: "01",
-    title: "Institutional access",
-    body: "Over 25 years building private market relationships delivering institutional-grade alternatives to individual portfolios.",
-  },
-];
+const section = await getEntry("site", "home-difference");
+const heading = section?.data as { eyebrow: string; title: string };
+const items = (await getCollection("difference-items"))
+  .map((entry) => entry.data)
+  .sort((a, b) => a.order - b.order);
 ---
 
 <section class="container-padding">
-  <SectionHeading eyebrow={eyebrow} title={ebTitel} />
+  <SectionHeading eyebrow={heading.eyebrow} title={heading.title} />
 
   <div class="difference-grid grid grid-cols-1 sm:grid-cols-3">
     {

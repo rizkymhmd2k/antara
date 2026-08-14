@@ -2,41 +2,13 @@
 import Eyebrow from "../ui/Eyebrow.astro";
 import SectionHeading from "../ui/SectionHeading.astro";
 import ScrollLine from "../ui/ScrollLine.astro";
-const text = "Our Service";
-const title = "Sophisticated planning for the future you're building.";
+import { getCollection, getEntry } from "astro:content";
 
-const servicesText = [
-  {
-    number: "01",
-    title: "Wealth Planning",
-    description:
-      "We build a living strategy around liquidity, lifestyle, family needs, and long-term independence. As your life changes, the plan changes with it, giving each major decision a clearer financial context.",
-  },
-  {
-    number: "02",
-    title: "Investment Management",
-    description:
-      "We design portfolios with a clear assignment: growth, preservation, income, access, liquidity, or resilience. Every allocation is considered in relation to the rest of your financial life, not only market performance.",
-  },
-  {
-    number: "03",
-    title: "Reporting & Balance Sheet Clarity",
-    description:
-      "We organize accounts, entities, private holdings, real estate, liabilities, and cash reserves into one view. The goal is simple: make the full picture easier to understand, discuss, and act on.",
-  },
-  {
-    number: "04",
-    title: "Legacy Coordination",
-    description:
-      "We help align family priorities, legal structures, beneficiaries, philanthropic intent, and investment strategy. Working alongside your outside professionals, we keep the broader wealth strategy connected to the people it is meant to serve.",
-  },
-  {
-    number: "05",
-    title: "Lending & Liquidity",
-    description:
-      "We evaluate credit and liquidity solutions with restraint, context, and purpose. The aim is flexibility without weakening the long-term strength of the balance sheet.",
-  },
-];
+const section = await getEntry("site", "home-services");
+const heading = section?.data as { eyebrow: string; title: string };
+const servicesText = (await getCollection("services"))
+  .map((entry) => entry.data)
+  .sort((a, b) => a.order - b.order);
 ---
 
 <div class="relative" data-sticky-wrapper>
@@ -46,15 +18,15 @@ const servicesText = [
   >
     <div class="grid w-full grid-cols-3 md:gap-y-24  ">
 
-     <SectionHeading eyebrow={text} title={title} class="md:hidden col-span-3 " />
+     <SectionHeading eyebrow={heading.eyebrow} title={heading.title} class="md:hidden col-span-3 " />
 
 
       <div class="hidden md:block md:col-span-2 md:col-start-2 max-w-3xl col-span-3">
-        <h1 class="text-4xl md:text-5xl">{title}</h1>
+        <h1 class="text-4xl md:text-5xl">{heading.title}</h1>
       </div>
 
       <div class="hidden md:block md:col-span-1 md:self-start">
-        <Eyebrow text={text} />
+        <Eyebrow text={heading.eyebrow} />
       </div>
 
       <div

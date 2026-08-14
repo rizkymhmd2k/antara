@@ -5,40 +5,23 @@ import familyImage from "../../assets/images/family.png";
 import sportsImage from "../../assets/images/tennis.png";
 import executivesImage from "../../assets/images/executives.png";
 import SectionHeading from "../ui/SectionHeading.astro";
+import { getCollection, getEntry } from "astro:content";
 
-const ebTitel =
-  "Tailored financial guidance for life's most important decisions.";
-const eyebrow = "Who we serve";
-const items = [
-  {
-    title: "Founders",
-    body: "From enterprise value to enduring personal wealth.",
-    image: foundersImage,
-    alt: "Two founders seated together in conversation.",
-  },
-  {
-    title: "Families",
-    body: "Clarity, continuity, and shared purpose across generations.",
-    image: familyImage,
-    alt: "A family spending time together outdoors.",
-  },
-  {
-    title: "Sports & Entertainment Professionals",
-    body: "Structure for uncommon careers, irregular income, and compressed opportunity windows.",
-    image: sportsImage,
-    alt: "A tennis player competing on court.",
-  },
-  {
-    title: "Executives",
-    body: "Guidance for concentrated equity, compensation complexity, and transition planning.",
-    image: executivesImage,
-    alt: "An executive in a professional office setting.",
-  },
-];
+const section = await getEntry("site", "home-serve");
+const heading = section?.data as { eyebrow: string; title: string };
+const images = {
+  founders: foundersImage,
+  family: familyImage,
+  sports: sportsImage,
+  executives: executivesImage,
+};
+const items = (await getCollection("audiences"))
+  .map((entry) => ({ ...entry.data, image: images[entry.data.image] }))
+  .sort((a, b) => a.order - b.order);
 ---
 
 <section class="container-padding min-h-screen">
-  <SectionHeading eyebrow={eyebrow} title={ebTitel} />
+  <SectionHeading eyebrow={heading.eyebrow} title={heading.title} />
 
   <div class="grid grid-cols-1 gap-6 min-[480px]:grid-cols-2 md:gap-8 lg:grid-cols-4">
     {

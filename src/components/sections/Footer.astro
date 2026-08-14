@@ -1,29 +1,13 @@
 ---
 import antaraLogoUrl from "../../assets/icon/AntaraSVG.svg?url";
 import FooterLines from "../ui/FooterLines.astro";
+import { getCollection, getEntry } from "astro:content";
 
-const socmed = [
-  {
-    name: "LinkedIn",
-    url: "https://linkedin.com/company/yourcompany",
-    icon: "linkedin",
-  },
-  {
-    name: "Instagram",
-    url: "https://instagram.com/yourcompany",
-    icon: "instagram",
-  },
-  {
-    name: "YouTube",
-    url: "https://youtube.com/@yourcompany",
-    icon: "youtube",
-  },
-  {
-    name: "Facebook",
-    url: "https://facebook.com/yourcompany",
-    icon: "facebook",
-  },
-];
+const footer = await getEntry("site", "footer");
+const data = footer?.data as { logoAlt: string };
+const socmed = (await getCollection("social-links"))
+  .map((entry) => entry.data)
+  .sort((a, b) => a.order - b.order);
 ---
 
 <section class="relative overflow-hidden px-4 pt-24 md:pt-48 flex flex-col gap-6">
@@ -44,7 +28,7 @@ const socmed = [
   </div>
   <img
     src={antaraLogoUrl}
-    alt="Antara"
+    alt={data.logoAlt}
     width="1213"
     height="260"
     loading="lazy"

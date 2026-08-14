@@ -6,12 +6,16 @@ import Values from "../components/about/Values.astro";
 import Location from "../components/about/Location.astro"
 import Contact from "../components/sections/Contact.astro";
 import Footer from "../components/sections/Footer.astro";
+import { getEntry } from "astro:content";
+
+const page = await getEntry("site", "about-page");
+const data = page?.data as { title: string; description: string };
 ---
 
 <Layout
 	class="bg-grid-3"
-	title="About | Antara Private Wealth"
-	description="Meet Antara Private Wealth: a different standard of wealth advisory for clients whose capital carries consequence."
+	title={data.title}
+	description={data.description}
 >
   <div class="relative">
     <Hero />

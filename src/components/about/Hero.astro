@@ -2,8 +2,15 @@
 import Eyebrow from "../ui/Eyebrow.astro";
 import GravityRings from "../ui/GravityRings.astro";
 import Button from "../ui/Button.astro";
+import { getEntry } from "astro:content";
 
-const subtext = "For clients whose capital carries consequence.";
+const hero = await getEntry("site", "about-hero");
+const data = hero?.data as {
+  eyebrow: string;
+  title: string;
+  subtext: string;
+  button: string;
+};
 ---
 
 <section
@@ -12,15 +19,18 @@ const subtext = "For clients whose capital carries consequence.";
   <GravityRings />
   <div class="relative z-10 flex w-full flex-col">
     <div class="flex w-full flex-col">
-      <Eyebrow text="Who we are" />
+      <Eyebrow text={data.eyebrow} />
       <h1 class="display-text max-w-[11ch] leading-[0.95] sm:max-w-5xl pt-4">
-        Built for the
-        <br />
-        Weight of Wealth
+        {data.title.split("\n").map((line, index) => (
+          <>
+            {line}
+            {index < data.title.split("\n").length - 1 && <br />}
+          </>
+        ))}
       </h1>
       <div class="pt-4 md:pt-6 gap-2 flex flex-col">
-        <h2>{subtext}</h2>
-        <Button text="Get Started" />
+        <h2>{data.subtext}</h2>
+        <Button text={data.button} />
       </div>
     </div>
   </div>

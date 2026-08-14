@@ -5,11 +5,18 @@ import "lenis/dist/lenis.css";
 import "../styles/global.css";
 import faviconUrl from "../assets/icon/AntaraFavicon.svg?url";
 import regularFontUrl from "../assets/fonts/AlteHaasGroteskRegular.ttf?url";
+import { getEntry } from "astro:content";
+
+const defaults = await getEntry("site", "layout-defaults");
+const layoutDefaults = defaults?.data as {
+	defaultTitle: string;
+	defaultDescription: string;
+};
 
 const {
 	class: className = "",
-	title = "Antara Private Wealth",
-	description = "Private wealth advisory for clients whose capital carries consequence.",
+	title = layoutDefaults.defaultTitle,
+	description = layoutDefaults.defaultDescription,
 } = Astro.props;
 ---
 

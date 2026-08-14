@@ -1,4 +1,6 @@
 ---
+import { getEntry } from "astro:content";
+
 export interface Props {
   class?: string;
   strokeWidth?: number;
@@ -10,6 +12,9 @@ const {
   strokeWidth = 1,
   animated = true,
 } = Astro.props;
+
+const content = await getEntry("site", "home-lines");
+const data = content?.data as { anchorText: string };
 
 // FIX: The third path in each `wave` string now matches the first path.
 // This allows the keyTimes loop to seamlessly transition back to the start.
@@ -80,7 +85,12 @@ const lines = [
       ))}
   </svg>
   <p class="white-lines__anchor-text text-xs sm:text-sm">
-    Modern wealth advisory <br /> for founders and families
+    {data.anchorText.split("\n").map((line, index) => (
+      <>
+        {line}
+        {index < data.anchorText.split("\n").length - 1 && <br />}
+      </>
+    ))}
   </p>
 </div>
 

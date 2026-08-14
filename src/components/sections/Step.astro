@@ -1,29 +1,16 @@
 ---
 import SectionHeading from "../ui/SectionHeading.astro";
+import { getCollection, getEntry } from "astro:content";
 
-const ebTitel = "Here at every step";
-const eyebrow = "The Antara Methods";
-const items = [
-  {
-    title: "Clarify",
-    body: "Bring every moving part of your wealth into focus, from capital and commitments to family priorities and future decisions.",
-    shape: "clarify",
-  },
-  {
-    title: "Align",
-    body: "Shape the strategy so your investments, liquidity, legacy, giving, and lifestyle work toward the same larger purpose.",
-    shape: "align",
-  },
-  {
-    title: "Evolve",
-    body: "Keep the plan responsive as markets shift, opportunities emerge, and life asks something new of your wealth.",
-    shape: "evolve",
-  },
-];
+const section = await getEntry("site", "home-process");
+const heading = section?.data as { eyebrow: string; title: string };
+const items = (await getCollection("process-steps"))
+  .map((entry) => entry.data)
+  .sort((a, b) => a.order - b.order);
 ---
 
 <section class="container-padding flex min-h-screen flex-col justify-between">
-  <SectionHeading eyebrow={eyebrow} title={ebTitel} class="" />
+  <SectionHeading eyebrow={heading.eyebrow} title={heading.title} class="" />
 
   <div class="grid grid-cols-1 md:grid-cols-3">
     {

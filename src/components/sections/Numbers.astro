@@ -1,10 +1,9 @@
 ---
-const stats = [
-  { value: "$4.7B", number: 4.7, prefix: "$", suffix: "B", label: "Global assets advised" },
-  { value: "15+", number: 15, suffix: "+", label: "Years advising wealth" },
-  { value: "34", number: 34, label: "Advisory professionals" },
-  { value: "120", number: 120, label: "Families served selectively" },
-];
+import { getCollection } from "astro:content";
+
+const stats = (await getCollection("stats"))
+  .map((entry) => entry.data)
+  .sort((a, b) => a.order - b.order);
 ---
 
 <section class="container-padding">

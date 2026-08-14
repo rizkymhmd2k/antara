@@ -1,9 +1,10 @@
 ---
 import Button from "../ui/Button.astro";
 import Whitelines from "../ui/WhiteLines.astro";
+import { getEntry } from "astro:content";
 
-const headline = "Build faster with Astro";
-const subtext = "The web framework for content-driven sites.";
+const hero = await getEntry("site", "home-hero");
+const data = hero?.data as { headline: string; button: string };
 ---
 
 <section
@@ -12,10 +13,14 @@ const subtext = "The web framework for content-driven sites.";
   <Whitelines />
   <div class="relative z-10 flex flex-col gap-6 sm:gap-12">
     <h1 class="display-text max-w-5xl leading-[0.95]">
-      Private Wealth,<br />
-      Precisely Held
+      {data.headline.split("\n").map((line, index) => (
+        <>
+          {line}
+          {index < data.headline.split("\n").length - 1 && <br />}
+        </>
+      ))}
     </h1>
 
-    <Button text="Get In Touch" />
+    <Button text={data.button} />
   </div>
 </section>

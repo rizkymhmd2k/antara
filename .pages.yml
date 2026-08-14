@@ -1,0 +1,292 @@
+media:
+  - name: images
+    label: Images
+    input: src/assets/images
+    output: /src/assets/images
+    extensions: [png, webp]
+  - name: icons
+    label: Icons
+    input: src/assets/icon
+    output: /src/assets/icon
+    extensions: [svg]
+  - name: line_art
+    label: Line art
+    input: src/assets/lines
+    output: /src/assets/lines
+    extensions: [svg]
+  - name: fonts
+    label: Fonts
+    input: src/assets/fonts
+    output: /src/assets/fonts
+    extensions: [ttf]
+  - name: root_assets
+    label: Root assets
+    input: src/assets
+    output: /src/assets
+    extensions: [ico, svg]
+  - name: ui_icons
+    label: UI icons
+    input: src/icons
+    output: /src/icons
+    extensions: [svg]
+
+content:
+  - name: site
+    label: Site
+    type: group
+    items:
+      - name: layout_defaults
+        label: Layout defaults
+        type: file
+        path: src/content/site/layout-defaults.yml
+        fields:
+          - name: defaultTitle
+            label: Default title
+            type: string
+          - name: defaultDescription
+            label: Default description
+            type: text
+      - name: home_page
+        label: Home page meta
+        type: file
+        path: src/content/site/home-page.yml
+        fields:
+          - name: title
+            type: string
+          - name: description
+            type: text
+      - name: about_page
+        label: About page meta
+        type: file
+        path: src/content/site/about-page.yml
+        fields:
+          - name: title
+            type: string
+          - name: description
+            type: text
+      - name: home_hero
+        label: Home hero
+        type: file
+        path: src/content/site/home-hero.yml
+        fields:
+          - name: headline
+            type: text
+          - name: button
+            type: string
+      - name: home_lines
+        label: Home line label
+        type: file
+        path: src/content/site/home-lines.yml
+        fields:
+          - name: anchorText
+            label: Anchor text
+            type: text
+      - name: home_who
+        label: Home who
+        type: file
+        path: src/content/site/home-who.yml
+        fields:
+          - name: eyebrow
+            type: string
+          - name: headline
+            type: text
+          - name: button
+            type: string
+          - name: href
+            type: string
+      - name: home_difference
+        label: Home difference
+        type: file
+        path: src/content/site/home-difference.yml
+        fields: &section_heading
+          - name: eyebrow
+            type: string
+          - name: title
+            type: text
+      - name: home_serve
+        label: Home serve
+        type: file
+        path: src/content/site/home-serve.yml
+        fields: *section_heading
+      - name: home_services
+        label: Home services
+        type: file
+        path: src/content/site/home-services.yml
+        fields: *section_heading
+      - name: home_process
+        label: Home process
+        type: file
+        path: src/content/site/home-process.yml
+        fields: *section_heading
+      - name: contact
+        label: Contact
+        type: file
+        path: src/content/site/contact.yml
+        fields:
+          - name: email
+            type: string
+          - name: eyebrow
+            type: string
+          - name: headline
+            type: text
+          - name: button
+            type: string
+      - name: footer
+        label: Footer
+        type: file
+        path: src/content/site/footer.yml
+        fields:
+          - name: logoAlt
+            label: Logo alt text
+            type: string
+      - name: about_hero
+        label: About hero
+        type: file
+        path: src/content/site/about-hero.yml
+        fields:
+          - name: eyebrow
+            type: string
+          - name: title
+            type: text
+          - name: subtext
+            type: text
+          - name: button
+            type: string
+      - name: about_values
+        label: About values
+        type: file
+        path: src/content/site/about-values.yml
+        fields:
+          - name: eyebrow
+            type: string
+      - name: about_team
+        label: About team
+        type: file
+        path: src/content/site/about-team.yml
+        fields: *section_heading
+      - name: about_locations
+        label: About locations
+        type: file
+        path: src/content/site/about-locations.yml
+        fields: *section_heading
+  - name: stats
+    label: Stats
+    type: collection
+    path: src/content/stats
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    view: { primary: label, sort: order }
+    fields:
+      - { name: value, type: string }
+      - { name: number, type: number }
+      - { name: prefix, type: string }
+      - { name: suffix, type: string }
+      - { name: label, type: string }
+      - { name: order, type: number }
+  - name: difference_items
+    label: Difference items
+    type: collection
+    path: src/content/difference-items
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    view: &title_view { primary: title, sort: order }
+    fields: &numbered_card
+      - { name: number, type: string }
+      - { name: title, type: string }
+      - { name: body, type: text }
+      - { name: order, type: number }
+  - name: audiences
+    label: Audiences
+    type: collection
+    path: src/content/audiences
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    view: *title_view
+    fields:
+      - { name: title, type: string }
+      - { name: body, type: text }
+      - name: image
+        type: select
+        options:
+          values: [founders, family, sports, executives]
+      - { name: alt, type: string }
+      - { name: order, type: number }
+  - name: services
+    label: Services
+    type: collection
+    path: src/content/services
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    view: *title_view
+    fields:
+      - { name: number, type: string }
+      - { name: title, type: string }
+      - { name: description, type: text }
+      - { name: order, type: number }
+  - name: process_steps
+    label: Process steps
+    type: collection
+    path: src/content/process-steps
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    view: *title_view
+    fields:
+      - { name: number, type: string }
+      - { name: title, type: string }
+      - { name: body, type: text }
+      - name: shape
+        type: select
+        options:
+          values: [clarify, align, evolve]
+      - { name: order, type: number }
+  - name: values
+    label: Values
+    type: collection
+    path: src/content/values
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    view: *title_view
+    fields: *numbered_card
+  - name: team_members
+    label: Team members
+    type: collection
+    path: src/content/team-members
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    view: { primary: name, sort: order }
+    fields:
+      - { name: name, type: string }
+      - { name: role, type: string }
+      - name: image
+        type: select
+        options:
+          values: [founders]
+      - { name: order, type: number }
+  - name: locations
+    label: Locations
+    type: collection
+    path: src/content/locations
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    view: { primary: name, sort: order }
+    fields:
+      - { name: name, type: string }
+      - { name: address, type: text }
+      - name: image
+        type: select
+        options:
+          values: [jakarta, banjarmasin]
+      - { name: alt, type: string }
+      - { name: order, type: number }
+  - name: social_links
+    label: Social links
+    type: collection
+    path: src/content/social-links
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    view: { primary: name, sort: order }
+    fields:
+      - { name: name, type: string }
+      - { name: url, type: string }
+      - { name: icon, type: string }
+      - { name: order, type: number }
