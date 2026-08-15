@@ -27,18 +27,45 @@ const {
 		<meta name="viewport" content="width=device-width" />
 		<meta name="description" content={description} />
 		<meta name="theme-color" content="#004cbb" />
+
 		<link rel="preload" href={regularFontUrl} as="font" type="font/ttf" crossorigin />
 		<link rel="icon" type="image/svg+xml" href={faviconUrl} />
+
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+
+		<!-- Google Analytics -->
+		<script
+			async
+			src="https://www.googletagmanager.com/gtag/js?id=G-VVZYB5BCK4"
+		></script>
+		<script is:inline>
+			window.dataLayer = window.dataLayer || [];
+
+			function gtag(...args) {
+				window.dataLayer.push(args);
+			}
+
+			gtag("js", new Date());
+			gtag("config", "G-VVZYB5BCK4");
+		</script>
+
 		<ClientRouter />
 	</head>
+
 	<body>
 		<!-- <ScreenWidth /> -->
+
 		<main class={className}>
 			<slot />
 		</main>
-		<div class="page-transition" data-page-transition transition:persist aria-hidden="true">
+
+		<div
+			class="page-transition"
+			data-page-transition
+			transition:persist
+			aria-hidden="true"
+		>
 			<span></span>
 			<span></span>
 			<span></span>
@@ -62,10 +89,19 @@ const {
 	}
 
 	const initPageTransition = () => {
-		const overlay = document.querySelector<HTMLElement>("[data-page-transition]");
-		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+		const overlay = document.querySelector<HTMLElement>(
+			"[data-page-transition]"
+		);
+		const prefersReducedMotion = window.matchMedia(
+			"(prefers-reduced-motion: reduce)"
+		);
 
-		if (!overlay || prefersReducedMotion.matches || overlay.dataset.ready) return;
+		if (
+			!overlay ||
+			prefersReducedMotion.matches ||
+			overlay.dataset.ready
+		)
+			return;
 
 		overlay.dataset.ready = "true";
 
@@ -76,7 +112,9 @@ const {
 			overlay.dataset.state = "cover";
 
 			event.loader = async () => {
-				await new Promise((resolve) => window.setTimeout(resolve, 1300));
+				await new Promise((resolve) =>
+					window.setTimeout(resolve, 1300)
+				);
 				await loader();
 			};
 		});
