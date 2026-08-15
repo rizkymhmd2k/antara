@@ -6,6 +6,7 @@ const className =
   "group inline-flex w-fit items-center justify-between gap-4 rounded-sm bg-white px-4 py-2 sm:gap-12 transition-transform duration-200 ease-out active:scale-[0.97]";
 
 const easing = "ease-[cubic-bezier(0.16,1,0.3,1)]";
+const textClass = `block text-xl transition-transform duration-500 ${easing} group-hover:-translate-y-full`;
 ---
 
 {
@@ -13,13 +14,15 @@ const easing = "ease-[cubic-bezier(0.16,1,0.3,1)]";
     <a href={href} class={className}>
       <span class="relative inline-block overflow-hidden">
         <span
-          class={`block text-xl text-black transition-transform duration-500 sm:text-md ${easing} group-hover:-translate-y-full`}
+          class={textClass}
+          style="color: var(--color-background)"
         >
           {text}
         </span>
         <span
           aria-hidden="true"
-          class={`absolute left-0 top-full block text-xl text-black transition-transform duration-500 sm:text-md ${easing} group-hover:-translate-y-full`}
+          class={`absolute left-0 top-full ${textClass}`}
+          style="color: var(--color-background)"
         >
           {text}
         </span>
@@ -42,13 +45,15 @@ const easing = "ease-[cubic-bezier(0.16,1,0.3,1)]";
     <button type="button" class={className}>
       <span class="relative inline-block overflow-hidden">
         <span
-          class={`block text-xl text-black transition-transform duration-500 sm:text-md ${easing} group-hover:-translate-y-full`}
+          class={textClass}
+          style="color: var(--color-background)"
         >
           {text}
         </span>
         <span
           aria-hidden="true"
-          class={`absolute left-0 top-full block text-xl text-black transition-transform duration-500 sm:text-md ${easing} group-hover:-translate-y-full`}
+          class={`absolute left-0 top-full ${textClass}`}
+          style="color: var(--color-background)"
         >
           {text}
         </span>

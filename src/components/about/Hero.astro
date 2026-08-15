@@ -10,6 +10,7 @@ const data = hero?.data as {
   title: string;
   subtext: string;
   button: string;
+  href?: string;
 };
 ---
 
@@ -30,7 +31,7 @@ const data = hero?.data as {
       </h1>
       <div class="pt-4 md:pt-6 gap-2 flex flex-col">
         <h2>{data.subtext}</h2>
-        <Button text={data.button} />
+        <Button text={data.button} href={data.href} />
       </div>
     </div>
   </div>

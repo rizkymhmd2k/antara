@@ -23,15 +23,16 @@ const site = defineCollection({
       headline: z.string(),
       button: z.string().optional(),
     }),
-    sectionHeadingSchema,
-    z.object({
-      eyebrow: z.string(),
-    }),
     z.object({
       eyebrow: z.string(),
       title: z.string(),
       subtext: z.string(),
       button: z.string(),
+      href: z.string().optional(),
+    }),
+    sectionHeadingSchema,
+    z.object({
+      eyebrow: z.string(),
     }),
     z.object({
       email: z.string().email(),
