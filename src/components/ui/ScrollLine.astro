@@ -34,7 +34,8 @@ const instanceId = `scroll-line-${Math.random().toString(36).slice(2, 10)}`;
 
   if (line instanceof HTMLElement) {
     let ticking = false;
-    let segments = [];
+    let revealRect = null;
+    let revealWidth = 0;
     const canvas = line.querySelector(".scroll-line__canvas");
 
     const clamp = (value) => Math.min(1, Math.max(0, value));
@@ -42,8 +43,8 @@ const instanceId = `scroll-line-${Math.random().toString(36).slice(2, 10)}`;
     const applyProgress = (value) => {
       line.style.setProperty("--scroll-line-progress", value.toString());
 
-      for (const segment of segments) {
-        segment.style.strokeDashoffset = `calc(${segment.dataset.length} * ${1 - value})`;
+      if (revealRect instanceof SVGRectElement) {
+        revealRect.setAttribute("width", `${revealWidth * value}`);
       }
     };
 
@@ -89,6 +90,56 @@ const instanceId = `scroll-line-${Math.random().toString(36).slice(2, 10)}`;
       );
     };
 
+    const createSvgWideReveal = (svg) => {
+      const namespace = "http://www.w3.org/2000/svg";
+      const clipId = `${instanceId}-clip`;
+      const viewBox = svg.viewBox.baseVal;
+      const hasViewBox = viewBox && viewBox.width > 0 && viewBox.height > 0;
+      const bounds = hasViewBox
+        ? {
+            x: viewBox.x,
+            y: viewBox.y,
+            width: viewBox.width,
+            height: viewBox.height,
+          }
+        : {
+            x: 0,
+            y: 0,
+            width: svg.getBoundingClientRect().width || 1,
+            height: svg.getBoundingClientRect().height || 1,
+          };
+
+      let defs = svg.querySelector(":scope > defs");
+      if (!(defs instanceof SVGDefsElement)) {
+        defs = document.createElementNS(namespace, "defs");
+        svg.prepend(defs);
+      }
+
+      const clipPath = document.createElementNS(namespace, "clipPath");
+      clipPath.setAttribute("id", clipId);
+      clipPath.setAttribute("clipPathUnits", "userSpaceOnUse");
+
+      const rect = document.createElementNS(namespace, "rect");
+      rect.setAttribute("x", `${bounds.x}`);
+      rect.setAttribute("y", `${bounds.y}`);
+      rect.setAttribute("width", "0");
+      rect.setAttribute("height", `${bounds.height}`);
+      clipPath.append(rect);
+      defs.append(clipPath);
+
+      const group = document.createElementNS(namespace, "g");
+      group.setAttribute("clip-path", `url(#${clipId})`);
+
+      for (const child of Array.from(svg.children)) {
+        if (child === defs || child === group) continue;
+        group.append(child);
+      }
+
+      svg.append(group);
+      revealRect = rect;
+      revealWidth = bounds.width;
+    };
+
     const init = async () => {
       if (!(canvas instanceof HTMLElement)) return;
 
@@ -104,17 +155,7 @@ const instanceId = `scroll-line-${Math.random().toString(36).slice(2, 10)}`;
         svg.setAttribute("focusable", "false");
         svg.setAttribute("class", `block ${imgClass}`.trim());
         updateSvgSizeMode();
-
-        segments = Array.from(
-          svg.querySelectorAll("path, line, polyline, polygon, circle, ellipse"),
-        ).filter((element) => typeof element.getTotalLength === "function");
-
-        for (const segment of segments) {
-          const length = segment.getTotalLength();
-          segment.dataset.length = `${length}`;
-          segment.style.strokeDasharray = `${length}`;
-          segment.style.strokeDashoffset = `${length}`;
-        }
+        createSvgWideReveal(svg);
 
         line.dataset.ready = "true";
         render();

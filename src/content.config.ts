@@ -14,14 +14,14 @@ const site = defineCollection({
       description: z.string(),
     }),
     z.object({
-      headline: z.string(),
-      button: z.string().optional(),
-    }),
-    z.object({
       eyebrow: z.string(),
       headline: z.string(),
       button: z.string().optional(),
       href: z.string().optional(),
+    }),
+    z.object({
+      headline: z.string(),
+      button: z.string().optional(),
     }),
     sectionHeadingSchema,
     z.object({
