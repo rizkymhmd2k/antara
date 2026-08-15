@@ -4,6 +4,7 @@ import ScreenWidth from "../components/ui/ScreenWidth.astro";
 import "lenis/dist/lenis.css";
 import "../styles/global.css";
 import faviconUrl from "../assets/icon/AntaraFavicon.svg?url";
+import logoUrl from "../assets/icon/AntaraSVG.svg?url";
 import regularFontUrl from "../assets/fonts/AlteHaasGroteskRegular.ttf?url";
 import { getEntry } from "astro:content";
 
@@ -18,6 +19,17 @@ const {
   title = layoutDefaults.defaultTitle,
   description = layoutDefaults.defaultDescription,
 } = Astro.props;
+
+const siteUrl = Astro.site ?? new URL("https://antarawealth.pages.dev");
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
+const absoluteLogoUrl = new URL(logoUrl, siteUrl);
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Antara Private Wealth",
+  url: siteUrl.href,
+  logo: absoluteLogoUrl.href,
+};
 ---
 
 <!doctype html>
@@ -26,7 +38,21 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
     <meta name="theme-color" content="#004cbb" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Antara Private Wealth" />
+    <meta property="og:image" content={absoluteLogoUrl} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={absoluteLogoUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
 
     <link
       rel="preload"
