@@ -85,8 +85,9 @@ const {
         if (!eventName) return;
 
         gtag("event", eventName, {
-          method: "email",
           location: "contact_cta",
+          link_url: link instanceof HTMLAnchorElement ? link.href : undefined,
+          page_path: window.location.pathname,
         });
       });
     </script>
