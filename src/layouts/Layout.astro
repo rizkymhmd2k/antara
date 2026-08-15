@@ -53,6 +53,8 @@ const {
         window.dataLayer.push(arguments);
       }
 
+      window.gtag = gtag;
+
       gtag("consent", "default", {
         analytics_storage: "granted",
         ad_storage: "denied",
@@ -70,6 +72,21 @@ const {
           page_title: document.title,
           page_location: window.location.href,
           page_path: window.location.pathname,
+        });
+      });
+
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+        const link = target instanceof Element
+          ? target.closest("[data-ga-event]")
+          : null;
+        const eventName = link?.getAttribute("data-ga-event");
+
+        if (!eventName) return;
+
+        gtag("event", eventName, {
+          method: "email",
+          location: "contact_cta",
         });
       });
     </script>

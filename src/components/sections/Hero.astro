@@ -24,6 +24,7 @@ const data = hero?.data as { headline: string; button: string; href: string };
     <Button
       text={data.button}
       href={data.href}
+      trackingEvent="contact_email_click"
     />
   </div>
 </section>

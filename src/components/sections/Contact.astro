@@ -41,7 +41,11 @@ const data = contact?.data as {
       </h2>
 
       <div class="inline-flex flex-col gap-6">
-        <Button text={data.button} href={data.href} />
+        <Button
+          text={data.button}
+          href={data.href}
+          trackingEvent="contact_email_click"
+        />
       </div>
     </div>
   </div>

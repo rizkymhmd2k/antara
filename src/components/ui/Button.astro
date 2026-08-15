@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-const { text, href } = Astro.props;
+const { text, href, trackingEvent } = Astro.props;
 
 const className =
   "group inline-flex w-fit items-center justify-between gap-4 rounded-sm bg-white px-4 py-2 sm:gap-12 transition-transform duration-200 ease-out active:scale-[0.97]";
@@ -11,7 +11,11 @@ const textClass = `block text-xl transition-transform duration-500 ${easing} gro
 
 {
   href ? (
-    <a href={href} class={className}>
+    <a
+      href={href}
+      class={className}
+      data-ga-event={trackingEvent}
+    >
       <span class="relative inline-block overflow-hidden">
         <span
           class={textClass}
