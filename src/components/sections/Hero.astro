@@ -4,7 +4,7 @@ import Whitelines from "../ui/WhiteLines.astro";
 import { getEntry } from "astro:content";
 
 const hero = await getEntry("site", "home-hero");
-const data = hero?.data as { headline: string; button: string };
+const data = hero?.data as { headline: string; button: string; href: string };
 ---
 
 <section
@@ -21,6 +21,9 @@ const data = hero?.data as { headline: string; button: string };
       ))}
     </h1>
 
-    <Button text={data.button} />
+    <Button
+      text={data.button}
+      href={data.href}
+    />
   </div>
 </section>

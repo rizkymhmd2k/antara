@@ -22,13 +22,14 @@ const site = defineCollection({
     z.object({
       headline: z.string(),
       button: z.string().optional(),
+      href: z.string(),
     }),
     z.object({
       eyebrow: z.string(),
       title: z.string(),
       subtext: z.string(),
       button: z.string(),
-      href: z.string().optional(),
+      href: z.string(),
     }),
     sectionHeadingSchema,
     z.object({
@@ -39,6 +40,7 @@ const site = defineCollection({
       eyebrow: z.string(),
       headline: z.string(),
       button: z.string(),
+      href: z.string(),
     }),
     z.object({
       logoAlt: z.string(),

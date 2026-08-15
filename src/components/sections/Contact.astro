@@ -11,6 +11,7 @@ const data = contact?.data as {
   eyebrow: string;
   headline: string;
   button: string;
+  href: string;
 };
 ---
 
@@ -40,7 +41,7 @@ const data = contact?.data as {
       </h2>
 
       <div class="inline-flex flex-col gap-6">
-        <Button text={data.button} />
+        <Button text={data.button} href={data.href} />
       </div>
     </div>
   </div>
