@@ -9,139 +9,145 @@ import { getEntry } from "astro:content";
 
 const defaults = await getEntry("site", "layout-defaults");
 const layoutDefaults = defaults?.data as {
-	defaultTitle: string;
-	defaultDescription: string;
+  defaultTitle: string;
+  defaultDescription: string;
 };
 
 const {
-	class: className = "",
-	title = layoutDefaults.defaultTitle,
-	description = layoutDefaults.defaultDescription,
+  class: className = "",
+  title = layoutDefaults.defaultTitle,
+  description = layoutDefaults.defaultDescription,
 } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="description" content={description} />
-		<meta name="theme-color" content="#004cbb" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#004cbb" />
 
-		<link rel="preload" href={regularFontUrl} as="font" type="font/ttf" crossorigin />
-		<link rel="icon" type="image/svg+xml" href={faviconUrl} />
+    <link
+      rel="preload"
+      href={regularFontUrl}
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link rel="icon" type="image/svg+xml" href={faviconUrl} />
 
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
 
-		<!-- Google Analytics -->
-		<script
-			async
-			src="https://www.googletagmanager.com/gtag/js?id=G-VVZYB5BCK4"
-		></script>
-		<script is:inline>
-			window.dataLayer = window.dataLayer || [];
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VVZYB5BCK4"
+    ></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
 
-			function gtag(...args) {
-				window.dataLayer.push(args);
-			}
+      function gtag(...args) {
+        window.dataLayer.push(args);
+      }
 
-			gtag("js", new Date());
-			gtag("config", "G-VVZYB5BCK4");
-		</script>
+      gtag("js", new Date());
 
-		<ClientRouter />
-	</head>
+      gtag("consent", "default", {
+        analytics_storage: "granted",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+      });
 
-	<body>
-		<!-- <ScreenWidth /> -->
+      gtag("config", "G-VVZYB5BCK4");
+    </script>
 
-		<main class={className}>
-			<slot />
-		</main>
+    <ClientRouter />
+  </head>
 
-		<div
-			class="page-transition"
-			data-page-transition
-			transition:persist
-			aria-hidden="true"
-		>
-			<span></span>
-			<span></span>
-			<span></span>
-		</div>
-	</body>
+  <body>
+    <!-- <ScreenWidth /> -->
+
+    <main class={className}>
+      <slot />
+    </main>
+
+    <div
+      class="page-transition"
+      data-page-transition
+      transition:persist
+      aria-hidden="true"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </body>
 </html>
 
 <script>
-	import Lenis from "lenis";
+  import Lenis from "lenis";
 
-	if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-		const lenis = new Lenis({
-			autoRaf: true,
-			anchors: true,
-			lerp: 0.08,
-			wheelMultiplier: 0.9,
-			touchMultiplier: 1.2,
-		});
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const lenis = new Lenis({
+      autoRaf: true,
+      anchors: true,
+      lerp: 0.08,
+      wheelMultiplier: 0.9,
+      touchMultiplier: 1.2,
+    });
 
-		window.lenis = lenis;
-	}
+    window.lenis = lenis;
+  }
 
-	const initPageTransition = () => {
-		const overlay = document.querySelector<HTMLElement>(
-			"[data-page-transition]"
-		);
-		const prefersReducedMotion = window.matchMedia(
-			"(prefers-reduced-motion: reduce)"
-		);
+  const initPageTransition = () => {
+    const overlay = document.querySelector<HTMLElement>(
+      "[data-page-transition]",
+    );
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
 
-		if (
-			!overlay ||
-			prefersReducedMotion.matches ||
-			overlay.dataset.ready
-		)
-			return;
+    if (!overlay || prefersReducedMotion.matches || overlay.dataset.ready)
+      return;
 
-		overlay.dataset.ready = "true";
+    overlay.dataset.ready = "true";
 
-		document.addEventListener("astro:before-preparation", (event) => {
-			const loader = event.loader;
+    document.addEventListener("astro:before-preparation", (event) => {
+      const loader = event.loader;
 
-			document.body.dataset.transition = "active";
-			overlay.dataset.state = "cover";
+      document.body.dataset.transition = "active";
+      overlay.dataset.state = "cover";
 
-			event.loader = async () => {
-				await new Promise((resolve) =>
-					window.setTimeout(resolve, 1300)
-				);
-				await loader();
-			};
-		});
+      event.loader = async () => {
+        await new Promise((resolve) => window.setTimeout(resolve, 1300));
+        await loader();
+      };
+    });
 
-		document.addEventListener("astro:after-swap", () => {
-			document.body.dataset.transition = "active";
+    document.addEventListener("astro:after-swap", () => {
+      document.body.dataset.transition = "active";
 
-			requestAnimationFrame(() => {
-				overlay.dataset.state = "reveal";
-			});
+      requestAnimationFrame(() => {
+        overlay.dataset.state = "reveal";
+      });
 
-			window.setTimeout(() => {
-				overlay.dataset.state = "idle";
-				delete document.body.dataset.transition;
-			}, 1500);
-		});
-	};
+      window.setTimeout(() => {
+        overlay.dataset.state = "idle";
+        delete document.body.dataset.transition;
+      }, 1500);
+    });
+  };
 
-	initPageTransition();
-	document.addEventListener("astro:page-load", initPageTransition);
+  initPageTransition();
+  document.addEventListener("astro:page-load", initPageTransition);
 </script>
 
 <style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		min-height: 100%;
-	}
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+  }
 </style>
