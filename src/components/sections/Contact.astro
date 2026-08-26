@@ -22,8 +22,8 @@ const data = contact?.data as {
   <ScrollLine
     src={scrollLineUrl}
     mobileEndOffset={0.7}
-    class="pointer-events-none absolute inset-x-0 top-8 md:top-0 z-0 h-[min(120vh,72rem)] w-full"
-    imgClass="h-[min(120vh,72rem)] w-full max-w-none "
+    class="pointer-events-none absolute left-1/2 top-8 z-0 h-[min(120vh,72rem)] w-screen -translate-x-1/2 md:top-0 border border-yellow-300"
+    imgClass="h-[min(120vh,72rem)] w-full max-w-none"
   />
   <div class="relative z-10 flex max-w-full flex-col gap-6 sm:w-fit">
     <Eyebrow text={data.eyebrow} />

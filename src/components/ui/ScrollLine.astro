@@ -154,6 +154,11 @@ const instanceId = `scroll-line-${Math.random().toString(36).slice(2, 10)}`;
         svg.setAttribute("aria-hidden", "true");
         svg.setAttribute("focusable", "false");
         svg.setAttribute("class", `block ${imgClass}`.trim());
+        // Runtime-injected SVG does not reliably receive generated utility CSS.
+        // Set width inline so every ScrollLine fills its canvas.
+        svg.style.display = "block";
+        svg.style.width = "100%";
+        svg.style.maxWidth = "none";
         updateSvgSizeMode();
         createSvgWideReveal(svg);
 
@@ -183,6 +188,9 @@ const instanceId = `scroll-line-${Math.random().toString(36).slice(2, 10)}`;
 
   .scroll-line :global(svg) {
     overflow: visible;
+    display: block;
+    width: 100%;
+    max-width: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
