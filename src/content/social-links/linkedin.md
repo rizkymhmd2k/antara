@@ -1,6 +1,6 @@
 ---
 name: LinkedIn
-url: https://linkedin.com/company/yourcompany
+url: https://www.linkedin.com/in/rizky-muhammad-38658140b/
 icon: linkedin
 order: 1
 ---

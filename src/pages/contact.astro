@@ -4,16 +4,20 @@ import Location from "../components/about/Location.astro";
 import Eyebrow from "../components/ui/Eyebrow.astro";
 import Button from "../components/ui/Button.astro";
 import Footer from "../components/sections/Footer.astro";
+import { Icon } from "astro-icon/components";
 import { getEntry } from "astro:content";
 
 const contact = await getEntry("site", "contact");
+const homeHero = await getEntry("site", "home-hero");
 const data = contact?.data as {
   email: string;
   eyebrow: string;
   headline: string;
   button: string;
 };
-const inquiryHref = `mailto:${data.email}?subject=Starting%20a%20conversation%20with%20Antara`;
+const hero = homeHero?.data as { href: string };
+const inquiryHref = hero.href;
+const easing = "ease-[cubic-bezier(0.16,1,0.3,1)]";
 ---
 
 <Layout
@@ -54,38 +58,62 @@ const inquiryHref = `mailto:${data.email}?subject=Starting%20a%20conversation%20
         <div class="grid min-w-0 gap-12 lg:grid-cols-12 lg:gap-8">
           <div class="min-w-0 lg:col-span-5">
             <Eyebrow text="Contact details" />
-            <h2 id="details-title" class="headline-text mt-4 max-w-[15ch]">
+            <h2
+              id="details-title"
+              class="mt-4 max-w-[13ch] text-[clamp(2.75rem,4vw,6rem)] leading-[0.92]"
+            >
               A considered first step toward clearer decisions.
             </h2>
           </div>
 
-          <div class="min-w-0 space-y-10 lg:col-span-6 lg:col-start-7">
-            <p class="title-text max-w-[22rem] min-w-0 sm:max-w-[38rem]">
-              {data.headline}
-            </p>
-
-            <div class="border-y border-white/30">
+          <div class="min-w-0 lg:col-span-7">
+            <div class="min-w-0 border-y border-white/35">
               <a
                 href={inquiryHref}
-                class="group grid min-w-0 gap-6 py-6 transition-colors duration-300 hover:bg-white hover:text-background focus-visible:bg-white focus-visible:text-background focus-visible:outline-none sm:grid-cols-[10rem_1fr] sm:items-center"
+                class="group grid min-w-0 gap-8 px-4 py-8 transition-colors duration-300 hover:bg-white hover:text-background focus-visible:bg-white focus-visible:text-background focus-visible:outline-none sm:grid-cols-[6rem_1fr_4rem] sm:items-end sm:px-6"
                 data-ga-event="contact_email_click"
               >
-                <span class="caption-text uppercase group-hover:text-background px-4">
+                <span class="text-base uppercase text-white/80 transition-colors duration-300 group-hover:text-background sm:pt-3 md:text-lg">
                   Email
                 </span>
-                <span class="text-[clamp(1.6rem,4vw,3.5rem)] leading-none [overflow-wrap:anywhere]">
-                  {data.email}
+                <span class="relative block min-w-0 overflow-hidden">
+                  <span
+                    class={`block text-[clamp(2.4rem,7vw,6.5rem)] leading-[0.86] transition-transform duration-500 [overflow-wrap:anywhere] ${easing} group-hover:-translate-y-full`}
+                  >
+                    {data.email}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    class={`absolute left-0 top-full block text-[clamp(2.4rem,7vw,6.5rem)] leading-[0.86] transition-transform duration-500 [overflow-wrap:anywhere] ${easing} group-hover:-translate-y-full`}
+                  >
+                    {data.email}
+                  </span>
                 </span>
-                <span class="sr-only"> Opens email client</span>
+                <span class="relative hidden size-10 items-center justify-center justify-self-end overflow-hidden sm:flex">
+                  <Icon
+                    name="arrow-up-right"
+                    aria-hidden="true"
+                    class={`absolute size-10 text-white transition-all duration-500 ${easing} group-hover:translate-x-8 group-hover:-translate-y-8 group-hover:text-background group-hover:opacity-0 group-focus-visible:translate-x-8 group-focus-visible:-translate-y-8 group-focus-visible:text-background group-focus-visible:opacity-0`}
+                  />
+                  <Icon
+                    name="arrow-up-right"
+                    aria-hidden="true"
+                    class={`absolute size-10 -translate-x-8 translate-y-8 text-background opacity-0 transition-all delay-[60ms] duration-500 ${easing} group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:translate-y-0 group-focus-visible:opacity-100`}
+                  />
+                </span>
+                <span class="sr-only">Opens email client</span>
               </a>
+            </div>
 
-              <div class="grid gap-3 border-t border-white/30 py-6 sm:grid-cols-[10rem_1fr]">
-                <span class="caption-text uppercase px-4">
-                  For
-                </span>
-                <p class="title-text max-w-[34rem] text-white/90">
+            <div class="mt-8 grid min-w-0 gap-8 px-4 sm:grid-cols-[6rem_1fr] sm:px-6">
+              <span class="text-base uppercase text-white/80 md:text-lg">For</span>
+              <div class="min-w-0">
+                <p class="title-text max-w-[34rem] text-white/95">
                   Families, founders, and stewards making decisions around
                   meaningful capital.
+                </p>
+                <p class="body-text mt-5 max-w-[32rem]">
+                  {data.headline}
                 </p>
               </div>
             </div>

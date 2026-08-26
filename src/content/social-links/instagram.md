@@ -1,6 +1,6 @@
 ---
 name: Instagram
-url: https://instagram.com/yourcompany
+url: https://www.instagram.com/formrizk/
 icon: instagram
 order: 2
 ---

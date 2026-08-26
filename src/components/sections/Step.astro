@@ -33,7 +33,7 @@ const items = (await getCollection("process-steps"))
           </div>
 
           <div
-            class:list={["diagram", `diagram-${item.shape} `]}
+            class:list={["diagram", `diagram-${item.shape}`]}
             aria-hidden="true"
           >
             <span />
@@ -296,19 +296,27 @@ const items = (await getCollection("process-steps"))
 </style>
 
 <script>
-  const diagrams = document.querySelectorAll(".diagram");
+  let observer: IntersectionObserver | undefined;
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
+  function initDiagrams() {
+    observer?.disconnect();
+
+    const diagrams = document.querySelectorAll<HTMLElement>(".diagram");
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
           entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.35 },
-  );
+          observer?.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.35 },
+    );
 
-  diagrams.forEach((el) => observer.observe(el));
+    diagrams.forEach((diagram) => observer?.observe(diagram));
+  }
+
+  initDiagrams();
+  document.addEventListener("astro:page-load", initDiagrams);
 </script>
