@@ -1,0 +1,421 @@
+---
+import logoUrl from "../assets/icon/AntaraSVG.svg?url";
+
+const navItems = [
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/services" },
+];
+
+const contactItem = { label: "Contact", href: "/contact" };
+const textAnimation =
+  "block transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-full";
+---
+
+<header
+  class="fixed inset-x-0 top-0 z-40 -translate-y-full  bg-background transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] data-[nav-state=visible]:translate-y-0 data-[nav-state=visible]:duration-700 motion-reduce:transition-none"
+  data-navbar-shell
+  data-nav-state="hidden"
+  inert
+>
+  <nav
+    class="flex min-h-20 items-center justify-between gap-6 px-4 py-4 sm:min-h-24 sm:px-8"
+    aria-label="Primary navigation"
+    data-navbar
+  >
+    <a
+      href="/"
+      class="inline-flex shrink-0 items-center rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+      aria-label="Antara Private Wealth home"
+    >
+      <img
+        src={logoUrl}
+        alt="Antara Private Wealth"
+        width="1213"
+        height="260"
+        decoding="async"
+        class="h-auto w-32 sm:w-40"
+      />
+    </a>
+
+    <div class="hidden items-center gap-10 md:flex">
+      <div class="flex items-center gap-8">
+        {
+          navItems.map((item) => (
+            <a
+              href={item.href}
+              class="group rounded-sm title-text text-white/85 transition-colors duration-200 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              <span class="relative inline-block overflow-hidden">
+                <span class={textAnimation}>{item.label}</span>
+                <span
+                  aria-hidden="true"
+                  class={`absolute left-0 top-full ${textAnimation}`}
+                >
+                  {item.label}
+                </span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+
+      <a
+        href={contactItem.href}
+        class="group inline-flex min-h-11 items-center rounded-sm bg-white px-6 title-text leading-none text-black transition-colors duration-200 hover:bg-white/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+      >
+        <span class="relative inline-block overflow-hidden">
+          <span class={textAnimation}>{contactItem.label}</span>
+          <span
+            aria-hidden="true"
+            class={`absolute left-0 top-full ${textAnimation}`}
+          >
+            {contactItem.label}
+          </span>
+        </span>
+      </a>
+    </div>
+
+    <button
+      type="button"
+      class="inline-flex size-12 items-center justify-center rounded-sm border border-white/20 bg-white text-black transition-transform duration-200 ease-out active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white md:hidden"
+      aria-label="Open menu"
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+      data-menu-toggle
+    >
+      <span class="sr-only">Open menu</span>
+
+      <span aria-hidden="true" class="relative block h-4 w-5">
+        <span
+          class="absolute left-0 top-1 block h-px w-5 origin-center bg-background transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          data-menu-line
+        ></span>
+
+        <span
+          class="absolute bottom-1 left-0 block h-px w-5 origin-center bg-background transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          data-menu-line
+        ></span>
+      </span>
+    </button>
+  </nav>
+</header>
+
+<div
+  id="mobile-menu"
+  class="fixed inset-0 z-30 pointer-events-none overflow-hidden md:hidden"
+  aria-hidden="true"
+  inert
+  data-menu
+>
+  <div
+    class="fixed inset-x-0 bottom-0 top-[var(--nav-h)] bg-background/50 opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+    data-menu-scrim
+  ></div>
+
+  <div
+    class="invisible fixed inset-x-0 top-[var(--nav-h)] -translate-y-full bg-white text-white transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+    data-menu-panel
+  >
+    <nav
+      class="flex flex-col px-4 py-4 sm:px-8 sm:py-6"
+      aria-label="Mobile navigation"
+    >
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            class="group border-b border-background/10 py-5 text-2xl leading-none tracking-tight text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-background sm:text-3xl"
+            data-menu-link
+          >
+            <span class="relative inline-block overflow-hidden">
+              <span class={textAnimation}>{item.label}</span>
+              <span
+                aria-hidden="true"
+                class={`absolute left-0 top-full ${textAnimation}`}
+              >
+                {item.label}
+              </span>
+            </span>
+          </a>
+        ))
+      }
+
+      <a
+        href={contactItem.href}
+        class="group py-5 text-2xl leading-none tracking-tight text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-background sm:text-3xl"
+        data-menu-link
+      >
+        <span class="relative inline-block overflow-hidden">
+          <span class={textAnimation}>{contactItem.label}</span>
+          <span
+            aria-hidden="true"
+            class={`absolute left-0 top-full ${textAnimation}`}
+          >
+            {contactItem.label}
+          </span>
+        </span>
+      </a>
+    </nav>
+  </div>
+</div>
+
+<style is:global>
+  html {
+    scrollbar-gutter: stable;
+  }
+</style>
+
+<script>
+  const initNavbar = () => {
+    const nav = document.querySelector<HTMLElement>("[data-navbar]");
+    const shell = document.querySelector<HTMLElement>("[data-navbar-shell]");
+
+    if (!nav || nav.dataset.ready) return;
+
+    nav.dataset.ready = "true";
+
+    const toggle = nav.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+    const menu = document.querySelector<HTMLElement>("[data-menu]");
+    const scrim = document.querySelector<HTMLElement>("[data-menu-scrim]");
+    const panel = document.querySelector<HTMLElement>("[data-menu-panel]");
+    const lines = nav.querySelectorAll<HTMLElement>("[data-menu-line]");
+    const links =
+      document.querySelectorAll<HTMLAnchorElement>("[data-menu-link]");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const controller = new AbortController();
+
+    if (!shell || !toggle || !menu || !scrim || !panel) return;
+
+    const syncNavHeight = () => {
+      document.documentElement.style.setProperty(
+        "--nav-h",
+        `${shell.offsetHeight}px`,
+      );
+    };
+
+    syncNavHeight();
+
+    window.addEventListener("resize", syncNavHeight, {
+      passive: true,
+      signal: controller.signal,
+    });
+
+    const tinyScroll = 4;
+    const stateThreshold = 24;
+
+    let previousScrollY = Math.max(window.scrollY, 0);
+    let accumulatedScroll = 0;
+    let previousDirection = 0;
+    let ticking = false;
+    let hidePanelTimer: number | undefined;
+
+    const setNavbar = (isVisible: boolean) => {
+      const state = isVisible ? "visible" : "hidden";
+
+      if (shell.dataset.navState === state) return;
+
+      shell.dataset.navState = state;
+      shell.inert = !isVisible;
+
+      shell.classList.toggle("-translate-y-full", !isVisible);
+      shell.classList.toggle("translate-y-0", isVisible);
+    };
+
+    const updateNavbar = () => {
+      ticking = false;
+
+      if (toggle.getAttribute("aria-expanded") === "true") return;
+
+      const currentScrollY = Math.max(window.scrollY, 0);
+      const delta = currentScrollY - previousScrollY;
+
+      if (currentScrollY === 0) {
+        previousScrollY = 0;
+        accumulatedScroll = 0;
+        previousDirection = 0;
+        setNavbar(false);
+        return;
+      }
+
+      if (Math.abs(delta) < tinyScroll) return;
+
+      const direction = delta > 0 ? 1 : -1;
+
+      accumulatedScroll =
+        direction === previousDirection
+          ? accumulatedScroll + Math.abs(delta)
+          : Math.abs(delta);
+
+      previousDirection = direction;
+      previousScrollY = currentScrollY;
+
+      if (accumulatedScroll < stateThreshold) return;
+
+      // Scroll up = show
+      // Scroll down = hide
+      setNavbar(direction < 0);
+
+      accumulatedScroll = 0;
+    };
+
+    const scheduleNavbarUpdate = () => {
+      if (ticking) return;
+
+      ticking = true;
+      requestAnimationFrame(updateNavbar);
+    };
+
+    const setMenu = (isOpen: boolean) => {
+      if (hidePanelTimer !== undefined) {
+        window.clearTimeout(hidePanelTimer);
+        hidePanelTimer = undefined;
+      }
+
+      toggle.setAttribute("aria-expanded", String(isOpen));
+      toggle.setAttribute(
+        "aria-label",
+        isOpen ? "Close menu" : "Open menu",
+      );
+
+      menu.setAttribute("aria-hidden", String(!isOpen));
+      menu.inert = !isOpen;
+      menu.classList.toggle("pointer-events-none", !isOpen);
+
+      scrim.classList.toggle("opacity-0", !isOpen);
+      scrim.classList.toggle("opacity-100", isOpen);
+
+      if (isOpen) {
+        panel.classList.remove("invisible");
+        panel.classList.add("visible");
+      }
+
+      panel.classList.toggle("-translate-y-full", !isOpen);
+      panel.classList.toggle("translate-y-0", isOpen);
+
+      if (!isOpen) {
+        // Always restore the initial hidden state, even when a transition is
+        // interrupted or disabled (for example with reduced motion).
+        const hidePanel = (event: TransitionEvent) => {
+          if (event.propertyName === "transform") {
+            panel.classList.add("invisible");
+            panel.classList.remove("visible");
+          }
+        };
+
+        panel.addEventListener("transitionend", hidePanel, { once: true });
+        hidePanelTimer = window.setTimeout(() => {
+          panel.classList.add("invisible");
+          panel.classList.remove("visible");
+          hidePanelTimer = undefined;
+        }, reduceMotion.matches ? 0 : 550);
+      }
+
+      lines[0]?.classList.toggle("translate-y-[3px]", isOpen);
+      lines[0]?.classList.toggle("rotate-45", isOpen);
+
+      lines[1]?.classList.toggle("-translate-y-[3px]", isOpen);
+      lines[1]?.classList.toggle("-rotate-45", isOpen);
+
+      if (isOpen) {
+        links[0]?.focus({ preventScroll: true });
+      } else if (menu.contains(document.activeElement)) {
+        toggle.focus({ preventScroll: true });
+      }
+    };
+
+    toggle.addEventListener(
+      "click",
+      () => {
+        const isOpen =
+          toggle.getAttribute("aria-expanded") === "true";
+
+        setMenu(!isOpen);
+      },
+      { signal: controller.signal },
+    );
+
+    scrim.addEventListener(
+      "click",
+      () => setMenu(false),
+      { signal: controller.signal },
+    );
+
+    links.forEach((link) =>
+      link.addEventListener(
+        "click",
+        () => setMenu(false),
+        { signal: controller.signal },
+      ),
+    );
+
+    document.addEventListener(
+      "astro:before-preparation",
+      () => setMenu(false),
+      { signal: controller.signal },
+    );
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => controller.abort(),
+      {
+        once: true,
+        signal: controller.signal,
+      },
+    );
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        const isOpen =
+          toggle.getAttribute("aria-expanded") === "true";
+
+        if (event.key === "Escape") {
+          setMenu(false);
+        }
+
+        if (!isOpen || event.key !== "Tab") return;
+
+        const focusable = [
+          ...menu.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          ),
+          toggle,
+        ];
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (!first || !last) return;
+
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (
+          !event.shiftKey &&
+          document.activeElement === last
+        ) {
+          event.preventDefault();
+          first.focus();
+        }
+      },
+      { signal: controller.signal },
+    );
+
+    window.addEventListener("scroll", scheduleNavbarUpdate, {
+      passive: true,
+      signal: controller.signal,
+    });
+
+    if (reduceMotion.matches) {
+      shell.classList.remove("transition-transform");
+      scrim.classList.remove("transition-opacity");
+      panel.classList.remove("transition-transform");
+    }
+
+    setNavbar(false);
+    setMenu(false);
+  };
+
+  initNavbar();
+  document.addEventListener("astro:page-load", initNavbar);
+</script>

@@ -30,7 +30,7 @@ const data = page?.data as {
   </div> -->
 
   <div class="relative z-10 flex h-full w-full flex-col justify-between ">
-    <div class="grid gap-8 md:grid-cols-3 md:gap-8 ">
+    <div class="grid min-w-0 gap-8 md:grid-cols-3 md:gap-8 ">
       <Eyebrow text={data.eyebrow} />
       <p class="caption-text w-full max-w-[20rem] md:col-start-3">
         Planning, investment, reporting, legacy, and liquidity held in one field
@@ -38,8 +38,8 @@ const data = page?.data as {
       </p>
     </div>
 
-    <div class="flex items-end ">
-      <h1 class="text-6xl tracking-tight sm:text-7xl md:text-8xl max-w-[10.8ch] leading-[0.9]  sm:max-w-6xl ">
+    <div class="flex min-w-0 items-end ">
+      <h1 class="max-w-[10.8ch] text-6xl leading-[0.9] tracking-tight [overflow-wrap:anywhere] sm:max-w-6xl sm:text-7xl md:text-8xl">
         {data.headline.split(" ").slice(0, 4).join(" ")}
         <br class="hidden sm:block" />
         <span class="">
@@ -48,7 +48,7 @@ const data = page?.data as {
       </h1>
     </div>
 
-    <div class="grid gap-8 md:grid-cols-3 md:items-end md:gap-8">
+    <div class="grid min-w-0 gap-8 md:grid-cols-3 md:items-end md:gap-8">
       <div class="hidden  pt-4 md:block">
         <p class="caption-text w-full max-w-[12rem]">
           Five services. One continuing advisory relationship.

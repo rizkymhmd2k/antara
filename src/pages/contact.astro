@@ -1,0 +1,130 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Location from "../components/about/Location.astro";
+import Eyebrow from "../components/ui/Eyebrow.astro";
+import Button from "../components/ui/Button.astro";
+import Footer from "../components/sections/Footer.astro";
+import { getEntry } from "astro:content";
+
+const contact = await getEntry("site", "contact");
+const data = contact?.data as {
+  email: string;
+  eyebrow: string;
+  headline: string;
+  button: string;
+};
+const inquiryHref = `mailto:${data.email}?subject=Starting%20a%20conversation%20with%20Antara`;
+---
+
+<Layout
+  class="bg-grid-3"
+  title="Contact | Antara Private Wealth"
+  description="Start a conversation with Antara Private Wealth."
+>
+  <div class="relative isolate">
+    <div class="relative z-10">
+      <section
+        class="hero-padding relative flex min-h-[72dvh] flex-col justify-end pb-16 sm:min-h-[76dvh] sm:pb-24 lg:pb-28"
+        aria-labelledby="contact-title"
+      >
+        <div class="grid w-full min-w-0 gap-10 lg:grid-cols-12 lg:gap-8">
+          <div class="min-w-0 lg:col-span-8">
+            <Eyebrow text={data.eyebrow} />
+            <h1
+              id="contact-title"
+              class="display-text mt-4 max-w-[12ch] leading-[0.95] [overflow-wrap:break-word]"
+            >
+              Contact Antara Private Wealth.
+            </h1>
+          </div>
+
+          <div class="flex min-w-0 items-end lg:col-span-4">
+            <p class="body-text max-w-[20rem] min-w-0 text-white/85 sm:max-w-[30rem]">
+              Start with the decision in front of you. We will help frame the
+              right conversation from there.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="container-padding border-t border-white/35"
+        aria-labelledby="details-title"
+      >
+        <div class="grid min-w-0 gap-12 lg:grid-cols-12 lg:gap-8">
+          <div class="min-w-0 lg:col-span-5">
+            <Eyebrow text="Contact details" />
+            <h2 id="details-title" class="headline-text mt-4 max-w-[15ch]">
+              A considered first step toward clearer decisions.
+            </h2>
+          </div>
+
+          <div class="min-w-0 space-y-10 lg:col-span-6 lg:col-start-7">
+            <p class="title-text max-w-[22rem] min-w-0 sm:max-w-[38rem]">
+              {data.headline}
+            </p>
+
+            <div class="border-y border-white/30">
+              <a
+                href={inquiryHref}
+                class="group grid min-w-0 gap-6 py-6 transition-colors duration-300 hover:bg-white hover:text-background focus-visible:bg-white focus-visible:text-background focus-visible:outline-none sm:grid-cols-[10rem_1fr] sm:items-center"
+                data-ga-event="contact_email_click"
+              >
+                <span class="caption-text uppercase group-hover:text-background px-4">
+                  Email
+                </span>
+                <span class="text-[clamp(1.6rem,4vw,3.5rem)] leading-none [overflow-wrap:anywhere]">
+                  {data.email}
+                </span>
+                <span class="sr-only"> Opens email client</span>
+              </a>
+
+              <div class="grid gap-3 border-t border-white/30 py-6 sm:grid-cols-[10rem_1fr]">
+                <span class="caption-text uppercase px-4">
+                  For
+                </span>
+                <p class="title-text max-w-[34rem] text-white/90">
+                  Families, founders, and stewards making decisions around
+                  meaningful capital.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Location class="border-t border-white/35" />
+
+      <section
+        class="container-padding border-t border-white/35"
+        aria-labelledby="conversation-title"
+      >
+        <div class="grid min-w-0 gap-12 lg:grid-cols-12 lg:gap-8">
+          <div class="min-w-0 lg:col-span-7">
+            <Eyebrow text="Begin here" />
+            <h2
+              id="conversation-title"
+              class="mt-4 max-w-[13ch] text-[clamp(2.75rem,7vw,6.5rem)] leading-[0.95]"
+            >
+              Bring us the question you are carrying.
+            </h2>
+          </div>
+
+          <div class="flex min-w-0 flex-col justify-end gap-6 lg:col-span-4 lg:col-start-9">
+            <p class="body-text max-w-[28rem] min-w-0">
+              No form. No forced path. Send a note and we will continue the
+              conversation privately.
+            </p>
+            <Button
+              text={data.button}
+              href={inquiryHref}
+              trackingEvent="contact_email_click"
+            />
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  </div>
+</Layout>

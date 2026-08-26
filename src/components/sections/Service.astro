@@ -66,12 +66,14 @@ const servicesText = (await getCollection("services"))
               </article>
             ))
           }
+          <div class="grid grid-cols-[auto_minmax(0,1fr)] gap-4 gap-x-6">
+            <div class="h-8 min-w-8"></div>
+            <div>
+              <Button text="View services" href="/services" />
+            </div>
+          </div>
         </div>
 
-      </div>
-
-      <div class="col-span-3 md:col-span-2 md:col-start-2 mt-6">
-        <Button text="View services" href="/services" />
       </div>
     </div>
   </section>

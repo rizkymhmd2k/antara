@@ -30,7 +30,7 @@ const outcomes = [
     </div>
   </div>
 
-  <div class=" services-stage border-y border-white/30 md:grid md:min-h-[105vh] md:grid-cols-3">
+  <div class="services-stage min-w-0 border-y border-white/30 md:grid md:min-h-[105vh] md:grid-cols-3">
     <div class="relative border-white/30 md:border-r">
       <nav
         aria-label="Service details"
@@ -66,11 +66,11 @@ const outcomes = [
             class="service-panel scroll-mt-10 border-b border-white/25 py-14 last:border-b-0 sm:py-18 md:min-h-screen md:py-0"
             data-service-panel={index}
           >
-            <div class="grid h-full content-center gap-10 md:grid-cols-12 md:gap-8 md:pl-8">
-              <div class="flex flex-col justify-between gap-12 md:col-span-7 md:min-h-[72vh]">
+            <div class="grid h-full min-w-0 content-center gap-10 md:grid-cols-12 md:gap-8 md:pl-8">
+              <div class="flex min-w-0 flex-col justify-between gap-12 md:col-span-7 md:min-h-[72vh]">
                 <div>
                   <p class="mb-5 mt-8 text-xs text-white/55">{frames[index]}</p>
-                  <h3 class="max-w-[8.5ch] text-[clamp(2.85rem,6vw,6.5rem)] leading-[1]">
+                  <h3 class="max-w-[12ch] text-[clamp(2.85rem,5vw,6.5rem)] leading-[1] text-balance">
                     {service.title}
                   </h3>
                 </div>
@@ -79,7 +79,7 @@ const outcomes = [
                 </p>
               </div>
 
-              <div class="flex flex-col justify-end gap-10 md:col-span-5 md:min-h-[72vh] md:border-l md:border-white/25 md:pl-8">
+              <div class="flex min-w-0 flex-col justify-end gap-10 md:col-span-5 md:min-h-[72vh] md:border-l md:border-white/25 md:pl-8">
                 <div class="service-figure" aria-hidden="true">
                   {index === 0 && (
                     <svg viewBox="0 0 200 200" class="service-figure__svg" data-shape="rings">

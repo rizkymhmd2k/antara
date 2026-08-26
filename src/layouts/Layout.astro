@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import ScreenWidth from "../components/ui/ScreenWidth.astro";
+import Navbar from "../components/Navbar.astro";
 import "lenis/dist/lenis.css";
 import "../styles/global.css";
 import faviconUrl from "../assets/icon/AntaraFavicon.svg?url";
@@ -124,7 +125,9 @@ const organizationSchema = {
   <body>
     <!-- <ScreenWidth /> -->
 
-    <main class={className} transition:animate="none">
+    <Navbar />
+
+    <main class={className}>
       <slot />
     </main>
 
@@ -200,10 +203,18 @@ const organizationSchema = {
 </script>
 
 <style>
-  html,
-  body {
+  :global(html),
+  :global(body) {
     margin: 0;
     width: 100%;
     min-height: 100%;
+    overflow-x: clip;
+  }
+
+  @supports not (overflow: clip) {
+    :global(html),
+    :global(body) {
+      overflow-x: hidden;
+    }
   }
 </style>

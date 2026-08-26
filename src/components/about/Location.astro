@@ -7,6 +7,7 @@ import { getCollection, getEntry } from "astro:content";
 
 const section = await getEntry("site", "about-locations");
 const data = section?.data as { eyebrow: string; title: string };
+const { class: className = "" } = Astro.props;
 const images = {
   jakarta: Jakarta,
   banjarmasin: Banjarmasin,
@@ -16,7 +17,7 @@ const locations = (await getCollection("locations"))
   .sort((a, b) => a.order - b.order);
 ---
 
-<section class="container-padding">
+<section class:list={["container-padding", className]}>
   <SectionHeading eyebrow={data.eyebrow} title={data.title} />
 
   <div class="grid gap-6 md:grid-cols-2 md:gap-8">
