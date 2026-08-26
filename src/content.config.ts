@@ -12,6 +12,11 @@ const site = defineCollection({
     z.object({
       title: z.string(),
       description: z.string(),
+      eyebrow: z.string(),
+      headline: z.string(),
+      subtext: z.string(),
+      button: z.string(),
+      href: z.string(),
     }),
     z.object({
       eyebrow: z.string(),
@@ -48,6 +53,10 @@ const site = defineCollection({
     z.object({
       defaultTitle: z.string(),
       defaultDescription: z.string(),
+    }),
+    z.object({
+      title: z.string(),
+      description: z.string(),
     }),
     z.object({
       anchorText: z.string(),

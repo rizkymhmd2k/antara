@@ -1,0 +1,63 @@
+---
+import Eyebrow from "../ui/Eyebrow.astro";
+import { getCollection } from "astro:content";
+
+const items = (await getCollection("services"))
+  .map((entry) => entry.data)
+  .sort((a, b) => a.order - b.order);
+---
+
+<section class="container-padding relative" id="services-overview">
+  <div class="grid gap-12 md:grid-cols-3 md:gap-8">
+    <div class="md:sticky md:top-8 md:self-start">
+      <Eyebrow text="The full picture" />
+    </div>
+
+    <div class="md:col-span-2">
+      <h2 class="headline-text max-w-3xl">
+        Wealth rarely arrives as one clean question.
+      </h2>
+      <div class="mt-8 grid gap-8 border-t border-white/25 pt-6 md:grid-cols-2">
+        <p class="body-text w-full max-w-[32rem]">
+          Antara’s work is deliberately connected: advice begins with context,
+          moves through allocation and access, then stays accountable through
+          reporting, family decisions, and liquidity needs.
+        </p>
+        <p class="title-text w-full max-w-[32rem] text-white/88">
+          The service is not a menu. It is a working system for decisions that
+          touch the whole balance sheet.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <nav
+    aria-label="Services"
+    class="mt-16 grid border-y border-white/30 md:mt-24 md:grid-cols-5"
+  >
+    {
+      items.map((item, index) => (
+        <a
+          href={`#service-${item.number}`}
+          class:list={[
+            "group flex min-h-40 flex-col justify-between gap-8 border-white/30 p-4 transition-colors duration-300 hover:bg-white hover:text-background focus-visible:bg-white focus-visible:text-background focus-visible:outline-none sm:min-h-48 sm:p-5",
+            index !== items.length - 1 && "border-b md:border-b-0 md:border-r",
+          ]}
+        >
+          <span class="flex items-center justify-between">
+            <span class="text-xl">{item.number}</span>
+            <span
+              aria-hidden="true"
+              class="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+            >
+              ↗
+            </span>
+          </span>
+          <span class="title-text max-w-[12rem] text-2xl leading-none md:text-[1.65rem]">
+            {item.title}
+          </span>
+        </a>
+      ))
+    }
+  </nav>
+</section>

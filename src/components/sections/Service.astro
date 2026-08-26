@@ -1,5 +1,6 @@
 ---
 import Eyebrow from "../ui/Eyebrow.astro";
+import Button from "../ui/Button.astro";
 import SectionHeading from "../ui/SectionHeading.astro";
 import ScrollLine from "../ui/ScrollLine.astro";
 import { getCollection, getEntry } from "astro:content";
@@ -11,7 +12,7 @@ const servicesText = (await getCollection("services"))
   .sort((a, b) => a.order - b.order);
 ---
 
-<div class="relative" data-sticky-wrapper>
+<div class="relative" data-sticky-wrapper style="visibility: hidden">
 
   <section
     class="container-padding relative z-10 flex items-start justify-start md:sticky md:top-0 md:min-h-screen md:pt-8"
@@ -66,6 +67,11 @@ const servicesText = (await getCollection("services"))
             ))
           }
         </div>
+
+      </div>
+
+      <div class="col-span-3 md:col-span-2 md:col-start-2 mt-6">
+        <Button text="View services" href="/services" />
       </div>
     </div>
   </section>
@@ -78,6 +84,10 @@ const servicesText = (await getCollection("services"))
     const track = document.querySelector("[data-track]");
     const lineFill = document.querySelector("[data-line-fill]");
     if (!wrapper || !frame || !track) return;
+
+    // Astro page transitions can run this initializer more than once.
+    if (wrapper.dataset.servicesInitialized === "true") return;
+    wrapper.dataset.servicesInitialized = "true";
 
     const isDesktop = () => window.matchMedia("(min-width: 768px)").matches;
 
@@ -137,6 +147,9 @@ const servicesText = (await getCollection("services"))
 
     measure();
     onScroll();
+    // Avoid a flash from the top before catching up to the current scroll position.
+    currentProgress = targetProgress;
+    wrapper.style.visibility = "visible";
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
     if (rafId) cancelAnimationFrame(rafId);

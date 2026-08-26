@@ -1,0 +1,43 @@
+---
+interface Props {
+  number: string;
+  title: string;
+  description: string;
+  index: number;
+}
+
+import Eyebrow from "../ui/Eyebrow.astro";
+
+const { number, title, description, index } = Astro.props as Props;
+const framing = [
+  "Start with what matters",
+  "Turn intent into allocation",
+  "Make complexity legible",
+  "Keep wealth aligned",
+  "Create room to move",
+];
+const outcomes = [
+  "A living plan for the decisions ahead.",
+  "A portfolio with a clear assignment.",
+  "One view of the whole balance sheet.",
+  "A legacy strategy connected to people.",
+  "Flexibility without losing the long view.",
+];
+---
+
+<article id={`service-${number}`} class="relative scroll-mt-8 border-t border-white/30 py-14 sm:py-20 md:py-28">
+  <div class="grid gap-10 md:grid-cols-3 md:gap-8">
+    <div class="flex items-start gap-4">
+      <span class="inline-flex h-8 min-w-8 items-center justify-center rounded-sm bg-white px-2 text-xs text-black">{number}</span>
+      <Eyebrow text={framing[index]} />
+    </div>
+
+    <div class="md:col-span-2 md:max-w-3xl">
+      <h2 class="display-text max-w-3xl text-[clamp(2.5rem,7vw,6rem)]">{title}</h2>
+      <div class="mt-8 grid gap-8 border-t border-white/20 pt-6 sm:grid-cols-2 sm:gap-12">
+        <p class="body-text max-w-md">{description}</p>
+        <p class="title-text max-w-xs text-white/90">{outcomes[index]}</p>
+      </div>
+    </div>
+  </div>
+</article>

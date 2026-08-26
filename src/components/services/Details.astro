@@ -1,0 +1,257 @@
+---
+import { getCollection } from "astro:content";
+
+const services = (await getCollection("services"))
+  .map((entry) => entry.data)
+  .sort((a, b) => a.order - b.order);
+
+const frames = [
+  "Life, liquidity, family, independence",
+  "Growth, preservation, income, resilience",
+  "Accounts, entities, holdings, liabilities",
+  "People, structures, beneficiaries, intent",
+  "Credit, cash, timing, optionality",
+];
+
+const outcomes = [
+  "A living plan for decisions ahead.",
+  "A portfolio with a clear assignment.",
+  "One readable view of the balance sheet.",
+  "A legacy strategy connected to people.",
+  "Flexibility without weakening the long view.",
+];
+---
+
+<section class="container-padding relative " id="service-details">
+  <div class="mb-12 grid gap-6 md:grid-cols-3 md:gap-8 ">
+    <!-- <p class="text-xs text-white/70">01-05</p> -->
+    <div class="md:col-span-2">
+      <h2 class="headline-text max-w-3xl">Services designed to work together.</h2>
+    </div>
+  </div>
+
+  <div class=" services-stage border-y border-white/30 md:grid md:min-h-[105vh] md:grid-cols-3">
+    <div class="relative border-white/30 md:border-r">
+      <nav
+        aria-label="Service details"
+        class="md:sticky md:top-0 md:flex md:min-h-screen md:flex-col md:justify-center"
+      >
+        {
+          services.map((service, index) => (
+            <a
+              href={`#service-${service.number}`}
+              class:list={[
+                "service-tab group grid grid-cols-[2.5rem_1fr] gap-4 border-white/25 px-0 py-5 transition-colors duration-300 md:px-0 md:pr-8",
+                index !== services.length - 1 && "border-b",
+              ]}
+              data-service-tab={index}
+            >
+              <span class="pt-1 text-xs text-white/60 transition-colors duration-300 group-hover:text-white">
+                {service.number}
+              </span>
+              <span class="title-text text-xl leading-tight text-white/65 transition-colors duration-300 group-hover:text-white sm:text-2xl md:text-[1.7rem]">
+                {service.title}
+              </span>
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+
+    <div class="md:col-span-2">
+      {
+        services.map((service, index) => (
+          <article
+            id={`service-${service.number}`}
+            class="service-panel scroll-mt-10 border-b border-white/25 py-14 last:border-b-0 sm:py-18 md:min-h-screen md:py-0"
+            data-service-panel={index}
+          >
+            <div class="grid h-full content-center gap-10 md:grid-cols-12 md:gap-8 md:pl-8">
+              <div class="flex flex-col justify-between gap-12 md:col-span-7 md:min-h-[72vh]">
+                <div>
+                  <p class="mb-5 mt-8 text-xs text-white/55">{frames[index]}</p>
+                  <h3 class="max-w-[8.5ch] text-[clamp(2.85rem,6vw,6.5rem)] leading-[1]">
+                    {service.title}
+                  </h3>
+                </div>
+                <p class="title-text w-full max-w-[28rem] text-white/90">
+                  {outcomes[index]}
+                </p>
+              </div>
+
+              <div class="flex flex-col justify-end gap-10 md:col-span-5 md:min-h-[72vh] md:border-l md:border-white/25 md:pl-8">
+                <div class="service-figure" aria-hidden="true">
+                  {index === 0 && (
+                    <svg viewBox="0 0 200 200" class="service-figure__svg" data-shape="rings">
+                      <circle cx="100" cy="100" r="96" />
+                      <circle cx="100" cy="100" r="64" />
+                      <circle cx="100" cy="100" r="32" />
+                    </svg>
+                  )}
+                  {index === 1 && (
+                    <svg viewBox="0 0 200 200" class="service-figure__svg" data-shape="vesica">
+                      <circle cx="74" cy="100" r="64" />
+                      <circle cx="126" cy="100" r="64" />
+                    </svg>
+                  )}
+                  {index === 2 && (
+                    <svg viewBox="0 0 200 200" class="service-figure__svg" data-shape="trefoil">
+                      <circle cx="100" cy="64" r="62" />
+                      <circle cx="131.2" cy="118" r="62" />
+                      <circle cx="68.8" cy="118" r="62" />
+                    </svg>
+                  )}
+                  {index === 3 && (
+                    <svg viewBox="0 0 200 200" class="service-figure__svg" data-shape="quatrefoil">
+                      <circle cx="100" cy="60" r="50" />
+                      <circle cx="140" cy="100" r="50" />
+                      <circle cx="100" cy="140" r="50" />
+                      <circle cx="60" cy="100" r="50" />
+                    </svg>
+                  )}
+                  {index === 4 && (
+                    <svg viewBox="0 0 200 200" class="service-figure__svg" data-shape="flower">
+                      <circle cx="100" cy="60" r="42" />
+                      <circle cx="134.6" cy="80" r="42" />
+                      <circle cx="134.6" cy="120" r="42" />
+                      <circle cx="100" cy="140" r="42" />
+                      <circle cx="65.4" cy="120" r="42" />
+                      <circle cx="65.4" cy="80" r="42" />
+                    </svg>
+                  )}
+                </div>
+                <p class="body-text max-w-[34rem]">{service.description}</p>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  function initServiceStage() {
+    const tabs = Array.from(document.querySelectorAll("[data-service-tab]"));
+    const panels = Array.from(document.querySelectorAll("[data-service-panel]"));
+    if (!tabs.length || !panels.length) return;
+
+    const setActive = (index) => {
+      tabs.forEach((tab, tabIndex) => {
+        tab.toggleAttribute("data-active", tabIndex === index);
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        setActive(Number(visible.target.getAttribute("data-service-panel")));
+      },
+      { threshold: [0.35, 0.55, 0.75] },
+    );
+
+    panels.forEach((panel) => observer.observe(panel));
+    setActive(0);
+  }
+
+  initServiceStage();
+  document.addEventListener("astro:page-load", initServiceStage);
+</script>
+
+<style>
+  .service-tab[data-active] span {
+    color: rgb(255 255 255);
+  }
+
+  .service-tab[data-active] {
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  .service-figure {
+    position: relative;
+    width: min(18rem, 78vw);
+    aspect-ratio: 1;
+    margin-inline: auto;
+  }
+
+  .service-figure__svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    transform-origin: 50% 50%;
+  }
+
+  .service-figure__svg circle,
+  .service-figure__svg polygon,
+  .service-figure__svg rect,
+  .service-figure__svg path,
+  .service-figure__svg line {
+    fill: none;
+    stroke: rgb(255 255 255 / 0.55);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  @keyframes figure-breathe {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.08);
+    }
+  }
+
+  @keyframes figure-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes figure-spin-reverse {
+    from {
+      transform: rotate(360deg);
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+
+  .service-figure__svg[data-shape="rings"] {
+    animation: figure-breathe 4.5s ease-in-out infinite;
+  }
+
+  .service-figure__svg[data-shape="vesica"] {
+    animation: figure-spin-reverse 16s linear infinite;
+  }
+
+  .service-figure__svg[data-shape="trefoil"] {
+    animation: figure-spin 22s linear infinite;
+  }
+
+  .service-figure__svg[data-shape="quatrefoil"] {
+    animation: figure-spin-reverse 28s linear infinite;
+  }
+
+  .service-figure__svg[data-shape="flower"] {
+    animation: figure-spin 34s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .service-figure__svg {
+      animation: none !important;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .service-figure {
+      width: min(20rem, 100%);
+    }
+  }
+</style>

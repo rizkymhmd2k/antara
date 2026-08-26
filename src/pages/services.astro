@@ -1,0 +1,30 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/services/Hero.astro";
+import Overview from "../components/services/Overview.astro";
+import Serve from "../components/sections/Serve.astro";
+import Details from "../components/services/Details.astro";
+import Step from "../components/sections/Step.astro";
+import Contact from "../components/sections/Contact.astro";
+import Footer from "../components/sections/Footer.astro";
+import { getEntry } from "astro:content";
+
+const page = await getEntry("site", "services-page");
+const data = page?.data as { title: string; description: string };
+---
+
+<Layout class="bg-grid-3" title={data.title} description={data.description}>
+  <div class="relative isolate">
+    <div class="relative z-10">
+      <Hero />
+      <!-- <Overview /> -->
+      <Details />
+
+      <!-- <Step /> -->
+      <Serve />
+
+      <Contact />
+      <Footer />
+    </div>
+  </div>
+</Layout>
