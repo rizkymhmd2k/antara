@@ -1,6 +1,6 @@
 ---
-number: "02"
-title: We invest our own capital
-body: Every strategy we recommend is one we believe in enough to invest our own money alongside yours.
+number: "05"
+title: Advice without the handoffs
+body: Investment, planning, and operations stay closely connected, so advice remains clear from strategy through execution.
 order: 5
 ---
