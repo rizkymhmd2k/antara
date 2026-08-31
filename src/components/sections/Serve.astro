@@ -26,7 +26,7 @@ const items = (await getCollection("audiences"))
   <div class="grid grid-cols-1 gap-6 min-[480px]:grid-cols-2 md:gap-8 lg:grid-cols-4">
     {
       items.map((item) => (
-        <article class="group flex flex-col gap-4">
+        <article class="group flex flex-col gap-4" data-serve-card>
           <div class="relative aspect-[4/3] w-full overflow-hidden rounded-sm">
             <Image
               src={item.image}
@@ -38,7 +38,7 @@ const items = (await getCollection("audiences"))
               class="h-full w-full object-cover"
             />
 
-            <div class="absolute inset-0 translate-y-full bg-gradient-to-t from-blue-600/80 via-blue-500/30 to-transparent transition-transform duration-500 ease-out group-hover:translate-y-0" />
+            <div class="mobile-hover-overlay absolute inset-0 translate-y-full bg-gradient-to-t from-blue-600/80 via-blue-500/30 to-transparent transition-transform duration-500 ease-out group-hover:translate-y-0" />
           </div>
 
           <div class="space-y-2">
@@ -52,3 +52,54 @@ const items = (await getCollection("audiences"))
     }
   </div>
 </section>
+
+<style>
+  @media (max-width: 767px) {
+    [data-serve-card].is-centered .mobile-hover-overlay {
+      transform: translateY(0) !important;
+    }
+  }
+</style>
+
+<script>
+  const cards = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-serve-card]")
+  );
+  const mobileQuery = window.matchMedia("(max-width: 767px)");
+  let frame = 0;
+
+  const updateCenteredCard = () => {
+    frame = 0;
+
+    if (!mobileQuery.matches) {
+      cards.forEach((card) => card.classList.remove("is-centered"));
+      return;
+    }
+
+    const viewportCenter = window.innerHeight / 2;
+    const centeredCard = cards.reduce<HTMLElement | null>((closest, card) => {
+      const bounds = card.getBoundingClientRect();
+      if (bounds.bottom < 0 || bounds.top > window.innerHeight) return closest;
+
+      const closestDistance = closest
+        ? Math.abs(closest.getBoundingClientRect().top + closest.getBoundingClientRect().height / 2 - viewportCenter)
+        : Infinity;
+      const cardDistance = Math.abs(bounds.top + bounds.height / 2 - viewportCenter);
+
+      return cardDistance < closestDistance ? card : closest;
+    }, null);
+
+    cards.forEach((card) =>
+      card.classList.toggle("is-centered", card === centeredCard)
+    );
+  };
+
+  const requestCenteredCardUpdate = () => {
+    if (!frame) frame = requestAnimationFrame(updateCenteredCard);
+  };
+
+  window.addEventListener("scroll", requestCenteredCardUpdate, { passive: true });
+  window.addEventListener("resize", requestCenteredCardUpdate);
+  mobileQuery.addEventListener("change", requestCenteredCardUpdate);
+  updateCenteredCard();
+</script>
