@@ -20,6 +20,62 @@ const outcomes = [
   "A legacy strategy connected to people.",
   "Flexibility without weakening the long view.",
 ];
+
+const blueprints = [
+  {
+    paths: ["M112 51 H154 V128 H180", "M112 103 H140 V128 H180", "M112 177 H140 V128 H180", "M112 229 H154 V128 H180"],
+    nodes: [
+      { x: 20, y: 34, w: 92, h: 34, title: "LIFE", detail: "priorities" },
+      { x: 20, y: 86, w: 92, h: 34, title: "LIQUIDITY", detail: "access" },
+      { x: 20, y: 160, w: 92, h: 34, title: "FAMILY", detail: "needs" },
+      { x: 20, y: 212, w: 92, h: 34, title: "FREEDOM", detail: "long term" },
+      { x: 180, y: 96, w: 158, h: 64, title: "LIVING PLAN", detail: "changes as life changes", primary: true },
+    ],
+  },
+  {
+    paths: ["M110 129 H134", "M236 129 H250 V43 H266", "M236 129 H266 V100", "M236 129 H266 V158", "M236 129 H250 V215 H266"],
+    nodes: [
+      { x: 18, y: 108, w: 92, h: 42, title: "OBJECTIVE", detail: "clear intent" },
+      { x: 134, y: 96, w: 102, h: 66, title: "ALLOCATION", detail: "assigned purpose", primary: true },
+      { x: 266, y: 26, w: 76, h: 34, title: "GROWTH", detail: "build" },
+      { x: 266, y: 83, w: 76, h: 34, title: "PRESERVE", detail: "protect" },
+      { x: 266, y: 141, w: 76, h: 34, title: "INCOME", detail: "support" },
+      { x: 266, y: 198, w: 76, h: 34, title: "RESILIENCE", detail: "adapt" },
+    ],
+  },
+  {
+    paths: ["M98 51 H118 V178 H151", "M98 103 H118 V178 H151", "M98 155 H118 V178 H151", "M262 77 H242 V178 H209", "M262 129 H242 V178 H209", "M180 203 V212"],
+    nodes: [
+      { x: 18, y: 34, w: 80, h: 34, title: "ACCOUNTS", detail: "liquid" },
+      { x: 18, y: 86, w: 80, h: 34, title: "ENTITIES", detail: "structured" },
+      { x: 18, y: 138, w: 80, h: 34, title: "HOLDINGS", detail: "private" },
+      { x: 262, y: 60, w: 80, h: 34, title: "PROPERTY", detail: "real assets" },
+      { x: 262, y: 112, w: 80, h: 34, title: "LIABILITIES", detail: "obligations" },
+      { x: 151, y: 153, w: 58, h: 50, title: "ONE", detail: "view", primary: true },
+      { x: 114, y: 212, w: 132, h: 42, title: "BALANCE SHEET", detail: "readable + current", primary: true },
+    ],
+  },
+  {
+    paths: ["M100 67 H122 V140 H142", "M100 213 H122 V140 H142", "M226 140 H254", "M184 173 V230"],
+    nodes: [
+      { x: 20, y: 46, w: 80, h: 42, title: "PEOPLE", detail: "family" },
+      { x: 20, y: 192, w: 80, h: 42, title: "INTENT", detail: "purpose" },
+      { x: 142, y: 107, w: 84, h: 66, title: "STRUCTURE", detail: "aligned", primary: true },
+      { x: 254, y: 119, w: 88, h: 42, title: "BENEFICIARY", detail: "future" },
+      { x: 136, y: 230, w: 96, h: 34, title: "LEGACY", detail: "connected" },
+    ],
+  },
+  {
+    paths: ["M85 100 H105", "M170 100 H190", "M255 100 H275", "M307 121 V168 H180 V199"],
+    nodes: [
+      { x: 20, y: 79, w: 65, h: 42, title: "CASH", detail: "today" },
+      { x: 105, y: 79, w: 65, h: 42, title: "CREDIT", detail: "access" },
+      { x: 190, y: 79, w: 65, h: 42, title: "TIMING", detail: "context" },
+      { x: 275, y: 79, w: 65, h: 42, title: "OPTIONS", detail: "available" },
+      { x: 112, y: 199, w: 136, h: 58, title: "FLEXIBILITY", detail: "without weakening the long view", primary: true },
+    ],
+  },
+];
 ---
 
 <section class="container-padding relative " id="service-details">
@@ -80,45 +136,31 @@ const outcomes = [
               </div>
 
               <div class="flex min-w-0 flex-col justify-end gap-10 md:col-span-5 md:min-h-[72vh] md:border-l md:border-white/25 md:pl-8">
-                <div class="service-figure" aria-hidden="true">
-                  {index === 0 && (
-                    <svg viewBox="0 0 200 200" class="service-figure__svg" data-shape="rings">
-                      <circle cx="100" cy="100" r="96" />
-                      <circle cx="100" cy="100" r="64" />
-                      <circle cx="100" cy="100" r="32" />
-                    </svg>
-                  )}
-                  {index === 1 && (
-                    <svg viewBox="0 0 200 200" class="service-figure__svg" data-shape="vesica">
-                      <circle cx="74" cy="100" r="64" />
-                      <circle cx="126" cy="100" r="64" />
-                    </svg>
-                  )}
-                  {index === 2 && (
-                    <svg viewBox="0 0 200 200" class="service-figure__svg" data-shape="trefoil">
-                      <circle cx="100" cy="64" r="62" />
-                      <circle cx="131.2" cy="118" r="62" />
-                      <circle cx="68.8" cy="118" r="62" />
-                    </svg>
-                  )}
-                  {index === 3 && (
-                    <svg viewBox="0 0 200 200" class="service-figure__svg" data-shape="quatrefoil">
-                      <circle cx="100" cy="60" r="50" />
-                      <circle cx="140" cy="100" r="50" />
-                      <circle cx="100" cy="140" r="50" />
-                      <circle cx="60" cy="100" r="50" />
-                    </svg>
-                  )}
-                  {index === 4 && (
-                    <svg viewBox="0 0 200 200" class="service-figure__svg" data-shape="flower">
-                      <circle cx="100" cy="60" r="42" />
-                      <circle cx="134.6" cy="80" r="42" />
-                      <circle cx="134.6" cy="120" r="42" />
-                      <circle cx="100" cy="140" r="42" />
-                      <circle cx="65.4" cy="120" r="42" />
-                      <circle cx="65.4" cy="80" r="42" />
-                    </svg>
-                  )}
+                <div class="service-blueprint" aria-hidden="true">
+                  <svg viewBox="0 0 360 280" class="service-blueprint__svg">
+                    <g class="service-blueprint__grid">
+                      <path d="M0 20 H360 M0 140 H360 M0 260 H360" />
+                      <path d="M20 0 V280 M180 0 V280 M340 0 V280" />
+                    </g>
+                    <g class="service-blueprint__paths">
+                      {blueprints[index].paths.map((path, pathIndex) => (
+                        <path d={path} pathLength="1" style={`--i: ${pathIndex}`} />
+                      ))}
+                    </g>
+                    <g class="service-blueprint__nodes">
+                      {blueprints[index].nodes.map((node, nodeIndex) => (
+                        <g
+                          class:list={["service-blueprint__node", node.primary && "is-primary"]}
+                          transform={`translate(${node.x} ${node.y})`}
+                          style={`--i: ${nodeIndex}`}
+                        >
+                          <rect width={node.w} height={node.h} />
+                          <text x="9" y={node.h / 2 - 3} class="service-blueprint__title">{node.title}</text>
+                          <text x="9" y={node.h / 2 + 10} class="service-blueprint__detail">{node.detail}</text>
+                        </g>
+                      ))}
+                    </g>
+                  </svg>
                 </div>
                 <p class="body-text max-w-[34rem]">{service.description}</p>
               </div>
@@ -139,6 +181,9 @@ const outcomes = [
     const setActive = (index) => {
       tabs.forEach((tab, tabIndex) => {
         tab.toggleAttribute("data-active", tabIndex === index);
+      });
+      panels.forEach((panel, panelIndex) => {
+        panel.toggleAttribute("data-active", panelIndex === index);
       });
     };
 
@@ -162,82 +207,83 @@ const outcomes = [
 </script>
 
 <style>
-  .service-figure {
+  .service-blueprint {
     position: relative;
-    width: min(18rem, 78vw);
-    aspect-ratio: 1;
+    width: 100%;
+    max-width: 28rem;
     margin-inline: auto;
   }
 
-  .service-figure__svg {
+  .service-blueprint__svg {
+    display: block;
     width: 100%;
-    height: 100%;
-    overflow: visible;
-    transform-origin: 50% 50%;
+    height: auto;
+    overflow: hidden;
   }
 
-  .service-figure__svg circle,
-  .service-figure__svg polygon,
-  .service-figure__svg rect,
-  .service-figure__svg path,
-  .service-figure__svg line {
+  .service-blueprint__grid path,
+  .service-blueprint__paths path,
+  .service-blueprint__node rect {
     fill: none;
-    stroke: rgb(255 255 255 / 0.55);
+    stroke: rgb(255 255 255 / 0.48);
     stroke-width: 1;
     vector-effect: non-scaling-stroke;
   }
 
-  @keyframes figure-breathe {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.08);
-    }
+  .service-blueprint__grid {
+    opacity: 0.16;
   }
 
-  @keyframes figure-spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+  .service-blueprint__paths path {
+    stroke: rgb(255 255 255 / 0.78);
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--i) * 90ms + 100ms);
   }
 
-  @keyframes figure-spin-reverse {
-    from {
-      transform: rotate(360deg);
-    }
-    to {
-      transform: rotate(0deg);
-    }
+  .service-blueprint__node {
+    opacity: 0;
+    transition: opacity 450ms ease;
+    transition-delay: calc(var(--i) * 70ms + 260ms);
   }
 
-  .service-figure__svg[data-shape="rings"] {
-    animation: figure-breathe 4.5s ease-in-out infinite;
+  .service-blueprint__node.is-primary rect {
+    fill: rgb(255 255 255 / 0.1);
+    stroke: rgb(255 255 255 / 0.88);
   }
 
-  .service-figure__svg[data-shape="vesica"] {
-    animation: figure-spin-reverse 16s linear infinite;
+  .service-blueprint__title,
+  .service-blueprint__detail {
+    fill: white;
+    font-family: "Alte Haas Grotesk", sans-serif;
+    pointer-events: none;
   }
 
-  .service-figure__svg[data-shape="trefoil"] {
-    animation: figure-spin 22s linear infinite;
+  .service-blueprint__title {
+    font-size: 8px;
+    letter-spacing: 0.06em;
   }
 
-  .service-figure__svg[data-shape="quatrefoil"] {
-    animation: figure-spin-reverse 28s linear infinite;
+  .service-blueprint__detail {
+    fill: rgb(255 255 255 / 0.58);
+    font-size: 7px;
   }
 
-  .service-figure__svg[data-shape="flower"] {
-    animation: figure-spin 34s linear infinite;
+  .service-panel[data-active] .service-blueprint__paths path {
+    stroke-dashoffset: 0;
+  }
+
+  .service-panel[data-active] .service-blueprint__node {
+    opacity: 1;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .service-figure__svg {
-      animation: none !important;
+    .service-blueprint__paths path,
+    .service-blueprint__node {
+      transition: none;
     }
   }
 
@@ -250,8 +296,8 @@ const outcomes = [
       background: rgb(255 255 255 / 0.08);
     }
 
-    .service-figure {
-      width: min(20rem, 100%);
+    .service-blueprint {
+      max-width: 24rem;
     }
   }
 </style>
