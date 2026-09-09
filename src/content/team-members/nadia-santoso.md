@@ -1,6 +1,6 @@
 ---
-name: Nadia Santoso
+name: Benny Santoso
 role: Wealth Strategist
-image: founders
+image: nadia
 order: 3
 ---

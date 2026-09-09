@@ -1,6 +1,6 @@
 ---
 name: Dimas Hartono
 role: Client Relationship Lead
-image: founders
+image: dimas
 order: 4
 ---

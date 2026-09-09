@@ -1,6 +1,6 @@
 ---
 name: Alya Pratama
 role: Managing Partner
-image: founders
+image: alya
 order: 1
 ---

@@ -1,6 +1,6 @@
 ---
 name: Raka Wirawan
 role: Investment Advisor
-image: founders
+image: raka
 order: 2
 ---

@@ -126,7 +126,7 @@ const teamMembers = defineCollection({
   schema: z.object({
     name: z.string(),
     role: z.string(),
-    image: z.enum(["founders"]),
+    image: z.enum(["alya", "raka", "nadia", "dimas"]),
     order: z.number(),
   }),
 });

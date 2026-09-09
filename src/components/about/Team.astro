@@ -1,13 +1,19 @@
 ---
 import { Image } from "astro:assets";
-import foundersImage from "../../assets/images/Founders.png";
+import alyaImage from "../../assets/images/team-alya.png";
+import dimasImage from "../../assets/images/team-dimas.png";
+import nadiaImage from "../../assets/images/team-nadia.png";
+import rakaImage from "../../assets/images/team-raka.png";
 import Eyebrow from "../ui/Eyebrow.astro";
 import { getCollection, getEntry } from "astro:content";
 
 const section = await getEntry("site", "about-team");
 const data = section?.data as { eyebrow: string; title: string };
 const images = {
-  founders: foundersImage,
+  alya: alyaImage,
+  dimas: dimasImage,
+  nadia: nadiaImage,
+  raka: rakaImage,
 };
 const members = (await getCollection("team-members"))
   .map((entry) => ({ ...entry.data, image: images[entry.data.image] }))
@@ -42,7 +48,7 @@ const members = (await getCollection("team-members"))
             <div class="absolute inset-0 translate-y-full bg-gradient-to-t from-blue-600/80 via-blue-500/30 to-transparent transition-transform duration-500 ease-out group-hover:translate-y-0" />
           </div>
 
-          <div class="space-y-2">
+          <div class="space-y-0">
             <h2 class="title-text">{member.name}</h2>
             <p class="caption-text">{member.role}</p>
           </div>
