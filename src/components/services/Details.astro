@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import ServiceIllustration from "./ServiceIllustration.astro";
 
 const services = (await getCollection("services"))
   .map((entry) => entry.data)
@@ -21,61 +22,6 @@ const outcomes = [
   "Flexibility without weakening the long view.",
 ];
 
-const blueprints = [
-  {
-    paths: ["M112 51 H154 V128 H180", "M112 103 H140 V128 H180", "M112 177 H140 V128 H180", "M112 229 H154 V128 H180"],
-    nodes: [
-      { x: 20, y: 34, w: 92, h: 34, title: "LIFE", detail: "priorities" },
-      { x: 20, y: 86, w: 92, h: 34, title: "LIQUIDITY", detail: "access" },
-      { x: 20, y: 160, w: 92, h: 34, title: "FAMILY", detail: "needs" },
-      { x: 20, y: 212, w: 92, h: 34, title: "FREEDOM", detail: "long term" },
-      { x: 180, y: 96, w: 158, h: 64, title: "LIVING PLAN", detail: "changes as life changes", primary: true },
-    ],
-  },
-  {
-    paths: ["M110 129 H134", "M236 129 H250 V43 H266", "M236 129 H266 V100", "M236 129 H266 V158", "M236 129 H250 V215 H266"],
-    nodes: [
-      { x: 18, y: 108, w: 92, h: 42, title: "OBJECTIVE", detail: "clear intent" },
-      { x: 134, y: 96, w: 102, h: 66, title: "ALLOCATION", detail: "assigned purpose", primary: true },
-      { x: 266, y: 26, w: 76, h: 34, title: "GROWTH", detail: "build" },
-      { x: 266, y: 83, w: 76, h: 34, title: "PRESERVE", detail: "protect" },
-      { x: 266, y: 141, w: 76, h: 34, title: "INCOME", detail: "support" },
-      { x: 266, y: 198, w: 76, h: 34, title: "RESILIENCE", detail: "adapt" },
-    ],
-  },
-  {
-    paths: ["M98 51 H118 V178 H151", "M98 103 H118 V178 H151", "M98 155 H118 V178 H151", "M262 77 H242 V178 H209", "M262 129 H242 V178 H209", "M180 203 V212"],
-    nodes: [
-      { x: 18, y: 34, w: 80, h: 34, title: "ACCOUNTS", detail: "liquid" },
-      { x: 18, y: 86, w: 80, h: 34, title: "ENTITIES", detail: "structured" },
-      { x: 18, y: 138, w: 80, h: 34, title: "HOLDINGS", detail: "private" },
-      { x: 262, y: 60, w: 80, h: 34, title: "PROPERTY", detail: "real assets" },
-      { x: 262, y: 112, w: 80, h: 34, title: "LIABILITIES", detail: "obligations" },
-      { x: 151, y: 153, w: 58, h: 50, title: "ONE", detail: "view", primary: true },
-      { x: 114, y: 212, w: 132, h: 42, title: "BALANCE SHEET", detail: "readable + current", primary: true },
-    ],
-  },
-  {
-    paths: ["M100 67 H122 V140 H142", "M100 213 H122 V140 H142", "M226 140 H254", "M184 173 V230"],
-    nodes: [
-      { x: 20, y: 46, w: 80, h: 42, title: "PEOPLE", detail: "family" },
-      { x: 20, y: 192, w: 80, h: 42, title: "INTENT", detail: "purpose" },
-      { x: 142, y: 107, w: 84, h: 66, title: "STRUCTURE", detail: "aligned", primary: true },
-      { x: 254, y: 119, w: 88, h: 42, title: "BENEFICIARY", detail: "future" },
-      { x: 136, y: 230, w: 96, h: 34, title: "LEGACY", detail: "connected" },
-    ],
-  },
-  {
-    paths: ["M85 100 H105", "M170 100 H190", "M255 100 H275", "M307 121 V168 H180 V199"],
-    nodes: [
-      { x: 20, y: 79, w: 65, h: 42, title: "CASH", detail: "today" },
-      { x: 105, y: 79, w: 65, h: 42, title: "CREDIT", detail: "access" },
-      { x: 190, y: 79, w: 65, h: 42, title: "TIMING", detail: "context" },
-      { x: 275, y: 79, w: 65, h: 42, title: "OPTIONS", detail: "available" },
-      { x: 112, y: 199, w: 136, h: 58, title: "FLEXIBILITY", detail: "without weakening the long view", primary: true },
-    ],
-  },
-];
 ---
 
 <section class="container-padding relative " id="service-details">
@@ -136,32 +82,7 @@ const blueprints = [
               </div>
 
               <div class="flex min-w-0 flex-col justify-end gap-10 md:col-span-5 md:min-h-[72vh] md:border-l md:border-white/25 md:pl-8">
-                <div class="service-blueprint" aria-hidden="true">
-                  <svg viewBox="0 0 360 280" class="service-blueprint__svg">
-                    <g class="service-blueprint__grid">
-                      <path d="M0 20 H360 M0 140 H360 M0 260 H360" />
-                      <path d="M20 0 V280 M180 0 V280 M340 0 V280" />
-                    </g>
-                    <g class="service-blueprint__paths">
-                      {blueprints[index].paths.map((path, pathIndex) => (
-                        <path d={path} pathLength="1" style={`--i: ${pathIndex}`} />
-                      ))}
-                    </g>
-                    <g class="service-blueprint__nodes">
-                      {blueprints[index].nodes.map((node, nodeIndex) => (
-                        <g
-                          class:list={["service-blueprint__node", node.primary && "is-primary"]}
-                          transform={`translate(${node.x} ${node.y})`}
-                          style={`--i: ${nodeIndex}`}
-                        >
-                          <rect width={node.w} height={node.h} />
-                          <text x="9" y={node.h / 2 - 3} class="service-blueprint__title">{node.title}</text>
-                          <text x="9" y={node.h / 2 + 10} class="service-blueprint__detail">{node.detail}</text>
-                        </g>
-                      ))}
-                    </g>
-                  </svg>
-                </div>
+                <ServiceIllustration index={index} />
                 <p class="body-text max-w-[34rem]">{service.description}</p>
               </div>
             </div>
@@ -173,131 +94,54 @@ const blueprints = [
 </section>
 
 <script>
+  let cleanup: (() => void) | undefined;
+
   function initServiceStage() {
-    const tabs = Array.from(document.querySelectorAll("[data-service-tab]"));
-    const panels = Array.from(document.querySelectorAll("[data-service-panel]"));
-    if (!tabs.length || !panels.length) return;
+    cleanup?.();
+    const stage = document.getElementById("service-details");
+    if (!stage) return;
+    const tabs = Array.from(stage.querySelectorAll<HTMLAnchorElement>("[data-service-tab]"));
+    const panels = Array.from(stage.querySelectorAll<HTMLElement>("[data-service-panel]"));
+    const visible = new Map<Element, number>();
 
-    const setActive = (index) => {
-      tabs.forEach((tab, tabIndex) => {
-        tab.toggleAttribute("data-active", tabIndex === index);
+    const activeObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) visible.set(entry.target, entry.intersectionRatio);
+        else visible.delete(entry.target);
       });
-      panels.forEach((panel, panelIndex) => {
-        panel.toggleAttribute("data-active", panelIndex === index);
+      const active = [...visible].sort((a, b) => b[1] - a[1])[0]?.[0];
+      if (!active) return;
+      tabs.forEach((tab, index) => {
+        const current = panels[index] === active;
+        tab.toggleAttribute("data-active", current);
+        if (current) tab.setAttribute("aria-current", "location");
+        else tab.removeAttribute("aria-current");
       });
-    };
+    }, { threshold: [0, 0.25, 0.5, 0.75, 1], rootMargin: "-15% 0px -25% 0px" });
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (!visible) return;
-        setActive(Number(visible.target.getAttribute("data-service-panel")));
-      },
-      { threshold: [0.35, 0.55, 0.75] },
-    );
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.setAttribute("data-revealed", "");
+        revealObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.35 });
 
-    panels.forEach((panel) => observer.observe(panel));
-    setActive(0);
+    panels.forEach((panel) => activeObserver.observe(panel));
+    stage.querySelectorAll(".service-illustration").forEach((sculpture) => revealObserver.observe(sculpture));
+    cleanup = () => { activeObserver.disconnect(); revealObserver.disconnect(); };
   }
 
   initServiceStage();
   document.addEventListener("astro:page-load", initServiceStage);
+  document.addEventListener("astro:before-swap", () => cleanup?.());
 </script>
 
 <style>
-  .service-blueprint {
-    position: relative;
-    width: 100%;
-    max-width: 28rem;
-    margin-inline: auto;
-  }
-
-  .service-blueprint__svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    overflow: hidden;
-  }
-
-  .service-blueprint__grid path,
-  .service-blueprint__paths path,
-  .service-blueprint__node rect {
-    fill: none;
-    stroke: rgb(255 255 255 / 0.48);
-    stroke-width: 1;
-    vector-effect: non-scaling-stroke;
-  }
-
-  .service-blueprint__grid {
-    opacity: 0.16;
-  }
-
-  .service-blueprint__paths path {
-    stroke: rgb(255 255 255 / 0.78);
-    stroke-linecap: square;
-    stroke-linejoin: miter;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    transition: stroke-dashoffset 700ms cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: calc(var(--i) * 90ms + 100ms);
-  }
-
-  .service-blueprint__node {
-    opacity: 0;
-    transition: opacity 450ms ease;
-    transition-delay: calc(var(--i) * 70ms + 260ms);
-  }
-
-  .service-blueprint__node.is-primary rect {
-    fill: rgb(255 255 255 / 0.1);
-    stroke: rgb(255 255 255 / 0.88);
-  }
-
-  .service-blueprint__title,
-  .service-blueprint__detail {
-    fill: white;
-    font-family: "Alte Haas Grotesk", sans-serif;
-    pointer-events: none;
-  }
-
-  .service-blueprint__title {
-    font-size: 8px;
-    letter-spacing: 0.06em;
-  }
-
-  .service-blueprint__detail {
-    fill: rgb(255 255 255 / 0.58);
-    font-size: 7px;
-  }
-
-  .service-panel[data-active] .service-blueprint__paths path {
-    stroke-dashoffset: 0;
-  }
-
-  .service-panel[data-active] .service-blueprint__node {
-    opacity: 1;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .service-blueprint__paths path,
-    .service-blueprint__node {
-      transition: none;
-    }
-  }
+  .service-tab:focus-visible { outline: 1px solid white; outline-offset: -4px; }
 
   @media (min-width: 48rem) {
-    .service-tab[data-active] span {
-      color: rgb(255 255 255);
-    }
-
-    .service-tab[data-active] {
-      background: rgb(255 255 255 / 0.08);
-    }
-
-    .service-blueprint {
-      max-width: 24rem;
-    }
+    .service-tab[data-active] span { color: white; }
+    .service-tab[data-active] { background: rgb(255 255 255 / 0.08); }
   }
 </style>
