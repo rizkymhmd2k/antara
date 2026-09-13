@@ -17,11 +17,12 @@ const items = (await getCollection("process-steps"))
       items.map((item, index) => (
         <article
           class:list={[
-            "flex min-h-[22rem] flex-col justify-between border-white/35 p-6 md:min-h-[31rem] md:py-2 md:pl-8 md:pr-10 lg:min-h-[34rem]",
+            "step-card flex min-h-[24rem] flex-col justify-between border-white/35 px-6 py-8 md:min-h-[35rem] md:px-0 md:py-8 md:pl-8 md:pr-10 lg:min-h-[38rem]",
             "border-x md:border-r-0",
             index !== items.length - 1 && "border-b md:border-b-0",
             index === items.length - 1 && "md:border-r",
           ]}
+          tabindex="0"
         >
           <div class="max-w-[19rem] space-y-3">
             <h2 class="text-[2.1rem] leading-none md:text-[2.3rem]">
@@ -47,6 +48,52 @@ const items = (await getCollection("process-steps"))
 </section>
 
 <style>
+  .step-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    outline: none;
+  }
+
+  .step-card::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -8%;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 0.62) 0%,
+      rgb(255 255 255 / 0.3) 42%,
+      transparent 100%
+    );
+    opacity: 0;
+    transform: translateY(-5%) scale(1.02);
+    transition:
+      opacity 450ms ease,
+      transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .step-card:hover::before,
+  .step-card:focus-visible::before {
+    opacity: 1;
+    animation: card-gradient-drift 3.2s ease-in-out infinite alternate;
+  }
+
+  .step-card:focus-visible {
+    outline: 1px solid rgb(255 255 255 / 0.9);
+    outline-offset: -3px;
+  }
+
+  @keyframes card-gradient-drift {
+    from {
+      transform: translateY(-5%) scale(1.02);
+    }
+    to {
+      transform: translateY(5%) scale(1.06);
+    }
+  }
+
   .diagram {
     position: relative;
     width: min(13rem, 58vw);
@@ -287,6 +334,12 @@ const items = (await getCollection("process-steps"))
   /* ---------- respect reduced motion ---------- */
 
   @media (prefers-reduced-motion: reduce) {
+    .step-card::before {
+      animation: none !important;
+      transition: none;
+      transform: none;
+    }
+
     .diagram span {
       animation: none !important;
       opacity: 1 !important;

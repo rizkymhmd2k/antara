@@ -3,6 +3,7 @@ import Eyebrow from "../ui/Eyebrow.astro";
 import Button from "../ui/Button.astro";
 import SectionHeading from "../ui/SectionHeading.astro";
 import ScrollLine from "../ui/ScrollLine.astro";
+import scrollLineFourUrl from "../../assets/lines/scroll-line-4.svg?url";
 import { getCollection, getEntry } from "astro:content";
 
 const section = await getEntry("site", "home-services");
@@ -15,9 +16,15 @@ const servicesText = (await getCollection("services"))
 <div class="relative" data-sticky-wrapper style="visibility: hidden">
 
   <section
-    class="container-padding relative z-10 flex items-start justify-start md:sticky md:top-0 md:min-h-screen md:pt-8"
+    class="container-padding relative z-10 flex items-start justify-start overflow-hidden md:sticky md:top-0 md:min-h-screen md:pt-8"
   >
-    <div class="grid w-full grid-cols-3 md:gap-y-24  ">
+    <ScrollLine
+      src={scrollLineFourUrl}
+      class="pointer-events-none absolute -left-[8%] top-[3%] z-0 h-[42%] w-[116%] rotate-2 opacity-75"
+      imgClass="h-full w-full max-w-none"
+    />
+
+    <div class="relative z-10 grid w-full grid-cols-3 md:gap-y-24">
 
      <SectionHeading eyebrow={heading.eyebrow} title={heading.title} class="md:hidden col-span-3 " />
 

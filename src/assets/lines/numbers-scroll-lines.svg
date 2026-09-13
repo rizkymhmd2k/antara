@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 180" preserveAspectRatio="none">
+  <path
+    d="M -10 54 C 230 78, 410 92, 610 78 C 830 62, 1030 72, 1210 126"
+    fill="none"
+    stroke="rgba(255,255,255,.48)"
+    stroke-width="1"
+    vector-effect="non-scaling-stroke"
+  />
+  <path
+    d="M -10 142 C 210 111, 430 79, 690 74 C 890 70, 1040 87, 1210 64"
+    fill="none"
+    stroke="rgba(255,255,255,.48)"
+    stroke-width="1"
+    vector-effect="non-scaling-stroke"
+  />
+</svg>

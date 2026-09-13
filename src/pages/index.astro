@@ -15,17 +15,13 @@ const page = await getEntry("site", "home-page");
 const data = page?.data as { title: string; description: string };
 ---
 
-<Layout
-	class="bg-grid-3"
-	title={data.title}
-	description={data.description}
->
+<Layout class="bg-grid-3" title={data.title} description={data.description}>
   <div class="relative isolate">
     <div class="relative z-10">
       <Hero />
       <Who />
-      <Numbers />
       <Diffrence />
+      <Numbers />
       <Serve />
       <Service />
       <Step />
