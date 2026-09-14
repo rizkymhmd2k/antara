@@ -1,9 +1,9 @@
 ---
-import Button from "../ui/Button.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import ScrollLine from "../ui/ScrollLine.astro";
 import scrollLineUrl from "../../assets/lines/scroll-line.svg?url";
 import { getEntry } from "astro:content";
+import { Icon } from "astro-icon/components";
 
 const who = await getEntry("site", "home-who");
 const data = who?.data as {
@@ -14,27 +14,131 @@ const data = who?.data as {
 };
 ---
 
-<section class="container-padding relative flex items-center md:pt-48">
+<section class="container-padding relative flex min-h-[80svh] items-center">
   <ScrollLine
     src={scrollLineUrl}
     class="pointer-events-none absolute inset-x-0 top-8 md:top-25 z-0 h-[min(120vh,72rem)] w-full "
     imgClass="h-[min(120vh,72rem)] w-full max-w-none"
   />
-  <div class="relative z-10 grid grid-cols-1 items-start gap-2 md:gap-12 sm:grid-cols-12 sm:gap-0">
-    <!-- Eyebrow -->
-    <div class="col-span-1 flex sm:col-span-3 xl:col-span-6">
+  <div
+    class="relative z-10 mx-auto flex max-w-4xl flex-col items-center gap-8 text-center sm:gap-10"
+  >
+    <div class="flex justify-center">
       <Eyebrow text={data.eyebrow} />
     </div>
 
-    <!-- Content -->
-    <div class="col-span-1 grid gap-6 sm:col-span-8 xl:col-span-6">
-      <h2 class="headline-text">
-        {data.headline}
-      </h2>
+    <h2
+      aria-label={data.headline}
+      data-scroll-fill
+      class="max-w-[24ch] text-[clamp(2rem,7vw,4.5rem)] leading-[1.05] tracking-[-0.035em]"
+    >
+      <span aria-hidden="true">
+        {
+          Array.from(data.headline).map((character) => (
+            <span class="scroll-fill-character">{character}</span>
+          ))
+        }
+      </span>
+    </h2>
 
-      <div class="flex justify-end sm:justify-start">
-        <Button text={data.button} href={data.href} />
-      </div>
-    </div>
+    <a
+      href={data.href}
+      class="group inline-flex items-center gap-2 text-lg underline decoration-white/40 underline-offset-6 transition-colors hover:decoration-white sm:text-xl"
+    >
+      <span>{data.button}</span>
+      <Icon
+        name="arrow-up-right"
+        aria-hidden="true"
+        class="size-5 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+      />
+    </a>
   </div>
 </section>
+
+<script>
+  let cleanupWhoFill: (() => void) | undefined;
+
+  function initWhoFill() {
+    cleanupWhoFill?.();
+
+    const heading = document.querySelector<HTMLElement>("[data-scroll-fill]");
+    const characters = Array.from(
+      heading?.querySelectorAll<HTMLElement>(".scroll-fill-character") ?? [],
+    );
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+
+    if (!heading || !characters.length) return;
+
+    let frame = 0;
+    const fillTrail = 10;
+
+    const update = () => {
+      frame = 0;
+
+      if (reducedMotion.matches) {
+        characters.forEach((character) =>
+          character.style.removeProperty("opacity"),
+        );
+        heading.classList.remove("scroll-fill-ready");
+        return;
+      }
+
+      heading.classList.add("scroll-fill-ready");
+
+      const rect = heading.getBoundingClientRect();
+      const start = window.innerHeight * 0.82;
+      const finish = window.innerHeight * 0.38;
+      const progress = Math.min(
+        1,
+        Math.max(0, (start - rect.top) / (start - finish)),
+      );
+      const fillHead = progress * (characters.length + fillTrail);
+
+      characters.forEach((character, index) => {
+        const characterProgress = Math.min(
+          1,
+          Math.max(0, (fillHead - index) / fillTrail),
+        );
+
+        character.style.opacity = String(0.2 + characterProgress * 0.8);
+      });
+    };
+
+    const requestUpdate = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    reducedMotion.addEventListener("change", requestUpdate);
+
+    cleanupWhoFill = () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      reducedMotion.removeEventListener("change", requestUpdate);
+      heading.classList.remove("scroll-fill-ready");
+      characters.forEach((character) =>
+        character.style.removeProperty("opacity"),
+      );
+    };
+  }
+
+  initWhoFill();
+  document.addEventListener("astro:page-load", initWhoFill);
+  document.addEventListener("astro:before-swap", () => cleanupWhoFill?.());
+</script>
+
+<style>
+  .scroll-fill-character {
+    opacity: 1;
+  }
+
+  .scroll-fill-ready .scroll-fill-character {
+    opacity: 0.2;
+  }
+</style>
