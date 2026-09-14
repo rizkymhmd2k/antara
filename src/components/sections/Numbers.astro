@@ -27,9 +27,23 @@ const stats = (await getCollection("stats"))
   >
     <h2
       id="numbers-heading"
+      aria-label="Antara Snapshot"
+      data-snapshot-scroll-fill
       class="max-w-[6ch] text-[clamp(4rem,10vw,9rem)] leading-[0.8] tracking-[-0.055em]"
     >
-      Antara<br />Snapshot
+      <span aria-hidden="true">
+        {
+          Array.from("Antara").map((character) => (
+            <span class="snapshot-fill-character">{character}</span>
+          ))
+        }
+        <br />
+        {
+          Array.from("Snapshot").map((character) => (
+            <span class="snapshot-fill-character">{character}</span>
+          ))
+        }
+      </span>
     </h2>
 
     <div class="grid grid-cols-1 gap-x-8 gap-y-14 min-[480px]:grid-cols-2 md:gap-y-16 md:pt-32 lg:gap-y-20 lg:pt-28">
@@ -56,6 +70,86 @@ const stats = (await getCollection("stats"))
 </section>
 
 <script>
+  let cleanupSnapshotFill: (() => void) | undefined;
+
+  function initSnapshotFill() {
+    cleanupSnapshotFill?.();
+
+    const heading = document.querySelector<HTMLElement>(
+      "[data-snapshot-scroll-fill]",
+    );
+    const characters = Array.from(
+      heading?.querySelectorAll<HTMLElement>(".snapshot-fill-character") ?? [],
+    );
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+
+    if (!heading || !characters.length) return;
+
+    let frame = 0;
+    const fillTrail = 10;
+
+    const update = () => {
+      frame = 0;
+
+      if (reducedMotion.matches) {
+        characters.forEach((character) =>
+          character.style.removeProperty("opacity"),
+        );
+        heading.classList.remove("snapshot-fill-ready");
+        return;
+      }
+
+      heading.classList.add("snapshot-fill-ready");
+
+      const rect = heading.getBoundingClientRect();
+      const start = window.innerHeight * 0.82;
+      const finish = window.innerHeight * 0.38;
+      const progress = Math.min(
+        1,
+        Math.max(0, (start - rect.top) / (start - finish)),
+      );
+      const fillHead = progress * (characters.length + fillTrail);
+
+      characters.forEach((character, index) => {
+        const characterProgress = Math.min(
+          1,
+          Math.max(0, (fillHead - index) / fillTrail),
+        );
+
+        character.style.opacity = String(0.2 + characterProgress * 0.8);
+      });
+    };
+
+    const requestUpdate = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    reducedMotion.addEventListener("change", requestUpdate);
+
+    cleanupSnapshotFill = () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      reducedMotion.removeEventListener("change", requestUpdate);
+      heading.classList.remove("snapshot-fill-ready");
+      characters.forEach((character) =>
+        character.style.removeProperty("opacity"),
+      );
+    };
+  }
+
+  initSnapshotFill();
+  document.addEventListener("astro:page-load", initSnapshotFill);
+  document.addEventListener("astro:before-swap", () =>
+    cleanupSnapshotFill?.(),
+  );
+
   const numbers = document.querySelectorAll<HTMLElement>("[data-countup]");
 
   if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -107,3 +201,13 @@ const stats = (await getCollection("stats"))
     });
   }
 </script>
+
+<style>
+  .snapshot-fill-character {
+    opacity: 1;
+  }
+
+  .snapshot-fill-ready .snapshot-fill-character {
+    opacity: 0.2;
+  }
+</style>

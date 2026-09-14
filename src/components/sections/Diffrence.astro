@@ -11,6 +11,8 @@ const items = (await getCollection("difference-items"))
 
 <section id="difference" class="difference-section" data-difference-section>
   <div class="difference-sticky">
+    <div class="difference-rails" aria-hidden="true"></div>
+
     <div class="difference-heading container-padding">
       <SectionHeading eyebrow={heading.eyebrow} title={heading.title} />
     </div>
@@ -127,11 +129,12 @@ const items = (await getCollection("difference-items"))
         const easedCenterDistance =
           centerDistance * centerDistance * (3 - 2 * centerDistance);
         const rotation = -easedAmount * 5;
-        const baseY = [6, -5, 4, -6, 5, -4][index % 6];
-        const floatY = Math.sin(distance * Math.PI) * 2;
+        const rail = index % 2 === 0 ? 0.78 : 0.66;
+        const cardBottom = track.offsetTop + card.offsetTop + card.offsetHeight;
+        const translateY = viewport.clientHeight * rail - cardBottom;
         const scale = 1.08 - easedCenterDistance * 0.18;
 
-        card.style.transform = `translate3d(0, ${baseY + floatY}vh, 0) rotate(${rotation}deg) scale(${scale})`;
+        card.style.transform = `translate3d(0, ${translateY}px, 0) rotate(${rotation}deg) scale(${scale})`;
       });
     };
 
@@ -172,6 +175,10 @@ const items = (await getCollection("difference-items"))
 
   .difference-sticky {
     min-width: 0;
+  }
+
+  .difference-rails {
+    display: none;
   }
 
   .difference-heading {
@@ -259,9 +266,25 @@ const items = (await getCollection("difference-items"))
       overflow: hidden;
     }
 
+    .difference-rails {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      display: block;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to bottom, var(--grid-line-color), var(--grid-line-color)),
+        linear-gradient(to bottom, var(--grid-line-color), var(--grid-line-color));
+      background-position:
+        0 40%,
+        0 78%;
+      background-repeat: no-repeat;
+      background-size: 100% 1px;
+    }
+
     .difference-heading {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       padding-bottom: 0;
     }
 
@@ -271,6 +294,7 @@ const items = (await getCollection("difference-items"))
       display: flex;
       align-items: center;
       overflow: visible;
+      z-index: 1;
       padding: 8rem 5vw 0;
       scroll-snap-type: none;
     }
@@ -289,6 +313,7 @@ const items = (await getCollection("difference-items"))
       max-width: 31rem;
       min-height: clamp(12rem, 17vw, 15.5rem);
       justify-content: center;
+      transform-origin: center bottom;
       padding: clamp(1.35rem, 2vw, 2rem);
       scroll-snap-align: none;
     }
@@ -313,6 +338,10 @@ const items = (await getCollection("difference-items"))
 
     .difference-heading {
       padding-bottom: 2rem;
+    }
+
+    .difference-rails {
+      display: none;
     }
 
     .difference-viewport {

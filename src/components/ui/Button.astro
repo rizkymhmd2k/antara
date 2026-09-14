@@ -1,12 +1,15 @@
 ---
 import { Icon } from "astro-icon/components";
-const { text, href, trackingEvent } = Astro.props;
+const { text, href, trackingEvent, compact = false, ariaCurrent } = Astro.props;
 
-const className =
-  "group inline-flex w-fit items-center justify-between gap-4 rounded-sm bg-white px-4 py-2 sm:gap-12 transition-transform duration-200 ease-out active:scale-[0.97]";
+const className = compact
+  ? "group inline-flex w-fit items-center justify-between gap-[0.55rem] rounded-sm bg-white p-[0.1375rem] pl-[0.6875rem] transition-transform duration-200 ease-out active:scale-[0.97]"
+  : "group inline-flex w-fit items-center justify-between gap-4 rounded-sm bg-white px-4 py-2 sm:gap-12 transition-transform duration-200 ease-out active:scale-[0.97]";
 
 const easing = "ease-[cubic-bezier(0.16,1,0.3,1)]";
-const textClass = `block text-xl transition-transform duration-500 ${easing} group-hover:-translate-y-full`;
+const textClass = `block ${compact ? "text-[0.9625rem]" : "text-xl"} transition-transform duration-500 ${easing} group-hover:-translate-y-full`;
+const iconClass = compact ? "size-[1.925rem]" : "size-9";
+const arrowClass = compact ? "size-[1.1rem]" : "size-6";
 ---
 
 {
@@ -15,6 +18,7 @@ const textClass = `block text-xl transition-transform duration-500 ${easing} gro
       href={href}
       class={className}
       data-ga-event={trackingEvent}
+      aria-current={ariaCurrent}
     >
       <span class="relative inline-block overflow-hidden">
         <span
@@ -32,16 +36,16 @@ const textClass = `block text-xl transition-transform duration-500 ${easing} gro
         </span>
       </span>
 
-      <span class="relative flex size-9 items-center justify-center overflow-hidden rounded-sm border bg-background">
+      <span class={`relative flex ${iconClass} items-center justify-center overflow-hidden rounded-sm border bg-background`}>
         <Icon
           name="arrow-up-right"
           aria-hidden="true"
-          class={`absolute size-6 text-white transition-all duration-500 ${easing} group-hover:translate-x-4 group-hover:-translate-y-4 group-hover:opacity-0`}
+          class={`absolute ${arrowClass} text-white transition-all duration-500 ${easing} group-hover:translate-x-4 group-hover:-translate-y-4 group-hover:opacity-0`}
         />
         <Icon
           name="arrow-up-right"
           aria-hidden="true"
-          class={`absolute size-6 -translate-x-4 translate-y-4 text-white opacity-0 transition-all delay-[60ms] duration-500 ${easing} group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100`}
+          class={`absolute ${arrowClass} -translate-x-4 translate-y-4 text-white opacity-0 transition-all delay-[60ms] duration-500 ${easing} group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100`}
         />
       </span>
     </a>
@@ -63,16 +67,16 @@ const textClass = `block text-xl transition-transform duration-500 ${easing} gro
         </span>
       </span>
 
-      <span class="relative flex size-9 items-center justify-center overflow-hidden rounded-sm border bg-background">
+      <span class={`relative flex ${iconClass} items-center justify-center overflow-hidden rounded-sm border bg-background`}>
         <Icon
           name="arrow-up-right"
           aria-hidden="true"
-          class={`absolute size-6 text-white transition-all duration-500 ${easing} group-hover:translate-x-4 group-hover:-translate-y-4 group-hover:opacity-0`}
+          class={`absolute ${arrowClass} text-white transition-all duration-500 ${easing} group-hover:translate-x-4 group-hover:-translate-y-4 group-hover:opacity-0`}
         />
         <Icon
           name="arrow-up-right"
           aria-hidden="true"
-          class={`absolute size-6 -translate-x-4 translate-y-4 text-white opacity-0 transition-all delay-[60ms] duration-500 ${easing} group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100`}
+          class={`absolute ${arrowClass} -translate-x-4 translate-y-4 text-white opacity-0 transition-all delay-[60ms] duration-500 ${easing} group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100`}
         />
       </span>
     </button>

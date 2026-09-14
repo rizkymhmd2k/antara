@@ -1,24 +1,27 @@
 ---
 import logoUrl from "../assets/icon/AntaraSVG.svg?url";
+import Button from "./ui/Button.astro";
 
 const navItems = [
+  { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
 ];
 
 const contactItem = { label: "Contact", href: "/contact" };
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 const textAnimation =
   "block transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-full";
 ---
 
 <header
-  class="fixed inset-x-0 top-0 z-40 -translate-y-full  bg-background transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] data-[nav-state=visible]:translate-y-0 data-[nav-state=visible]:duration-700 motion-reduce:transition-none"
+  class="fixed inset-x-0 top-0 z-40 -translate-y-full bg-background transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] data-[nav-state=visible]:translate-y-0 data-[nav-state=visible]:duration-700 motion-reduce:transition-none md:bg-transparent"
   data-navbar-shell
   data-nav-state="hidden"
   inert
 >
   <nav
-    class="flex min-h-20 items-center justify-between gap-6 px-4 py-4 sm:min-h-24 sm:px-8"
+    class="flex min-h-20 items-center justify-between gap-6 px-4 py-4 sm:min-h-24 sm:px-8 md:grid md:min-h-0 md:grid-cols-[1fr_auto_1fr] md:py-[0.825rem]"
     aria-label="Primary navigation"
     data-navbar
   >
@@ -33,16 +36,24 @@ const textAnimation =
         width="1213"
         height="260"
         decoding="async"
-        class="h-auto w-32 sm:w-40"
+        class="h-auto w-28 sm:w-32 md:w-[6.6rem] lg:w-[7.7rem]"
       />
     </a>
 
-    <div class="hidden items-center gap-8 md:flex">
+    <div
+      class="hidden items-stretch gap-[0.1375rem] rounded-sm border border-white/10 bg-black/25 p-[0.1375rem] shadow-[0_0.5rem_2rem_rgb(0_0_0/0.08)] backdrop-blur-md md:flex"
+    >
       {
         navItems.map((item) => (
           <a
             href={item.href}
-            class="group rounded-sm title-text text-white/85 transition-colors duration-200 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            aria-current={currentPath === item.href ? "page" : undefined}
+            class:list={[
+              "group flex min-h-[2.2rem] items-center rounded-[0.2rem] px-[0.825rem] text-[0.825rem] leading-none transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white",
+              currentPath === item.href
+                ? "bg-white text-background"
+                : "text-white/80 hover:bg-white/10 hover:text-white",
+            ]}
           >
             <span class="relative inline-block overflow-hidden">
               <span class={textAnimation}>{item.label}</span>
@@ -56,21 +67,15 @@ const textAnimation =
           </a>
         ))
       }
+    </div>
 
-      <a
+    <div class="hidden justify-self-end md:block">
+      <Button
+        text={contactItem.label}
         href={contactItem.href}
-        class="group inline-flex min-h-11 items-center rounded-sm bg-white px-6 title-text leading-none text-black transition-colors duration-200 hover:bg-white/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-      >
-        <span class="relative inline-block overflow-hidden">
-          <span class={textAnimation}>{contactItem.label}</span>
-          <span
-            aria-hidden="true"
-            class={`absolute left-0 top-full ${textAnimation}`}
-          >
-            {contactItem.label}
-          </span>
-        </span>
-      </a>
+        compact
+        ariaCurrent={currentPath === contactItem.href ? "page" : undefined}
+      />
     </div>
 
     <button
@@ -180,6 +185,7 @@ const textAnimation =
     const links =
       document.querySelectorAll<HTMLAnchorElement>("[data-menu-link]");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const desktop = window.matchMedia("(min-width: 48rem)");
     const controller = new AbortController();
 
     if (!shell || !toggle || !menu || !scrim || !panel) return;
@@ -221,6 +227,11 @@ const textAnimation =
 
     const updateNavbar = () => {
       ticking = false;
+
+      if (desktop.matches) {
+        setNavbar(true);
+        return;
+      }
 
       if (toggle.getAttribute("aria-expanded") === "true") return;
 
@@ -404,13 +415,17 @@ const textAnimation =
       signal: controller.signal,
     });
 
+    desktop.addEventListener("change", scheduleNavbarUpdate, {
+      signal: controller.signal,
+    });
+
     if (reduceMotion.matches) {
       shell.classList.remove("transition-transform");
       scrim.classList.remove("transition-opacity");
       panel.classList.remove("transition-transform");
     }
 
-    setNavbar(false);
+    setNavbar(desktop.matches);
     setMenu(false);
   };
 
