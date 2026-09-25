@@ -89,24 +89,26 @@ const servicesText = (await getCollection("services"))
 </div>
 
 <script>
+  let cleanupServices: (() => void) | undefined;
+
   function initStickyServices() {
+    cleanupServices?.();
     const wrapper = document.querySelector("[data-sticky-wrapper]");
     const frame = document.querySelector("[data-frame]");
     const track = document.querySelector("[data-track]");
     const lineFill = document.querySelector("[data-line-fill]");
     if (!wrapper || !frame || !track) return;
 
-    // Astro page transitions can run this initializer more than once.
-    if (wrapper.dataset.servicesInitialized === "true") return;
-    wrapper.dataset.servicesInitialized = "true";
-
-    const isDesktop = () => window.matchMedia("(min-width: 768px)").matches;
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const isDesktop = () => desktop.matches;
 
     let maxTranslate = 0;
     let wrapperHeight = 0;
     let targetProgress = 0;
     let currentProgress = 0;
     let rafId = null;
+    let visible = false;
 
     function measure() {
       if (isDesktop()) {
@@ -139,22 +141,37 @@ const servicesText = (await getCollection("services"))
         targetProgress =
           total > 0 ? Math.min(Math.max(scrolled / total, 0), 1) : 0;
       }
+      if (!rafId && visible && !document.hidden) rafId = requestAnimationFrame(loop);
     }
 
     function loop() {
-      currentProgress += (targetProgress - currentProgress) * 0.15;
+      rafId = null;
+      if (!visible || document.hidden) return;
+      const settled = reducedMotion.matches || Math.abs(targetProgress - currentProgress) < 0.0001;
+      currentProgress = settled ? targetProgress : currentProgress + (targetProgress - currentProgress) * 0.15;
       if (isDesktop()) {
         track.style.transform = `translateY(${-currentProgress * maxTranslate}px)`;
       }
       if (lineFill) lineFill.style.transform = `scaleY(${currentProgress})`;
-      rafId = requestAnimationFrame(loop);
+      if (!settled) rafId = requestAnimationFrame(loop);
     }
 
     let resizeTimer;
     function onResize() {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(measure, 150);
+      resizeTimer = setTimeout(() => { measure(); onScroll(); }, 150);
     }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) onScroll();
+      else if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    });
+    observer.observe(wrapper);
+    const onVisibility = () => {
+      if (document.hidden && rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      else if (visible) onScroll();
+    };
 
     measure();
     onScroll();
@@ -163,10 +180,20 @@ const servicesText = (await getCollection("services"))
     wrapper.style.visibility = "visible";
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
-    if (rafId) cancelAnimationFrame(rafId);
-    loop();
+    document.addEventListener("visibilitychange", onVisibility);
+    reducedMotion.addEventListener("change", onScroll);
+    cleanupServices = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      clearTimeout(resizeTimer);
+      observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibility);
+      reducedMotion.removeEventListener("change", onScroll);
+    };
   }
 
   initStickyServices();
   document.addEventListener("astro:page-load", initStickyServices);
+  document.addEventListener("astro:before-swap", () => cleanupServices?.());
 </script>

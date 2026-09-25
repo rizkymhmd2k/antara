@@ -18,10 +18,10 @@ const data = content?.data as { anchorText: string };
 
 const LINE_COUNT = 18;
 
-const makePath = (index: number, motion = 0) => {
+const makePath = (index: number) => {
   const t = index / (LINE_COUNT - 1);
   const back = 1 - t;
-  const drift = motion * 7;
+  const drift = 0;
 
   // Coordinates follow the reference's 700 × 312 composition. The right
   // crest folds back toward the bottom edge instead of exiting sideways.
@@ -39,7 +39,6 @@ const makePath = (index: number, motion = 0) => {
 
 const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
   d: makePath(index),
-  wave: `${makePath(index, -1)};${makePath(index, 1)};${makePath(index, -1)}`,
 }));
 ---
 
@@ -76,19 +75,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
     </defs>
     <g class="white-lines__ribbon" mask="url(#home-ribbon-mask)">
       {lines.map((line) => (
-        <path d={line.d} class="white-lines__path">
-          {animated && (
-            <animate
-              attributeName="d"
-              dur="12s"
-              repeatCount="indefinite"
-              calcMode="spline"
-              keyTimes="0;0.5;1"
-              keySplines="0.42 0 0.58 1;0.42 0 0.58 1"
-              values={line.wave}
-            />
-          )}
-        </path>
+        <path d={line.d} class="white-lines__path" />
       ))}
     </g>
   </svg>
@@ -120,16 +107,29 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
     overflow: visible;
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .white-lines:not(.is-static) .white-lines__svg {
+      animation: ribbon-drift 14s ease-in-out infinite alternate;
+      animation-play-state: paused;
+      transform-origin: center;
+    }
+
+    .white-lines.is-visible .white-lines__svg {
+      animation-play-state: running;
+    }
+  }
+
+  @keyframes ribbon-drift {
+    from { transform: translate3d(-6px, -4px, 0) rotate(-0.25deg); }
+    to { transform: translate3d(6px, 4px, 0) rotate(0.25deg); }
+  }
+
   .white-lines__path {
     fill: none;
     stroke: url(#home-ribbon-depth);
     stroke-width: var(--white-lines-stroke);
     stroke-linecap: round;
     vector-effect: non-scaling-stroke;
-  }
-
-  .is-static animate {
-    display: none;
   }
 
   .white-lines__anchor-text {
@@ -153,20 +153,30 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
 </style>
 
 <script>
-  const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let cleanupRibbon: (() => void) | undefined;
 
-  function updateMotion() {
-    document.querySelectorAll<SVGSVGElement>(".white-lines__svg").forEach((svg) => {
-      if (motionPreference.matches) {
-        svg.pauseAnimations();
-        svg.setCurrentTime(0);
-      } else {
-        svg.unpauseAnimations();
-      }
+  function initRibbon() {
+    cleanupRibbon?.();
+    const ribbon = document.querySelector<HTMLElement>(".white-lines:not(.is-static)");
+    // The ribbon extends through both Hero and Who, beyond its SVG viewport.
+    const region = ribbon?.parentElement?.parentElement;
+    if (!ribbon || !region) return;
+    let visible = false;
+    const update = () => ribbon.classList.toggle("is-visible", visible && !document.hidden);
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      update();
     });
+    observer.observe(region);
+    document.addEventListener("visibilitychange", update);
+    cleanupRibbon = () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", update);
+      ribbon.classList.remove("is-visible");
+    };
   }
 
-  updateMotion();
-  motionPreference.addEventListener("change", updateMotion);
-  document.addEventListener("astro:page-load", updateMotion);
+  initRibbon();
+  document.addEventListener("astro:page-load", initRibbon);
+  document.addEventListener("astro:before-swap", () => cleanupRibbon?.());
 </script>

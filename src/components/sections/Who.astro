@@ -65,6 +65,8 @@ const data = who?.data as {
     if (!heading || !characters.length) return;
 
     let frame = 0;
+    let visible = false;
+    let lastFillHead = -1;
     const fillTrail = 10;
 
     const update = () => {
@@ -88,6 +90,8 @@ const data = who?.data as {
         Math.max(0, (start - rect.top) / (start - finish)),
       );
       const fillHead = progress * (characters.length + fillTrail);
+      if (fillHead === lastFillHead) return;
+      lastFillHead = fillHead;
 
       characters.forEach((character, index) => {
         const characterProgress = Math.min(
@@ -100,20 +104,27 @@ const data = who?.data as {
     };
 
     const requestUpdate = () => {
-      if (frame) return;
+      if (frame || !visible) return;
       frame = requestAnimationFrame(update);
     };
 
     update();
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) requestUpdate();
+    });
+    observer.observe(heading);
+    const onMotionChange = () => { lastFillHead = -1; update(); };
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate);
-    reducedMotion.addEventListener("change", requestUpdate);
+    reducedMotion.addEventListener("change", onMotionChange);
 
     cleanupWhoFill = () => {
       if (frame) cancelAnimationFrame(frame);
+      observer.disconnect();
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
-      reducedMotion.removeEventListener("change", requestUpdate);
+      reducedMotion.removeEventListener("change", onMotionChange);
       heading.classList.remove("scroll-fill-ready");
       characters.forEach((character) =>
         character.style.removeProperty("opacity"),
