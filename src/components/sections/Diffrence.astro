@@ -190,6 +190,7 @@ const items = (await getCollection("difference-items"))
   }
 
   .difference-card {
+    --hole-left: 1.5rem;
     position: relative;
     display: flex;
     width: 85%;
@@ -197,9 +198,14 @@ const items = (await getCollection("difference-items"))
     flex: 0 0 auto;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 1.35rem 1.5rem 3.25rem;
+    padding: 2.75rem 1.5rem 3.25rem;
     color: var(--color-background);
     background: white;
+    mask-image: radial-gradient(
+      circle at calc(var(--hole-left) + 7px) calc(1.25rem + 7px),
+      transparent 6.5px,
+      black 7.5px
+    );
   }
 
   .difference-card::after {
@@ -308,6 +314,7 @@ const items = (await getCollection("difference-items"))
       min-height: clamp(12rem, 17vw, 15.5rem);
       justify-content: center;
       padding: clamp(1.35rem, 2vw, 2rem);
+      padding-top: clamp(2.75rem, 3.5vw, 3.5rem);
       scroll-snap-align: none;
       will-change: transform;
     }
@@ -322,6 +329,10 @@ const items = (await getCollection("difference-items"))
 
     .difference-card:nth-child(3n) {
       transform: translateY(2vh) scale(1.02) rotate(var(--scroll-rotation, 0deg));
+    }
+
+    .difference-card {
+      --hole-left: clamp(1.35rem, 2vw, 2rem);
     }
 
     .difference-card::after {
