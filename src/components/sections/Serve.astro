@@ -1,10 +1,10 @@
 ---
 import { Image } from "astro:assets";
-import foundersImage from "../../assets/images/Founders.png";
-import familyImage from "../../assets/images/family.png";
-import sportsImage from "../../assets/images/tennis.png";
-import executivesImage from "../../assets/images/executives.png";
-import SectionHeading from "../ui/SectionHeading.astro";
+import foundersImage from "../../assets/images/serve-founders-v2.png";
+import familyImage from "../../assets/images/serve-families-v2.png";
+import sportsImage from "../../assets/images/serve-sports-v2.png";
+import executivesImage from "../../assets/images/serve-executives-v2.png";
+import Eyebrow from "../ui/Eyebrow.astro";
 import { getCollection, getEntry } from "astro:content";
 
 const section = await getEntry("site", "home-serve");
@@ -20,86 +20,321 @@ const items = (await getCollection("audiences"))
   .sort((a, b) => a.order - b.order);
 ---
 
-<section class="container-padding min-h-screen">
-  <SectionHeading eyebrow={heading.eyebrow} title={heading.title} />
+<section class="serve container-padding bg-grid-3 bg-grid-light" data-serve-section aria-labelledby="serve-title">
+  <div class="serve-heading">
+    <div class="serve-label"><Eyebrow text={heading.eyebrow} /></div>
+    <h2 id="serve-title">{heading.title}</h2>
+  </div>
 
-  <div class="grid grid-cols-1 gap-6 min-[480px]:grid-cols-2 md:gap-8 lg:grid-cols-4">
-    {
-      items.map((item) => (
-        <article class="group flex flex-col gap-4" data-serve-card>
-          <div class="relative aspect-[4/3] w-full overflow-hidden rounded-sm">
-            <Image
-              src={item.image}
-              alt={item.alt}
-              format="webp"
-              quality={75}
-              widths={[640, 960]}
-              sizes="(min-width: 1024px) 25vw, (min-width: 480px) 50vw, 100vw"
-              class="h-full w-full object-cover"
-            />
+  <div class="serve-content">
+    <div class="serve-image-column" aria-hidden="true">
+      <div class="serve-image-frame">
+        {
+          items.map((item, index) => (
+            <div class:list={["serve-image", { "is-active": index === 0 }]} data-serve-image>
+              <Image
+                src={item.image}
+                alt=""
+                format="webp"
+                quality={82}
+                widths={[640, 960, 1280]}
+                sizes="(min-width: 900px) 25vw, 1px"
+                loading={index === 0 ? "eager" : "lazy"}
+              />
+            </div>
+          ))
+        }
+        <div class="serve-pixels" data-serve-pixels></div>
+      </div>
+    </div>
 
-            <div class="mobile-hover-overlay absolute inset-0 translate-y-full bg-gradient-to-t from-blue-600/80 via-blue-500/30 to-transparent transition-transform duration-500 ease-out group-hover:translate-y-0" />
-          </div>
-
-          <div class="space-y-2">
-            <h2 class="title-text">{item.title}</h2>
-            <p class="caption-text">
-              {item.body}
-            </p>
-          </div>
-        </article>
-      ))
-    }
+    <div class="serve-rows">
+      {
+        items.map((item, index) => (
+          <article class:list={["serve-row", { "is-active": index === 0 }]} data-serve-row>
+            <button
+              class="serve-button"
+              type="button"
+              aria-expanded={index === 0 ? "true" : "false"}
+              aria-controls={`serve-panel-${index}`}
+              data-serve-button
+            >
+              <span class="serve-title">{item.title}</span>
+              <span class="serve-plus" aria-hidden="true"></span>
+            </button>
+            <div class="serve-panel" id={`serve-panel-${index}`} data-serve-panel>
+              <div class="serve-panel-inner">
+                <p>{item.body}</p>
+                <div class="serve-mobile-image">
+                  <Image
+                    src={item.image}
+                    alt={item.alt}
+                    format="webp"
+                    quality={78}
+                    widths={[480, 800]}
+                    sizes="(max-width: 899px) calc(100vw - 2rem), 1px"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
   </div>
 </section>
 
 <style>
-  @media (max-width: 767px) {
-    [data-serve-card].is-centered .mobile-hover-overlay {
-      transform: translateY(0) !important;
-    }
+  .serve {
+    background: var(--color-surface);
+    color: var(--color-background);
+  }
+
+  .serve-heading {
+    display: grid;
+    grid-template-columns: 25% 50%;
+    column-gap: 13%;
+    align-items: start;
+    padding-bottom: clamp(2.5rem, 4vw, 5rem);
+  }
+
+  .serve-heading h2 {
+    font-size: clamp(2rem, 2.7vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: -.035em;
+    text-wrap: balance;
+  }
+
+  .serve-content {
+    display: grid;
+    grid-template-columns: 25% 50%;
+    column-gap: 13%;
+    align-items: start;
+  }
+
+  .serve-image-column {
+    position: relative;
+    align-self: stretch;
+  }
+
+  .serve-image-frame {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: .35rem;
+    background: var(--color-background);
+  }
+
+  .serve-image {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+  }
+
+  .serve-image.is-active { opacity: 1; }
+
+  .serve-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .serve-pixels {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    pointer-events: none;
+  }
+
+  .serve-pixels :global(span) {
+    background: var(--color-background);
+    opacity: 0;
+  }
+
+  .serve-rows,
+  .serve-row {
+    position: relative;
+    border-color: transparent;
+  }
+
+  .serve-rows::before,
+  .serve-row::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 124%;
+    border-color: rgb(0 76 187 / 12%);
+    border-style: solid;
+    pointer-events: none;
+  }
+
+  .serve-rows::before {
+    top: 0;
+    border-width: 1px 0 0;
+  }
+
+  .serve-row::after {
+    bottom: 0;
+    border-width: 0 0 1px;
+  }
+
+  .serve-button {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 2rem;
+    gap: 1.5rem;
+    align-items: center;
+    width: 100%;
+    padding: clamp(1.25rem, 1.65vw, 2rem) 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .serve-button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+  .serve-title { font-size: clamp(1.3rem, 1.5vw, 1.85rem); line-height: 1.2; letter-spacing: -.025em; text-wrap: balance; }
+  .serve-plus { position: relative; width: 2rem; height: 2rem; border: 1px solid rgb(0 76 187 / 18%); border-radius: .25rem; background: white; transition: transform 350ms ease; }
+  .serve-plus::before, .serve-plus::after { content: ""; position: absolute; top: 50%; left: 50%; width: .75rem; height: 1px; background: currentColor; transform: translate(-50%, -50%); }
+  .serve-plus::after { transform: translate(-50%, -50%) rotate(90deg); }
+  .serve-row.is-active .serve-plus { transform: rotate(45deg); }
+  .serve-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 450ms cubic-bezier(.76, 0, .24, 1); }
+  .serve-row.is-active .serve-panel { grid-template-rows: 1fr; }
+  .serve-panel-inner { min-height: 0; overflow: hidden; }
+  .serve-panel p { max-width: 36rem; margin: .15rem 3.5rem 2rem 0; font-size: clamp(.95rem, 1.05vw, 1.1rem); line-height: 1.5; }
+  .serve-mobile-image { display: none; }
+
+  @media (max-width: 899px) {
+    .serve-heading, .serve-content { grid-template-columns: 1fr; gap: 0; }
+    .serve-heading { padding-bottom: 2.25rem; }
+    .serve-heading h2 { margin-top: 1.25rem; font-size: clamp(2rem, 6vw, 2.75rem); }
+    .serve-image-column { display: none; }
+    .serve-rows { border-top: 1px solid rgb(0 76 187 / 12%); }
+    .serve-row { border-bottom: 1px solid rgb(0 76 187 / 12%); }
+    .serve-rows::before, .serve-row::after { display: none; }
+    .serve-title { font-size: clamp(1.4rem, 4vw, 1.85rem); }
+    .serve-panel p { margin-right: 0; }
+    .serve-mobile-image { display: block; max-width: 18rem; margin: 0 0 1.75rem; aspect-ratio: 1.15; overflow: hidden; background: var(--color-background); }
+    .serve-mobile-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .serve-plus, .serve-panel { transition: none; }
   }
 </style>
 
 <script>
-  const cards = Array.from(
-    document.querySelectorAll<HTMLElement>("[data-serve-card]")
-  );
-  const mobileQuery = window.matchMedia("(max-width: 767px)");
-  let frame = 0;
+  let cleanupServe: (() => void) | undefined;
 
-  const updateCenteredCard = () => {
-    frame = 0;
+  function initServe() {
+    cleanupServe?.();
+    const section = document.querySelector<HTMLElement>("[data-serve-section]");
+    if (!section) return;
 
-    if (!mobileQuery.matches) {
-      cards.forEach((card) => card.classList.remove("is-centered"));
-      return;
-    }
+    const rows = Array.from(section.querySelectorAll<HTMLElement>("[data-serve-row]"));
+    const images = Array.from(section.querySelectorAll<HTMLElement>("[data-serve-image]"));
+    const pixels = section.querySelector<HTMLElement>("[data-serve-pixels]");
+    if (!pixels) return;
 
-    const viewportCenter = window.innerHeight / 2;
-    const centeredCard = cards.reduce<HTMLElement | null>((closest, card) => {
-      const bounds = card.getBoundingClientRect();
-      if (bounds.bottom < 0 || bounds.top > window.innerHeight) return closest;
+    const tiles = Array.from({ length: 100 }, () => {
+      const tile = document.createElement("span");
+      pixels.append(tile);
+      return tile;
+    });
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const desktop = window.matchMedia("(min-width: 900px)");
+    const animations = new Set<Animation>();
+    let activeImage = 0;
+    let openRow = 0;
+    let queuedImage = 0;
+    let transitioning = false;
+    let cancelled = false;
 
-      const closestDistance = closest
-        ? Math.abs(closest.getBoundingClientRect().top + closest.getBoundingClientRect().height / 2 - viewportCenter)
-        : Infinity;
-      const cardDistance = Math.abs(bounds.top + bounds.height / 2 - viewportCenter);
+    const setOpenRow = (index: number) => {
+      rows.forEach((row, rowIndex) => {
+        const selected = rowIndex === index;
+        row.classList.toggle("is-active", selected);
+        row.querySelector("button")?.setAttribute("aria-expanded", String(selected));
+        row.querySelector<HTMLElement>("[data-serve-panel]")?.toggleAttribute("inert", !selected);
+      });
+      openRow = index;
+    };
 
-      return cardDistance < closestDistance ? card : closest;
-    }, null);
+    const setImage = (index: number) => {
+      images.forEach((image, imageIndex) => image.classList.toggle("is-active", imageIndex === index));
+      activeImage = index;
+    };
 
-    cards.forEach((card) =>
-      card.classList.toggle("is-centered", card === centeredCard)
-    );
-  };
+    const wipe = (cover: boolean) => Promise.all(tiles.map((tile, index) => {
+      const col = index % 10;
+      const row = Math.floor(index / 10);
+      const animation = tile.animate(
+        [{ opacity: cover ? 0 : 1 }, { opacity: cover ? 1 : 0 }],
+        { duration: 120, delay: col * 23 + row * 16, easing: "steps(1, end)", fill: "forwards" },
+      );
+      animations.add(animation);
+      return animation.finished.catch(() => undefined).then(() => {
+        animations.delete(animation);
+        if (!cancelled) tile.style.opacity = cover ? "1" : "0";
+        animation.cancel();
+      });
+    }));
 
-  const requestCenteredCardUpdate = () => {
-    if (!frame) frame = requestAnimationFrame(updateCenteredCard);
-  };
+    const selectImage = async (index: number) => {
+      queuedImage = index;
+      if (transitioning) return;
+      transitioning = true;
+      while (!cancelled && queuedImage !== activeImage) {
+        const next = queuedImage;
+        if (!desktop.matches || reducedMotion.matches) {
+          setImage(next);
+          continue;
+        }
+        const image = images[next]?.querySelector("img");
+        if (image) {
+          image.loading = "eager";
+          await image.decode().catch(() => undefined);
+        }
+        if (cancelled || queuedImage !== next) continue;
+        await wipe(true);
+        if (cancelled) break;
+        setImage(next);
+        await wipe(false);
+      }
+      transitioning = false;
+    };
 
-  window.addEventListener("scroll", requestCenteredCardUpdate, { passive: true });
-  window.addEventListener("resize", requestCenteredCardUpdate);
-  mobileQuery.addEventListener("change", requestCenteredCardUpdate);
-  updateCenteredCard();
+    const onClick = (event: Event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const button = target.closest<HTMLElement>("[data-serve-button]");
+      if (!button) return;
+      const index = rows.indexOf(button.closest<HTMLElement>("[data-serve-row]")!);
+      if (index < 0) return;
+      if (index === openRow) return;
+
+      setOpenRow(index);
+      if (index !== activeImage) void selectImage(index);
+    };
+
+    setOpenRow(0);
+    setImage(0);
+    section.addEventListener("click", onClick);
+    cleanupServe = () => {
+      cancelled = true;
+      section.removeEventListener("click", onClick);
+      animations.forEach((animation) => animation.cancel());
+      tiles.forEach((tile) => tile.remove());
+    };
+  }
+
+  initServe();
+  document.addEventListener("astro:page-load", initServe);
+  document.addEventListener("astro:before-swap", () => cleanupServe?.());
 </script>

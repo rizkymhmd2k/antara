@@ -1,7 +1,5 @@
 ---
 import Eyebrow from "../ui/Eyebrow.astro";
-import ScrollLine from "../ui/ScrollLine.astro";
-import scrollLineUrl from "../../assets/lines/scroll-line.svg?url";
 import { getEntry } from "astro:content";
 import { Icon } from "astro-icon/components";
 
@@ -15,22 +13,17 @@ const data = who?.data as {
 ---
 
 <section class="container-padding relative flex min-h-[80svh] items-center">
-  <ScrollLine
-    src={scrollLineUrl}
-    class="pointer-events-none absolute inset-x-0 top-8 md:top-25 z-0 h-[min(120vh,72rem)] w-full "
-    imgClass="h-[min(120vh,72rem)] w-full max-w-none"
-  />
   <div
-    class="relative z-10 mx-auto flex max-w-4xl flex-col items-center gap-8 text-center sm:gap-10"
+    class="relative z-10 mx-auto min-h-screen justify-center flex max-w-4xl md:max-w-6xl leading-tight flex-col items-center gap-8 text-center sm:gap-10"
   >
-    <div class="flex justify-center">
+    <!-- <div class="flex justify-center">
       <Eyebrow text={data.eyebrow} />
-    </div>
+    </div> -->
 
     <h2
       aria-label={data.headline}
       data-scroll-fill
-      class="max-w-[24ch] text-[clamp(2rem,7vw,4.5rem)] leading-[1.05] tracking-[-0.035em]"
+      class="max-w-[22ch] md:max-w-[24ch] text-[clamp(2rem,7vw,4.5rem)] leading-[1.05] tracking-[-0.035em]"
     >
       <span aria-hidden="true">
         {

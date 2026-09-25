@@ -1,0 +1,126 @@
+---
+interface Props {
+  to: "white" | "blue";
+}
+
+const { to } = Astro.props;
+---
+
+<div
+  class:list={["stair-transition bg-grid-3", { "to-blue": to === "blue" }]}
+  data-stair-transition
+  aria-hidden="true"
+>
+  {Array.from({ length: 3 }, () => (
+    <div class="stair-row"><span></span><span></span></div>
+  ))}
+</div>
+
+<script>
+  let cleanup: (() => void) | undefined;
+
+  function initStairTransitions() {
+    cleanup?.();
+    const transitions = Array.from(document.querySelectorAll<HTMLElement>("[data-stair-transition]"));
+    const navbar = document.querySelector<HTMLElement>("[data-navbar-shell]");
+    const numbers = document.querySelector<HTMLElement>(".snapshot");
+    const services = document.querySelector<HTMLElement>("[data-services-section]");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const original = navbar?.style.backgroundColor ?? "";
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      transitions.forEach((transition) => {
+        const bottom = transition.getBoundingClientRect().bottom;
+        const progress = Math.min(1, Math.max(0,
+          (window.innerHeight - bottom) / (window.innerHeight * 0.7),
+        ));
+        Array.from(transition.children).forEach((row, index) => {
+          const amount = reducedMotion.matches ? 1 : Math.min(1, Math.max(0,
+            progress * 1.4 - (2 - index) * 0.2,
+          ));
+          row.querySelectorAll<HTMLElement>("span").forEach((bar) => {
+            bar.style.transform = `scaleX(${amount})`;
+          });
+        });
+      });
+
+      if (navbar && numbers && services) {
+        const position = navbar.offsetHeight;
+        const firstTransition = transitions[0]?.getBoundingClientRect();
+        const white = (firstTransition && firstTransition.top <= position && firstTransition.bottom > 0)
+          || (numbers.getBoundingClientRect().top <= position
+            && services.getBoundingClientRect().top > position);
+        navbar.style.backgroundColor = white ? "var(--color-background)" : original;
+      }
+    };
+    const requestUpdate = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    reducedMotion.addEventListener("change", requestUpdate);
+    cleanup = () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      reducedMotion.removeEventListener("change", requestUpdate);
+      if (navbar) navbar.style.backgroundColor = original;
+    };
+  }
+
+  initStairTransitions();
+  document.addEventListener("astro:page-load", initStairTransitions);
+  document.addEventListener("astro:before-swap", () => cleanup?.());
+</script>
+
+<style>
+  .stair-transition {
+    --grid-line-color: rgb(128 128 128 / 20%);
+    position: relative;
+    height: 270px;
+    background: var(--color-background);
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .stair-transition::before {
+    z-index: 1;
+  }
+
+  .stair-row {
+    display: flex;
+    justify-content: space-between;
+    height: 90px;
+  }
+
+  .stair-row span {
+    display: block;
+    background: var(--color-surface);
+    transform: scaleX(0);
+  }
+
+  .stair-row span:first-child { transform-origin: left center; }
+  .stair-row span:last-child { transform-origin: right center; }
+  .stair-row span { width: 50%; }
+
+  .stair-transition.to-blue {
+    background: var(--color-surface);
+  }
+
+  .stair-transition.to-blue .stair-row span {
+    background: var(--color-background);
+  }
+
+  @media (max-width: 47.999rem) {
+    .stair-transition { height: 210px; }
+    .stair-row { height: 70px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stair-transition { height: 3rem; }
+    .stair-row { display: none; }
+  }
+</style>

@@ -15,12 +15,12 @@ const data = hero?.data as {
 ---
 
 <section
-  class="hero-padding relative flex min-h-[100dvh] pb-[calc(10rem+env(safe-area-inset-bottom))] sm:pb-44"
+  class="hero-padding relative flex min-h-[100dvh] pb-[calc(10rem+env(safe-area-inset-bottom))] sm:pb-44 pt-28"
 >
   <GravityRings />
   <div class="relative z-10 flex w-full flex-col">
     <div class="flex w-full flex-col">
-      <Eyebrow text={data.eyebrow} />
+      <!-- <Eyebrow text={data.eyebrow} /> -->
       <h1 class="display-text max-w-[11ch] leading-[0.95] sm:max-w-5xl pt-4">
         {data.title.split("\n").map((line, index) => (
           <>

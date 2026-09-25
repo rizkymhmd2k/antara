@@ -16,45 +16,31 @@ const {
 const content = await getEntry("site", "home-lines");
 const data = content?.data as { anchorText: string };
 
-// FIX: The third path in each `wave` string now matches the first path.
-// This allows the keyTimes loop to seamlessly transition back to the start.
-const lines = [
-  {
-    d: "M -100 240 Q 500 240, 900 180 T 1600 80",
-    wave:
-      "M -100 232 Q 560 260, 900 180 T 1600 60;M -100 248 Q 440 220, 900 180 T 1600 100;M -100 232 Q 560 260, 900 180 T 1600 60",
-    dur: "7s",
-    begin: "-2s",
-  },
-  {
-    d: "M -100 320 Q 520 320, 900 180 T 1600 0",
-    wave:
-      "M -100 312 Q 570 340, 900 180 T 1600 -20;M -100 328 Q 470 300, 900 180 T 1600 20;M -100 312 Q 570 340, 900 180 T 1600 -20",
-    dur: "8.5s",
-    begin: "-8s",
-  },
-  {
-    d: "M -100 400 Q 540 400, 900 180 T 1600 -80",
-    wave:
-      "M -100 392 Q 600 420, 900 180 T 1600 -100;M -100 408 Q 480 380, 900 180 T 1600 -60;M -100 392 Q 600 420, 900 180 T 1600 -100",
-    dur: "8s",
-    begin: "-5s",
-  },
-  {
-    d: "M -100 480 Q 560 480, 900 180 T 1600 -160",
-    wave:
-      "M -100 472 Q 620 500, 900 180 T 1600 -180;M -100 488 Q 500 460, 900 180 T 1600 -140;M -100 472 Q 620 500, 900 180 T 1600 -180",
-    dur: "9.5s",
-    begin: "-11s",
-  },
-  {
-    d: "M -100 560 Q 580 560, 900 180 T 1600 -240",
-    wave:
-      "M -100 552 Q 640 580, 900 180 T 1600 -260;M -100 568 Q 520 540, 900 180 T 1600 -220;M -100 552 Q 640 580, 900 180 T 1600 -260",
-    dur: "10s",
-    begin: "-15s",
-  },
-];
+const LINE_COUNT = 18;
+
+const makePath = (index: number, motion = 0) => {
+  const t = index / (LINE_COUNT - 1);
+  const back = 1 - t;
+  const drift = motion * 7;
+
+  // Coordinates follow the reference's 700 × 312 composition. The right
+  // crest folds back toward the bottom edge instead of exiting sideways.
+  return [
+    // Reverse strand order across the neck to turn the ribbon edge-on.
+    `M -20 ${40 + back * 62}`,
+    `C 55 ${133 - back * 14}, 125 ${77 + back * 37}, 205 ${95 + back * 35}`,
+    `C ${300 + drift} ${113 + back * 32}, ${293 + drift} ${207 + t * 53}, ${350 + drift} ${217 + t * 50}`,
+    `C ${408 + drift} ${229 + t * 55}, ${463 - drift} ${119 + t * 83}, ${552 - drift} ${122 + t * 78}`,
+    `C ${655 - drift} ${122 + t * 78}, ${650 + t * 84} ${242 + t * 10}, ${532 + t * 116} 330`,
+    `C ${414 + t * 148} ${418 - t * 10}, ${185 + drift + t * 75} ${399 + t * 22}, ${133 + drift + t * 60} ${465 + t * 17}`,
+    `C ${81 + drift + t * 45} ${531 + t * 12}, ${225 + t * 65} 598, ${430 + t * 80} 660`,
+  ].join(" ");
+};
+
+const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
+  d: makePath(index),
+  wave: `${makePath(index, -1)};${makePath(index, 1)};${makePath(index, -1)}`,
+}));
 ---
 
 <div
@@ -64,16 +50,37 @@ const lines = [
 >
   <svg
     class="white-lines__svg"
-    viewBox="0 0 1440 600"
-    preserveAspectRatio="none"
+    viewBox="0 0 700 312"
+    preserveAspectRatio="xMidYMin slice"
   >
+    <defs>
+      <linearGradient id="home-ribbon-fade" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="660">
+        <stop offset="0" stop-color="white" />
+        <stop offset="0.48" stop-color="white" />
+        <stop offset="0.72" stop-color="white" stop-opacity="0.5" />
+        <stop offset="1" stop-color="white" stop-opacity="0" />
+      </linearGradient>
+      <mask id="home-ribbon-mask" maskUnits="userSpaceOnUse" x="-100" y="0" width="900" height="700">
+        <rect x="-100" width="900" height="700" fill="url(#home-ribbon-fade)" />
+      </mask>
+      <linearGradient id="home-ribbon-depth" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="700" y2="0">
+        <stop offset="0" stop-color="white" stop-opacity="0.36" />
+        <stop offset="0.34" stop-color="white" stop-opacity="0.42" />
+        <stop offset="0.43" stop-color="white" stop-opacity="0.2" />
+        <stop offset="0.48" stop-color="white" stop-opacity="0.46" />
+        <stop offset="0.68" stop-color="white" stop-opacity="0.36" />
+        <stop offset="0.86" stop-color="white" stop-opacity="0.45" />
+        <stop offset="0.92" stop-color="white" stop-opacity="0.18" />
+        <stop offset="1" stop-color="white" stop-opacity="0.34" />
+      </linearGradient>
+    </defs>
+    <g class="white-lines__ribbon" mask="url(#home-ribbon-mask)">
       {lines.map((line) => (
         <path d={line.d} class="white-lines__path">
           {animated && (
             <animate
               attributeName="d"
-              dur={line.dur}
-              begin={line.begin}
+              dur="12s"
               repeatCount="indefinite"
               calcMode="spline"
               keyTimes="0;0.5;1"
@@ -83,6 +90,7 @@ const lines = [
           )}
         </path>
       ))}
+    </g>
   </svg>
   <p class="white-lines__anchor-text text-xs sm:text-sm">
     {data.anchorText.split("\n").map((line, index) => (
@@ -97,24 +105,26 @@ const lines = [
 <style>
   .white-lines {
     position: absolute;
-    inset: 0 0 auto 0;
-    height: 30%;
-    opacity: 0.82;
-    overflow: hidden;
+    inset: 0;
+    overflow: visible;
     pointer-events: none;
     z-index: 0;
   }
 
   .white-lines__svg {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     display: block;
+    overflow: visible;
   }
 
   .white-lines__path {
     fill: none;
-    stroke: rgb(255 255 255 / 0.82);
+    stroke: url(#home-ribbon-depth);
     stroke-width: var(--white-lines-stroke);
+    stroke-linecap: round;
     vector-effect: non-scaling-stroke;
   }
 
@@ -124,11 +134,39 @@ const lines = [
 
   .white-lines__anchor-text {
     position: absolute;
-    left: 62.5%;
-    top: 30%;
-    transform: translateY(12px);
+    left: 56.5%;
+    top: 23%;
     color: rgb(255 255 255 / 0.82);
     margin: 0;
     text-align: left;
   }
+
+  @media (max-width: 47.99rem) {
+    .white-lines__anchor-text {
+      top: 14%;
+      right: 1rem;
+      left: auto;
+      width: 9rem;
+    }
+  }
+
 </style>
+
+<script>
+  const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  function updateMotion() {
+    document.querySelectorAll<SVGSVGElement>(".white-lines__svg").forEach((svg) => {
+      if (motionPreference.matches) {
+        svg.pauseAnimations();
+        svg.setCurrentTime(0);
+      } else {
+        svg.unpauseAnimations();
+      }
+    });
+  }
+
+  updateMotion();
+  motionPreference.addEventListener("change", updateMotion);
+  document.addEventListener("astro:page-load", updateMotion);
+</script>

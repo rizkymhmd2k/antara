@@ -34,6 +34,7 @@
 @theme {
   /* Colors */
   --color-background: #004cbb;
+  --color-surface: #f0efe7;
 
   /* Fonts */
   --font-cormorant: "Cormorant Garamond", serif;
@@ -136,6 +137,15 @@ body {
     calc(66.666% - var(--grid-third)) 0,
     calc(100% - var(--grid-edge)) 0;
 
+}
+
+.bg-grid-light {
+  --grid-line-color: rgb(0 76 187 / 10%);
+}
+
+.bg-grid-light > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ==========================================================================

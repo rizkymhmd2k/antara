@@ -40,261 +40,106 @@ const items = (await getCollection("difference-items"))
 
   function initDifference() {
     cleanupDifference?.();
-
-    const section = document.querySelector<HTMLElement>(
-      "[data-difference-section]",
-    );
-    const viewport = section?.querySelector<HTMLElement>(
-      "[data-difference-viewport]",
-    );
-    const track = section?.querySelector<HTMLElement>(
-      "[data-difference-track]",
-    );
-    const cards = Array.from(
-      section?.querySelectorAll<HTMLElement>(".difference-card") ?? [],
-    );
+    const section = document.querySelector<HTMLElement>("[data-difference-section]");
+    const viewport = section?.querySelector<HTMLElement>("[data-difference-viewport]");
+    const track = section?.querySelector<HTMLElement>("[data-difference-track]");
     const desktop = window.matchMedia("(min-width: 48rem)");
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    );
-
-    if (!section || !viewport || !track || !cards.length) return;
-
-    const clamp = (value: number, min: number, max: number) =>
-      Math.min(max, Math.max(min, value));
-    const easeOutCubic = (value: number) => 1 - Math.pow(1 - value, 3);
-    const motions = cards.map(() => ({
-      targetY: 0,
-      targetRotateX: 0,
-      targetRotateY: 0,
-      targetRotateZ: 0,
-      targetScale: 1,
-      currentY: 0,
-      currentRotateX: 0,
-      currentRotateY: 0,
-      currentRotateZ: 0,
-      currentScale: 1,
-    }));
-    const trackMotion = { targetX: 0, currentX: 0 };
-
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!section || !viewport || !track) return;
+    const cards = Array.from(track.querySelectorAll<HTMLElement>(".difference-card")).map((card, index) => {
+      const seed = Math.sin((index + 1) * 127.1) * 43758.5453;
+      const variation = seed - Math.floor(seed);
+      return {
+        card,
+        variation,
+        direction: index % 2 === 0 ? 1 : -1,
+        phase: variation * Math.PI * 2,
+      };
+    });
     let frame = 0;
-    let animationFrame = 0;
-    let previousTime = performance.now();
     let active = true;
+    let sectionTop = 0;
+    let scrollDistance = 1;
+    let viewportWidth = 1;
+    let startX = 0;
+    let endX = 0;
+    let lastProgress = -1;
 
-    const setMobileTargets = () => {
-      const viewportHeight = window.innerHeight || 1;
-      const trackTop = track.getBoundingClientRect().top;
-
-      cards.forEach((card, index) => {
-        const motion = motions[index];
-        const center = trackTop + card.offsetTop + card.offsetHeight / 2;
-        const entry = clamp(
-          (viewportHeight * 0.9 - center) / (viewportHeight * 0.4),
-          0,
-          1,
-        );
-        const exit = clamp(
-          (viewportHeight * 0.5 - center) / (viewportHeight * 0.6),
-          0,
-          1,
-        );
-        const easedEntry = easeOutCubic(entry);
-        const easedExit = easeOutCubic(exit);
-        const direction = index % 2 === 0 ? 1 : -1;
-
-        motion.targetY =
-          viewportHeight * 0.35 * (1 - easedEntry) -
-          viewportHeight * 0.06 * easedExit;
-        motion.targetRotateX = 45 * (1 - easedEntry);
-        motion.targetRotateY = 0;
-        motion.targetRotateZ = direction * 5 * (1 - easedEntry);
-        motion.targetScale =
-          1.18 - 0.1 * easedEntry - 0.16 * easedExit;
-      });
-    };
-
-    const setDesktopTargets = () => {
-      const rect = section.getBoundingClientRect();
-      const scrollDistance = section.offsetHeight - window.innerHeight;
-      const progress = clamp(-rect.top / scrollDistance, 0, 1);
-      const viewportWidth = viewport.clientWidth;
-      const viewportHeight = viewport.clientHeight;
-      const firstCard = cards[0];
-      const lastCard = cards.at(-1)!;
-      const trackOrigin = track.offsetLeft;
-      const firstCenter =
-        trackOrigin + firstCard.offsetLeft + firstCard.offsetWidth / 2;
-      const lastCenter =
-        trackOrigin + lastCard.offsetLeft + lastCard.offsetWidth / 2;
-      const startX = viewportWidth * 0.58 - firstCenter;
-      const endX = viewportWidth * 0.74 - lastCenter;
-
-      trackMotion.targetX = startX + (endX - startX) * progress;
-
-      cards.forEach((card, index) => {
-        const motion = motions[index];
-        const center =
-          trackOrigin +
-          trackMotion.targetX +
-          card.offsetLeft +
-          card.offsetWidth / 2;
-        const distance = clamp(
-          (center - viewportWidth / 2) / (viewportWidth / 2),
-          -1,
-          1,
-        );
-        const entry = easeOutCubic(Math.max(0, distance));
-        const exit = easeOutCubic(Math.max(0, -distance));
-        const direction = index % 2 === 0 ? 1 : -1;
-        const rail = index % 2 === 0 ? 0.78 : 0.66;
-        const cardBottom = track.offsetTop + card.offsetTop + card.offsetHeight;
-        const railY = viewportHeight * rail - cardBottom;
-
-        motion.targetY =
-          railY + viewportHeight * 0.12 * entry - viewportHeight * 0.05 * exit;
-        motion.targetRotateX = 0;
-        motion.targetRotateY = -35 * entry + 10 * exit;
-        motion.targetRotateZ = direction * 4 * entry;
-        motion.targetScale = 1.20 - 0.14 * entry - 0.22 * exit;
-      });
-    };
-
-    const renderMotion = (time: number) => {
-      const elapsed = Math.min(time - previousTime, 64);
-      const smoothing = 1 - Math.pow(0.86, elapsed / (1000 / 60));
-      let unsettled = false;
-
-      previousTime = time;
-      if (desktop.matches) {
-        trackMotion.currentX +=
-          (trackMotion.targetX - trackMotion.currentX) * smoothing;
-        track.style.transform = `translate3d(${trackMotion.currentX}px, 0, 0)`;
-        if (Math.abs(trackMotion.targetX - trackMotion.currentX) > 0.02) {
-          unsettled = true;
-        }
-      }
-
-      motions.forEach((motion, index) => {
-        motion.currentY += (motion.targetY - motion.currentY) * smoothing;
-        motion.currentRotateX +=
-          (motion.targetRotateX - motion.currentRotateX) * smoothing;
-        motion.currentRotateY +=
-          (motion.targetRotateY - motion.currentRotateY) * smoothing;
-        motion.currentRotateZ +=
-          (motion.targetRotateZ - motion.currentRotateZ) * smoothing;
-        motion.currentScale +=
-          (motion.targetScale - motion.currentScale) * smoothing;
-
-        cards[index].style.transform =
-          `translate3d(0, ${motion.currentY}px, 0) ` +
-          `rotateX(${motion.currentRotateX}deg) ` +
-          `rotateY(${motion.currentRotateY}deg) ` +
-          `rotateZ(${motion.currentRotateZ}deg) ` +
-          `scale(${motion.currentScale})`;
-
-        if (
-          Math.abs(motion.targetY - motion.currentY) > 0.02 ||
-          Math.abs(motion.targetRotateX - motion.currentRotateX) > 0.01 ||
-          Math.abs(motion.targetRotateY - motion.currentRotateY) > 0.01 ||
-          Math.abs(motion.targetRotateZ - motion.currentRotateZ) > 0.01 ||
-          Math.abs(motion.targetScale - motion.currentScale) > 0.0001
-        ) {
-          unsettled = true;
-        }
-      });
-
-      animationFrame = unsettled ? requestAnimationFrame(renderMotion) : 0;
-    };
-
-    const syncMotion = () => {
-      trackMotion.currentX = trackMotion.targetX;
-      if (desktop.matches) {
-        track.style.transform = `translate3d(${trackMotion.currentX}px, 0, 0)`;
-      }
-
-      motions.forEach((motion, index) => {
-        motion.currentY = motion.targetY;
-        motion.currentRotateX = motion.targetRotateX;
-        motion.currentRotateY = motion.targetRotateY;
-        motion.currentRotateZ = motion.targetRotateZ;
-        motion.currentScale = motion.targetScale;
-        cards[index].style.transform =
-          `translate3d(0, ${motion.currentY}px, 0) ` +
-          `rotateX(${motion.currentRotateX}deg) ` +
-          `rotateY(${motion.currentRotateY}deg) ` +
-          `rotateZ(${motion.currentRotateZ}deg) ` +
-          `scale(${motion.currentScale})`;
-      });
+    const clearMotion = () => {
+      track.style.removeProperty("transform");
+      cards.forEach(({ card }) => card.style.removeProperty("--scroll-rotation"));
+      lastProgress = -1;
     };
 
     const update = () => {
       frame = 0;
-
-      if (reducedMotion.matches) {
-        if (animationFrame) cancelAnimationFrame(animationFrame);
-        animationFrame = 0;
-        track.style.removeProperty("transform");
-        cards.forEach((card) => card.style.removeProperty("transform"));
+      if (!desktop.matches || reducedMotion.matches) {
+        clearMotion();
         return;
       }
-
-      if (!desktop.matches) {
-        track.style.removeProperty("transform");
-        setMobileTargets();
-      } else {
-        setDesktopTargets();
-      }
-
-      previousTime = performance.now();
-      if (!animationFrame) {
-        animationFrame = requestAnimationFrame(renderMotion);
-      }
+      const progress = Math.min(1, Math.max(0, (window.scrollY - sectionTop) / scrollDistance));
+      if (progress === lastProgress) return;
+      lastProgress = progress;
+      const translateX = startX + (endX - startX) * progress;
+      track.style.transform = `translate3d(${translateX}px, 0, 0)`;
+      cards.forEach(({ card, variation, direction, phase }) => {
+        const magnitude = 5 + variation * 1.2 + Math.sin(progress * Math.PI * 2 + phase) * 2.2;
+        const rotation = direction * magnitude;
+        card.style.setProperty("--scroll-rotation", `${rotation}deg`);
+      });
     };
-
     const requestUpdate = () => {
-      if (!active || frame) return;
-      frame = requestAnimationFrame(update);
-    };
-
-    const syncMode = () => {
-      if (frame) cancelAnimationFrame(frame);
-      if (animationFrame) cancelAnimationFrame(animationFrame);
-      frame = 0;
-      animationFrame = 0;
-
-      if (reducedMotion.matches) {
-        track.style.removeProperty("transform");
-        cards.forEach((card) => card.style.removeProperty("transform"));
-      } else if (desktop.matches) {
-        setDesktopTargets();
-        syncMotion();
-      } else {
-        track.style.removeProperty("transform");
-        setMobileTargets();
-        syncMotion();
+      if (active && desktop.matches && !reducedMotion.matches && !frame) {
+        frame = requestAnimationFrame(update);
       }
     };
-
-    syncMode();
+    const measure = () => {
+      if (!active) return;
+      if (!desktop.matches || reducedMotion.matches) {
+        clearMotion();
+        return;
+      }
+      const first = cards[0]?.card;
+      const last = cards.at(-1)?.card;
+      if (!first || !last) return;
+      viewportWidth = viewport.clientWidth;
+      sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      scrollDistance = Math.max(1, section.offsetHeight - window.innerHeight);
+      const trackLeft = track.offsetLeft;
+      startX = viewportWidth * 0.5 - trackLeft - first.offsetLeft - first.offsetWidth / 2;
+      endX = viewportWidth * 0.5 - trackLeft - last.offsetLeft - last.offsetWidth / 2;
+      lastProgress = -1;
+      update();
+    };
+    const handleMotionPreference = () => {
+      if (!desktop.matches || reducedMotion.matches) {
+        if (frame) cancelAnimationFrame(frame);
+        frame = 0;
+        clearMotion();
+      } else {
+        measure();
+      }
+    };
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(section);
+    resizeObserver.observe(viewport);
+    cards.forEach(({ card }) => resizeObserver.observe(card));
+    measure();
     window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestUpdate);
-    desktop.addEventListener("change", syncMode);
-    reducedMotion.addEventListener("change", syncMode);
-
+    window.addEventListener("resize", measure);
+    desktop.addEventListener("change", handleMotionPreference);
+    reducedMotion.addEventListener("change", handleMotionPreference);
+    document.fonts.ready.then(measure);
     cleanupDifference = () => {
       active = false;
       if (frame) cancelAnimationFrame(frame);
-      if (animationFrame) cancelAnimationFrame(animationFrame);
+      resizeObserver.disconnect();
       window.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestUpdate);
-      desktop.removeEventListener("change", syncMode);
-      reducedMotion.removeEventListener("change", syncMode);
-      track.style.removeProperty("transform");
-      cards.forEach((card) => card.style.removeProperty("transform"));
+      window.removeEventListener("resize", measure);
+      desktop.removeEventListener("change", handleMotionPreference);
+      reducedMotion.removeEventListener("change", handleMotionPreference);
+      clearMotion();
     };
-
-    document.fonts.ready.then(requestUpdate);
   }
 
   initDifference();
@@ -309,6 +154,8 @@ const items = (await getCollection("difference-items"))
   }
 
   .difference-sticky {
+    position: relative;
+    isolation: isolate;
     min-width: 0;
   }
 
@@ -317,10 +164,14 @@ const items = (await getCollection("difference-items"))
   }
 
   .difference-heading {
+    position: relative;
+    z-index: 1;
     padding-bottom: 2rem;
   }
 
   .difference-viewport {
+    position: relative;
+    z-index: 1;
     min-width: 0;
     overflow: visible;
     padding: 1rem 1rem 3.5rem;
@@ -349,7 +200,6 @@ const items = (await getCollection("difference-items"))
     padding: 1.35rem 1.5rem 3.25rem;
     color: var(--color-background);
     background: white;
-    will-change: transform;
   }
 
   .difference-card::after {
@@ -383,18 +233,13 @@ const items = (await getCollection("difference-items"))
   }
 
   @media (max-width: 47.999rem) {
+    .difference-card:nth-child(odd) { align-self: flex-start; width: 90%; }
+    .difference-card:nth-child(even) { align-self: flex-end; width: 80%; }
+
     .difference-heading {
       padding-top: 1.5rem;
     }
 
-    .difference-track {
-      perspective: 100vw;
-    }
-
-    .difference-card {
-      transform-origin: center bottom;
-      transform-style: preserve-3d;
-    }
   }
 
   @media (min-width: 48rem) {
@@ -427,7 +272,10 @@ const items = (await getCollection("difference-items"))
     }
 
     .difference-heading {
-      position: relative;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
       z-index: 2;
       padding-bottom: 0;
     }
@@ -439,13 +287,13 @@ const items = (await getCollection("difference-items"))
       align-items: center;
       overflow: visible;
       z-index: 1;
-      padding: 8rem 5vw 0;
-      perspective: 120vw;
-      perspective-origin: center;
+      padding: 0 5vw;
       scroll-snap-type: none;
     }
 
     .difference-track {
+      position: relative;
+      top: -10vh;
       width: max-content;
       flex-direction: row;
       align-items: center;
@@ -459,10 +307,21 @@ const items = (await getCollection("difference-items"))
       max-width: 31rem;
       min-height: clamp(12rem, 17vw, 15.5rem);
       justify-content: center;
-      transform-origin: center bottom;
-      transform-style: preserve-3d;
       padding: clamp(1.35rem, 2vw, 2rem);
       scroll-snap-align: none;
+      will-change: transform;
+    }
+
+    .difference-card:nth-child(3n + 1) {
+      transform: translateY(7vh) scale(1.08) rotate(var(--scroll-rotation, 0deg));
+    }
+
+    .difference-card:nth-child(3n + 2) {
+      transform: translateY(-6vh) scale(0.92) rotate(var(--scroll-rotation, 0deg));
+    }
+
+    .difference-card:nth-child(3n) {
+      transform: translateY(2vh) scale(1.02) rotate(var(--scroll-rotation, 0deg));
     }
 
     .difference-card::after {
@@ -484,6 +343,7 @@ const items = (await getCollection("difference-items"))
     }
 
     .difference-heading {
+      position: relative;
       padding-bottom: 2rem;
     }
 
@@ -501,6 +361,7 @@ const items = (await getCollection("difference-items"))
 
     .difference-track {
       gap: 5rem;
+      top: 0;
       transform: none;
     }
 

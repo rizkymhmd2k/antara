@@ -13,7 +13,7 @@ const servicesText = (await getCollection("services"))
   .sort((a, b) => a.order - b.order);
 ---
 
-<div class="relative" data-sticky-wrapper style="visibility: hidden">
+<div class="relative" data-services-section data-sticky-wrapper style="visibility: hidden">
 
   <section
     class="container-padding relative z-10 flex items-start justify-start overflow-hidden md:sticky md:top-0 md:min-h-screen md:pt-28"

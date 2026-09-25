@@ -9,6 +9,7 @@ import Service from "../components/sections/Service.astro";
 import Step from "../components/sections/Step.astro";
 import Contact from "../components/sections/Contact.astro";
 import Footer from "../components/sections/Footer.astro";
+import StairTransition from "../components/ui/StairTransition.astro";
 import { getEntry } from "astro:content";
 
 const page = await getEntry("site", "home-page");
@@ -18,11 +19,15 @@ const data = page?.data as { title: string; description: string };
 <Layout class="bg-grid-3" title={data.title} description={data.description}>
   <div class="relative isolate">
     <div class="relative z-10">
-      <Hero />
-      <Who />
+      <div class="relative isolate overflow-hidden">
+        <Hero />
+        <Who />
+      </div>
       <Diffrence />
+      <StairTransition to="white" />
       <Numbers />
       <Serve />
+      <StairTransition to="blue" />
       <Service />
       <Step />
       <Contact />
