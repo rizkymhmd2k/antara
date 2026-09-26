@@ -56,6 +56,9 @@ const items = (await getCollection("difference-items"))
         variation,
         direction: index % 2 === 0 ? 1 : -1,
         phase: variation * Math.PI * 2,
+        top: 0,
+        height: 1,
+        lastMobileProgress: Number.NaN,
       };
     });
     let frame = 0;
@@ -66,17 +69,41 @@ const items = (await getCollection("difference-items"))
     let startX = 0;
     let endX = 0;
     let lastProgress = -1;
+    let mobileVisible = false;
 
     const clearMotion = () => {
       track.style.removeProperty("transform");
-      cards.forEach(({ card }) => card.style.removeProperty("--scroll-rotation"));
+      cards.forEach((entry) => {
+        entry.card.style.removeProperty("--scroll-rotation");
+        entry.card.style.removeProperty("--card-tilt-x");
+        entry.card.style.removeProperty("--card-tilt-y");
+        entry.card.style.removeProperty("--card-scale");
+        entry.card.classList.remove("is-moving");
+        entry.lastMobileProgress = Number.NaN;
+      });
       lastProgress = -1;
     };
 
     const update = () => {
       frame = 0;
-      if (!desktop.matches || reducedMotion.matches) {
+      if (reducedMotion.matches) {
         clearMotion();
+        return;
+      }
+      if (!desktop.matches) {
+        const center = window.scrollY + window.innerHeight * 0.52;
+        cards.forEach((entry) => {
+          const progress = Math.round(Math.max(-1, Math.min(1,
+            (entry.top + entry.height / 2 - center) / (window.innerHeight * 0.5 + entry.height / 2),
+          )) * 1000) / 1000;
+          if (progress === entry.lastMobileProgress) return;
+          entry.lastMobileProgress = progress;
+          entry.card.classList.toggle("is-moving", Math.abs(progress) < 1);
+          entry.card.style.setProperty("--card-tilt-x", `${-progress * 9}deg`);
+          entry.card.style.setProperty("--card-tilt-y", `${progress * entry.direction * 5}deg`);
+          entry.card.style.setProperty("--scroll-rotation", `${progress * entry.direction * 2}deg`);
+          entry.card.style.setProperty("--card-scale", String(1 - Math.abs(progress) * 0.035));
+        });
         return;
       }
       const progress = Math.min(1, Math.max(0, (window.scrollY - animationStart) / scrollDistance));
@@ -91,14 +118,25 @@ const items = (await getCollection("difference-items"))
       });
     };
     const requestUpdate = () => {
-      if (active && desktop.matches && !reducedMotion.matches && !frame) {
+      if (active && (desktop.matches || mobileVisible) && !reducedMotion.matches && !document.hidden && !frame) {
         frame = requestAnimationFrame(update);
       }
     };
     const measure = () => {
       if (!active) return;
-      if (!desktop.matches || reducedMotion.matches) {
+      if (reducedMotion.matches) {
         clearMotion();
+        return;
+      }
+      if (!desktop.matches) {
+        track.style.removeProperty("transform");
+        const trackTop = track.getBoundingClientRect().top + window.scrollY;
+        cards.forEach((entry) => {
+          entry.top = trackTop + entry.card.offsetTop;
+          entry.height = entry.card.offsetHeight;
+          entry.lastMobileProgress = Number.NaN;
+        });
+        update();
         return;
       }
       const first = cards[0]?.card;
@@ -116,7 +154,8 @@ const items = (await getCollection("difference-items"))
       update();
     };
     const handleMotionPreference = () => {
-      if (!desktop.matches || reducedMotion.matches) {
+      clearMotion();
+      if (reducedMotion.matches) {
         if (frame) cancelAnimationFrame(frame);
         frame = 0;
         clearMotion();
@@ -125,12 +164,18 @@ const items = (await getCollection("difference-items"))
       }
     };
     const resizeObserver = new ResizeObserver(measure);
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      mobileVisible = entry.isIntersecting;
+      if (mobileVisible) requestUpdate();
+    }, { rootMargin: "100px" });
+    visibilityObserver.observe(section);
     resizeObserver.observe(section);
     resizeObserver.observe(viewport);
     cards.forEach(({ card }) => resizeObserver.observe(card));
     measure();
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", measure);
+    document.addEventListener("visibilitychange", requestUpdate);
     desktop.addEventListener("change", handleMotionPreference);
     reducedMotion.addEventListener("change", handleMotionPreference);
     document.fonts.ready.then(measure);
@@ -138,8 +183,10 @@ const items = (await getCollection("difference-items"))
       active = false;
       if (frame) cancelAnimationFrame(frame);
       resizeObserver.disconnect();
+      visibilityObserver.disconnect();
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", measure);
+      document.removeEventListener("visibilitychange", requestUpdate);
       desktop.removeEventListener("change", handleMotionPreference);
       reducedMotion.removeEventListener("change", handleMotionPreference);
       clearMotion();
@@ -199,6 +246,7 @@ const items = (await getCollection("difference-items"))
   }
 
   .difference-track {
+    position: relative;
     display: flex;
     width: 100%;
     flex-direction: column;
@@ -256,13 +304,32 @@ const items = (await getCollection("difference-items"))
   }
 
   @media (max-width: 47.999rem) {
-    .difference-card:nth-child(odd) { align-self: flex-start; width: 96%; }
-    .difference-card:nth-child(even) { align-self: flex-end; width: 90%; }
+    .difference-card {
+      align-self: center;
+      width: 80%;
+    }
 
     .difference-heading {
       padding-top: 1.5rem;
+      padding-bottom: 2.8rem;
     }
 
+  }
+
+  @media (max-width: 47.999rem) and (prefers-reduced-motion: no-preference) {
+    .difference-card {
+      transform: perspective(900px)
+        rotateX(var(--card-tilt-x, 0deg))
+        rotateY(var(--card-tilt-y, 0deg))
+        rotateZ(var(--scroll-rotation, 0deg))
+        scale(var(--card-scale, 1));
+      transform-origin: center;
+      backface-visibility: hidden;
+    }
+
+    .difference-card.is-moving {
+      will-change: transform;
+    }
   }
 
   @media (min-width: 48rem) {

@@ -22,11 +22,7 @@ const { to } = Astro.props;
   function initStairTransitions() {
     cleanup?.();
     const transitions = Array.from(document.querySelectorAll<HTMLElement>("[data-stair-transition]"));
-    const navbar = document.querySelector<HTMLElement>("[data-navbar-shell]");
-    const numbers = document.querySelector<HTMLElement>(".snapshot");
-    const services = document.querySelector<HTMLElement>("[data-services-section]");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const original = navbar?.style.backgroundColor ?? "";
     let frame = 0;
 
     const update = () => {
@@ -46,14 +42,6 @@ const { to } = Astro.props;
         });
       });
 
-      if (navbar && numbers && services) {
-        const position = navbar.offsetHeight;
-        const firstTransition = transitions[0]?.getBoundingClientRect();
-        const white = (firstTransition && firstTransition.top <= position && firstTransition.bottom > 0)
-          || (numbers.getBoundingClientRect().top <= position
-            && services.getBoundingClientRect().top > position);
-        navbar.style.backgroundColor = white ? "var(--color-background)" : original;
-      }
     };
     const requestUpdate = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -67,7 +55,6 @@ const { to } = Astro.props;
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
       reducedMotion.removeEventListener("change", requestUpdate);
-      if (navbar) navbar.style.backgroundColor = original;
     };
   }
 
