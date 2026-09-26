@@ -5,12 +5,14 @@ export interface Props {
   class?: string;
   strokeWidth?: number;
   animated?: boolean;
+  scrollLighten?: boolean;
 }
 
 const {
   class: className = "",
   strokeWidth = 1,
   animated = true,
+  scrollLighten = false,
 } = Astro.props;
 
 const content = await getEntry("site", "home-lines");
@@ -43,7 +45,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
 ---
 
 <div
-  class:list={["white-lines", className, { "is-static": !animated }]}
+  class:list={["white-lines", className, { "is-static": !animated, "is-scroll-lit": scrollLighten }]}
   style={`--white-lines-stroke:${strokeWidth};`}
   aria-hidden="true"
 >
@@ -63,14 +65,14 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
         <rect x="-100" width="900" height="700" fill="url(#home-ribbon-fade)" />
       </mask>
       <linearGradient id="home-ribbon-depth" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="700" y2="0">
-        <stop offset="0" stop-color="white" stop-opacity="0.36" />
-        <stop offset="0.34" stop-color="white" stop-opacity="0.42" />
-        <stop offset="0.43" stop-color="white" stop-opacity="0.2" />
-        <stop offset="0.48" stop-color="white" stop-opacity="0.46" />
-        <stop offset="0.68" stop-color="white" stop-opacity="0.36" />
-        <stop offset="0.86" stop-color="white" stop-opacity="0.45" />
-        <stop offset="0.92" stop-color="white" stop-opacity="0.18" />
-        <stop offset="1" stop-color="white" stop-opacity="0.34" />
+        <stop offset="0" stop-color="white" stop-opacity="0.75" />
+        <stop offset="0.34" stop-color="white" stop-opacity="0.9" />
+        <stop offset="0.43" stop-color="white" stop-opacity="0.4" />
+        <stop offset="0.48" stop-color="white" stop-opacity="0.95" />
+        <stop offset="0.68" stop-color="white" stop-opacity="0.75" />
+        <stop offset="0.86" stop-color="white" stop-opacity="0.92" />
+        <stop offset="0.92" stop-color="white" stop-opacity="0.36" />
+        <stop offset="1" stop-color="white" stop-opacity="0.7" />
       </linearGradient>
     </defs>
     <g class="white-lines__ribbon" mask="url(#home-ribbon-mask)">
@@ -108,6 +110,14 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .white-lines.is-scroll-lit .white-lines__svg {
+      opacity: 0.22;
+    }
+
+    .white-lines.is-scroll-lit.is-visible .white-lines__svg {
+      will-change: opacity;
+    }
+
     .white-lines:not(.is-static) .white-lines__svg {
       animation: ribbon-drift 14s ease-in-out infinite alternate;
       animation-play-state: paused;
@@ -142,6 +152,10 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
   }
 
   @media (max-width: 47.99rem) {
+    .white-lines__svg {
+      translate: 30% 0;
+    }
+
     .white-lines__anchor-text {
       top: 14%;
       right: 1rem;
@@ -157,22 +171,72 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
 
   function initRibbon() {
     cleanupRibbon?.();
-    const ribbon = document.querySelector<HTMLElement>(".white-lines:not(.is-static)");
+    const ribbon = document.querySelector<HTMLElement>(".white-lines");
     // The ribbon extends through both Hero and Who, beyond its SVG viewport.
     const region = ribbon?.parentElement?.parentElement;
-    if (!ribbon || !region) return;
+    const svg = ribbon?.querySelector<SVGSVGElement>("svg");
+    if (!ribbon || !region || !svg) return;
+    const scrollLighten = ribbon.classList.contains("is-scroll-lit");
+    if (!scrollLighten && ribbon.classList.contains("is-static")) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let visible = false;
-    const update = () => ribbon.classList.toggle("is-visible", visible && !document.hidden);
+    let frame = 0;
+    let start = 0;
+    let distance = 1;
+    let lastOpacity = -1;
+    const render = () => {
+      frame = 0;
+      if (!scrollLighten || reducedMotion.matches) return;
+      const progress = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
+      const opacity = Math.round((0.22 + progress * 0.78) * 1000) / 1000;
+      if (opacity === lastOpacity) return;
+      lastOpacity = opacity;
+      svg.style.opacity = String(opacity);
+    };
+    const schedule = () => {
+      if (!frame && visible && !document.hidden && !reducedMotion.matches) {
+        frame = requestAnimationFrame(render);
+      }
+    };
+    const measure = () => {
+      start = region.getBoundingClientRect().top + window.scrollY;
+      // Reach full brightness while the hero ribbon is still in view.
+      distance = Math.max(1, Math.min(window.innerHeight * 0.65, region.offsetHeight));
+      schedule();
+    };
+    const update = () => {
+      ribbon.classList.toggle("is-visible", visible && !document.hidden);
+      if (!visible || document.hidden || reducedMotion.matches) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+      if (reducedMotion.matches) {
+        svg.style.removeProperty("opacity");
+        lastOpacity = -1;
+      } else schedule();
+    };
     const observer = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
       update();
     });
     observer.observe(region);
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(region);
+    measure();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", measure);
+    reducedMotion.addEventListener("change", update);
     document.addEventListener("visibilitychange", update);
     cleanupRibbon = () => {
       observer.disconnect();
+      resizeObserver.disconnect();
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", measure);
+      reducedMotion.removeEventListener("change", update);
       document.removeEventListener("visibilitychange", update);
       ribbon.classList.remove("is-visible");
+      svg.style.removeProperty("opacity");
     };
   }
 

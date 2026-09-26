@@ -18,9 +18,22 @@ const images = {
 const items = (await getCollection("audiences"))
   .map((entry) => ({ ...entry.data, image: images[entry.data.image] }))
   .sort((a, b) => a.order - b.order);
+
+interface Props {
+  theme?: "light" | "blue";
+}
+
+const { theme = "light" } = Astro.props;
 ---
 
-<section class="serve container-padding bg-grid-3 bg-grid-light" data-serve-section aria-labelledby="serve-title">
+<section
+  class:list={[
+    "serve container-padding bg-grid-3",
+    { "bg-grid-light": theme === "light", "serve--blue": theme === "blue" },
+  ]}
+  data-serve-section
+  aria-labelledby="serve-title"
+>
   <div class="serve-heading">
     <div class="serve-label"><Eyebrow text={heading.eyebrow} /></div>
     <h2 id="serve-title">{heading.title}</h2>
@@ -87,14 +100,30 @@ const items = (await getCollection("audiences"))
 
 <style>
   .serve {
+    /* Match the second Snapshot column, including its border and inset. */
+    --serve-column-gap: calc(100% / 12 + clamp(1rem, 1.6vw, 2rem) + 1px);
+    --serve-rule: rgb(0 76 187 / 12%);
+    --serve-pixels: var(--color-background);
+    --serve-plus-border: rgb(0 76 187 / 18%);
+    --serve-plus-background: white;
     background: var(--color-surface);
     color: var(--color-background);
+  }
+
+  .serve--blue {
+    --grid-line-color: rgb(255 255 255 / 8%);
+    --serve-rule: rgb(255 255 255 / 18%);
+    --serve-pixels: white;
+    --serve-plus-border: rgb(255 255 255 / 35%);
+    --serve-plus-background: transparent;
+    background: var(--color-background);
+    color: white;
   }
 
   .serve-heading {
     display: grid;
     grid-template-columns: 25% 50%;
-    column-gap: 13%;
+    column-gap: var(--serve-column-gap);
     align-items: start;
     padding-bottom: clamp(2.5rem, 4vw, 5rem);
   }
@@ -110,7 +139,7 @@ const items = (await getCollection("audiences"))
   .serve-content {
     display: grid;
     grid-template-columns: 25% 50%;
-    column-gap: 13%;
+    column-gap: var(--serve-column-gap);
     align-items: start;
   }
 
@@ -153,7 +182,7 @@ const items = (await getCollection("audiences"))
   }
 
   .serve-pixels :global(span) {
-    background: var(--color-background);
+    background: var(--serve-pixels);
     opacity: 0;
   }
 
@@ -169,7 +198,7 @@ const items = (await getCollection("audiences"))
     position: absolute;
     left: 0;
     width: 124%;
-    border-color: rgb(0 76 187 / 12%);
+    border-color: var(--serve-rule);
     border-style: solid;
     pointer-events: none;
   }
@@ -200,7 +229,7 @@ const items = (await getCollection("audiences"))
 
   .serve-button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
   .serve-title { font-size: clamp(1.3rem, 1.5vw, 1.85rem); line-height: 1.2; letter-spacing: -.025em; text-wrap: balance; }
-  .serve-plus { position: relative; width: 2rem; height: 2rem; border: 1px solid rgb(0 76 187 / 18%); border-radius: .25rem; background: white; transition: transform 350ms ease; }
+  .serve-plus { position: relative; width: 2rem; height: 2rem; border: 1px solid var(--serve-plus-border); border-radius: .25rem; background: var(--serve-plus-background); transition: transform 350ms ease; }
   .serve-plus::before, .serve-plus::after { content: ""; position: absolute; top: 50%; left: 50%; width: .75rem; height: 1px; background: currentColor; transform: translate(-50%, -50%); }
   .serve-plus::after { transform: translate(-50%, -50%) rotate(90deg); }
   .serve-row.is-active .serve-plus { transform: rotate(45deg); }
@@ -215,8 +244,8 @@ const items = (await getCollection("audiences"))
     .serve-heading { padding-bottom: 2.25rem; }
     .serve-heading h2 { margin-top: 1.25rem; font-size: clamp(2rem, 6vw, 2.75rem); }
     .serve-image-column { display: none; }
-    .serve-rows { border-top: 1px solid rgb(0 76 187 / 12%); }
-    .serve-row { border-bottom: 1px solid rgb(0 76 187 / 12%); }
+    .serve-rows { border-top: 1px solid var(--serve-rule); }
+    .serve-row { border-bottom: 1px solid var(--serve-rule); }
     .serve-rows::before, .serve-row::after { display: none; }
     .serve-title { font-size: clamp(1.4rem, 4vw, 1.85rem); }
     .serve-panel p { margin-right: 0; }

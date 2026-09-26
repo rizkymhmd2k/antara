@@ -10,7 +10,7 @@ const data = hero?.data as { headline: string; button: string; href: string };
 <section
   class="hero-padding relative flex min-h-screen items-end justify-start"
 >
-  <Whitelines />
+  <Whitelines animated={false} scrollLighten />
   <div class="relative z-10 flex flex-col gap-6 sm:gap-12">
     <h1 class="display-text max-w-5xl leading-[0.95]">
       {data.headline.split("\n").map((line, index) => (

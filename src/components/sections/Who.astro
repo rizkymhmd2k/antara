@@ -27,8 +27,8 @@ const data = who?.data as {
     >
       <span aria-hidden="true">
         {
-          Array.from(data.headline).map((character) => (
-            <span class="scroll-fill-character">{character}</span>
+          data.headline.split(/(\s+)/).map((word) => (
+            word.trim() ? <span class="scroll-fill-word">{word}</span> : word
           ))
         }
       </span>
@@ -55,32 +55,32 @@ const data = who?.data as {
     cleanupWhoFill?.();
 
     const heading = document.querySelector<HTMLElement>("[data-scroll-fill]");
-    const characters = Array.from(
-      heading?.querySelectorAll<HTMLElement>(".scroll-fill-character") ?? [],
+    const words = Array.from(
+      heading?.querySelectorAll<HTMLElement>(".scroll-fill-word") ?? [],
     );
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     );
 
-    if (!heading || !characters.length) return;
+    if (!heading || !words.length) return;
 
     let frame = 0;
     let visible = false;
     let lastFillHead = -1;
-    const fillTrail = 10;
+    const fillTrail = 3;
+    const opacities = new Array<number>(words.length).fill(-1);
 
     const update = () => {
       frame = 0;
 
       if (reducedMotion.matches) {
-        characters.forEach((character) =>
-          character.style.removeProperty("opacity"),
+        words.forEach((word) =>
+          word.style.removeProperty("opacity"),
         );
+        opacities.fill(-1);
         heading.classList.remove("scroll-fill-ready");
         return;
       }
-
-      heading.classList.add("scroll-fill-ready");
 
       const rect = heading.getBoundingClientRect();
       const start = window.innerHeight * 0.82;
@@ -89,35 +89,47 @@ const data = who?.data as {
         1,
         Math.max(0, (start - rect.top) / (start - finish)),
       );
-      const fillHead = progress * (characters.length + fillTrail);
+      const fillHead = progress * (words.length + fillTrail);
       if (fillHead === lastFillHead) return;
       lastFillHead = fillHead;
 
-      characters.forEach((character, index) => {
-        const characterProgress = Math.min(
+      words.forEach((word, index) => {
+        const wordProgress = Math.min(
           1,
           Math.max(0, (fillHead - index) / fillTrail),
         );
 
-        character.style.opacity = String(0.2 + characterProgress * 0.8);
+        const opacity = Math.round((0.2 + wordProgress * 0.8) * 100) / 100;
+        if (opacity === opacities[index]) return;
+        opacities[index] = opacity;
+        word.style.opacity = String(opacity);
       });
     };
 
     const requestUpdate = () => {
-      if (frame || !visible) return;
+      if (frame || !visible || reducedMotion.matches || document.hidden) return;
       frame = requestAnimationFrame(update);
     };
 
+    heading.classList.toggle("scroll-fill-ready", !reducedMotion.matches);
     update();
     const observer = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
       if (visible) requestUpdate();
+      else if (frame) { cancelAnimationFrame(frame); frame = 0; }
     });
     observer.observe(heading);
-    const onMotionChange = () => { lastFillHead = -1; update(); };
+    const onMotionChange = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+      lastFillHead = -1;
+      heading.classList.toggle("scroll-fill-ready", !reducedMotion.matches);
+      update();
+    };
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate);
     reducedMotion.addEventListener("change", onMotionChange);
+    document.addEventListener("visibilitychange", requestUpdate);
 
     cleanupWhoFill = () => {
       if (frame) cancelAnimationFrame(frame);
@@ -125,9 +137,10 @@ const data = who?.data as {
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
       reducedMotion.removeEventListener("change", onMotionChange);
+      document.removeEventListener("visibilitychange", requestUpdate);
       heading.classList.remove("scroll-fill-ready");
-      characters.forEach((character) =>
-        character.style.removeProperty("opacity"),
+      words.forEach((word) =>
+        word.style.removeProperty("opacity"),
       );
     };
   }
@@ -138,11 +151,11 @@ const data = who?.data as {
 </script>
 
 <style>
-  .scroll-fill-character {
+  .scroll-fill-word {
     opacity: 1;
   }
 
-  .scroll-fill-ready .scroll-fill-character {
+  .scroll-fill-ready .scroll-fill-word {
     opacity: 0.2;
   }
 </style>

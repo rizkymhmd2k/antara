@@ -9,13 +9,14 @@ const items = (await getCollection("difference-items"))
   .sort((a, b) => a.order - b.order);
 ---
 
-<section id="difference" class="difference-section" data-difference-section>
+<section id="difference" class="difference-section">
+  <div class="difference-heading container-padding">
+    <SectionHeading class="difference-heading-content" eyebrow={heading.eyebrow} title={heading.title} />
+  </div>
+
+  <div class="difference-scroll" data-difference-section>
   <div class="difference-sticky">
     <div class="difference-rails" aria-hidden="true"></div>
-
-    <div class="difference-heading container-padding">
-      <SectionHeading eyebrow={heading.eyebrow} title={heading.title} />
-    </div>
 
     <div class="difference-viewport" data-difference-viewport>
       <div class="difference-track" data-difference-track>
@@ -32,6 +33,7 @@ const items = (await getCollection("difference-items"))
         }
       </div>
     </div>
+  </div>
   </div>
 </section>
 
@@ -58,7 +60,7 @@ const items = (await getCollection("difference-items"))
     });
     let frame = 0;
     let active = true;
-    let sectionTop = 0;
+    let animationStart = 0;
     let scrollDistance = 1;
     let viewportWidth = 1;
     let startX = 0;
@@ -77,7 +79,7 @@ const items = (await getCollection("difference-items"))
         clearMotion();
         return;
       }
-      const progress = Math.min(1, Math.max(0, (window.scrollY - sectionTop) / scrollDistance));
+      const progress = Math.min(1, Math.max(0, (window.scrollY - animationStart) / scrollDistance));
       if (progress === lastProgress) return;
       lastProgress = progress;
       const translateX = startX + (endX - startX) * progress;
@@ -103,8 +105,10 @@ const items = (await getCollection("difference-items"))
       const last = cards.at(-1)?.card;
       if (!first || !last) return;
       viewportWidth = viewport.clientWidth;
-      sectionTop = section.getBoundingClientRect().top + window.scrollY;
-      scrollDistance = Math.max(1, section.offsetHeight - window.innerHeight);
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      const animationEnd = sectionTop + section.offsetHeight - window.innerHeight * 0.7;
+      animationStart = sectionTop - window.innerHeight * 0.2;
+      scrollDistance = Math.max(1, animationEnd - animationStart);
       const trackLeft = track.offsetLeft;
       startX = viewportWidth * 0.5 - trackLeft - first.offsetLeft - first.offsetWidth / 2;
       endX = viewportWidth * 0.5 - trackLeft - last.offsetLeft - last.offsetWidth / 2;
@@ -166,7 +170,20 @@ const items = (await getCollection("difference-items"))
   .difference-heading {
     position: relative;
     z-index: 1;
-    padding-bottom: 2rem;
+    padding-bottom: 0;
+    text-align: center;
+  }
+
+  .difference-heading :global(.difference-heading-content) {
+    align-items: center;
+    margin-bottom: 0;
+  }
+
+  .difference-heading :global(h2) {
+    max-width: 22ch;
+    font-size: clamp(2rem, 4.5vw, 4rem);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
   }
 
   .difference-viewport {
@@ -194,7 +211,7 @@ const items = (await getCollection("difference-items"))
     position: relative;
     display: flex;
     width: 85%;
-    min-height: 0;
+    min-height: 16rem;
     flex: 0 0 auto;
     flex-direction: column;
     justify-content: flex-start;
@@ -239,8 +256,8 @@ const items = (await getCollection("difference-items"))
   }
 
   @media (max-width: 47.999rem) {
-    .difference-card:nth-child(odd) { align-self: flex-start; width: 90%; }
-    .difference-card:nth-child(even) { align-self: flex-end; width: 80%; }
+    .difference-card:nth-child(odd) { align-self: flex-start; width: 96%; }
+    .difference-card:nth-child(even) { align-self: flex-end; width: 90%; }
 
     .difference-heading {
       padding-top: 1.5rem;
@@ -249,7 +266,7 @@ const items = (await getCollection("difference-items"))
   }
 
   @media (min-width: 48rem) {
-    .difference-section {
+    .difference-scroll {
       height: 460vh;
     }
 
@@ -277,15 +294,6 @@ const items = (await getCollection("difference-items"))
       background-size: 100% 1px;
     }
 
-    .difference-heading {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 2;
-      padding-bottom: 0;
-    }
-
     .difference-viewport {
       position: absolute;
       inset: 0;
@@ -299,7 +307,7 @@ const items = (await getCollection("difference-items"))
 
     .difference-track {
       position: relative;
-      top: -10vh;
+      top: 0;
       width: max-content;
       flex-direction: row;
       align-items: center;
@@ -308,10 +316,10 @@ const items = (await getCollection("difference-items"))
     }
 
     .difference-card {
-      width: 30vw;
-      min-width: 19rem;
-      max-width: 31rem;
-      min-height: clamp(12rem, 17vw, 15.5rem);
+      width: 40vw;
+      min-width: 23rem;
+      max-width: 40rem;
+      min-height: clamp(17rem, 23vw, 21rem);
       justify-content: center;
       padding: clamp(1.35rem, 2vw, 2rem);
       padding-top: clamp(2.75rem, 3.5vw, 3.5rem);
@@ -343,7 +351,7 @@ const items = (await getCollection("difference-items"))
   }
 
   @media (min-width: 48rem) and (prefers-reduced-motion: reduce) {
-    .difference-section {
+    .difference-scroll {
       height: auto;
     }
 
@@ -355,7 +363,7 @@ const items = (await getCollection("difference-items"))
 
     .difference-heading {
       position: relative;
-      padding-bottom: 2rem;
+      padding-bottom: 0;
     }
 
     .difference-rails {
@@ -377,9 +385,9 @@ const items = (await getCollection("difference-items"))
     }
 
     .difference-card {
-      width: min(82vw, 25rem);
+      width: min(82vw, 36rem);
       min-width: 0;
-      min-height: 13.5rem;
+      min-height: 17rem;
       transform: none;
       scroll-snap-align: center;
     }
