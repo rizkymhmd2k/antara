@@ -10,7 +10,7 @@ const items = (await getCollection("difference-items"))
 ---
 
 <section id="difference" class="difference-section">
-  <div class="difference-heading container-padding">
+  <div class="difference-heading px-4 sm:px-8">
     <SectionHeading class="difference-heading-content" eyebrow={heading.eyebrow} title={heading.title} />
   </div>
 
@@ -217,6 +217,7 @@ const items = (await getCollection("difference-items"))
   .difference-heading {
     position: relative;
     z-index: 1;
+    padding-top: 0;
     padding-bottom: 0;
     text-align: center;
   }
@@ -310,7 +311,6 @@ const items = (await getCollection("difference-items"))
     }
 
     .difference-heading {
-      padding-top: 1.5rem;
       padding-bottom: 2.8rem;
     }
 

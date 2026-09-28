@@ -15,10 +15,8 @@ const textAnimation =
 ---
 
 <header
-  class="fixed inset-x-0 top-0 z-40 -translate-y-full bg-transparent transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] data-[nav-state=visible]:translate-y-0 data-[nav-state=visible]:duration-700 motion-reduce:transition-none"
+  class="fixed inset-x-0 top-0 z-40 bg-transparent"
   data-navbar-shell
-  data-nav-state="hidden"
-  inert
 >
   <nav
     class="flex min-h-20 items-center justify-between gap-6 px-4 py-4 sm:min-h-24 sm:px-8 md:grid md:min-h-0 md:grid-cols-[1fr_auto_1fr] md:py-[0.825rem]"
@@ -27,7 +25,7 @@ const textAnimation =
   >
     <a
       href="/"
-      class="inline-flex shrink-0 items-center rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+      class="relative z-0 inline-flex shrink-0 self-center items-center rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
       aria-label="Antara Private Wealth home"
     >
       <img
@@ -36,7 +34,7 @@ const textAnimation =
         width="1213"
         height="260"
         decoding="async"
-        class="h-auto w-28 sm:w-32 md:w-[6.6rem] lg:w-[7.7rem]"
+        class="block h-auto w-24 sm:w-28 md:w-[5.7rem] lg:w-[6.7rem]"
       />
     </a>
 
@@ -80,7 +78,7 @@ const textAnimation =
 
     <button
       type="button"
-      class="inline-flex size-12 items-center justify-center rounded-sm border border-white/20 bg-white text-black transition-transform duration-200 ease-out active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white md:hidden"
+      class="relative z-20 inline-flex size-12 items-center justify-center rounded-sm border border-white/20 bg-white/15 text-white backdrop-blur-md transition-transform duration-200 ease-out active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white md:hidden"
       aria-label="Open menu"
       aria-controls="mobile-menu"
       aria-expanded="false"
@@ -89,45 +87,38 @@ const textAnimation =
       <span class="sr-only">Open menu</span>
 
       <span aria-hidden="true" class="relative block h-4 w-5">
-        <span
-          class="absolute left-0 top-1 block h-px w-5 origin-center bg-background transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
-          data-menu-line
-        ></span>
-
-        <span
-          class="absolute bottom-1 left-0 block h-px w-5 origin-center bg-background transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
-          data-menu-line
-        ></span>
+        <span class="mobile-menu-line" data-menu-line></span>
+        <span class="mobile-menu-line" data-menu-line></span>
       </span>
     </button>
   </nav>
-</header>
 
 <div
   id="mobile-menu"
-  class="fixed inset-0 z-30 pointer-events-none overflow-hidden md:hidden"
+  class="pointer-events-none absolute inset-x-0 top-0 h-dvh overflow-hidden md:hidden"
   aria-hidden="true"
   inert
   data-menu
 >
   <div
-    class="fixed inset-x-0 bottom-0 top-[var(--nav-h)] bg-background/50 opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+    class="absolute inset-0 z-0 bg-black/30 opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
     data-menu-scrim
   ></div>
 
   <div
-    class="invisible fixed inset-x-0 top-[var(--nav-h)] -translate-y-full bg-white text-white transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+    class="invisible absolute left-4 right-4 top-4 z-10 overflow-hidden rounded-lg border border-white/15 bg-black/30 text-white shadow-[0_1.5rem_4rem_rgb(0_0_0/0.2)] backdrop-blur-xl sm:left-8 sm:right-8 sm:top-6"
     data-menu-panel
   >
     <nav
-      class="flex flex-col px-4 py-4 sm:px-8 sm:py-6"
+      class="flex flex-col px-5 pb-3 pt-12 sm:px-7 sm:pb-4 sm:pt-14"
       aria-label="Mobile navigation"
     >
       {
         navItems.map((item) => (
           <a
             href={item.href}
-            class="group border-b border-background/10 py-5 text-2xl leading-none tracking-tight text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-background sm:text-3xl"
+            aria-current={currentPath === item.href ? "page" : undefined}
+            class="group py-3.5 text-xl leading-none tracking-tight text-white/90 transition-colors duration-300 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:py-4 sm:text-2xl"
             data-menu-link
           >
             <span class="relative inline-block overflow-hidden">
@@ -143,9 +134,12 @@ const textAnimation =
         ))
       }
 
+      <div class="my-1 h-px bg-white/20" aria-hidden="true"></div>
+
       <a
         href={contactItem.href}
-        class="group py-5 text-2xl leading-none tracking-tight text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-background sm:text-3xl"
+        aria-current={currentPath === contactItem.href ? "page" : undefined}
+        class="group flex items-center justify-between py-3.5 text-xl leading-none tracking-tight text-white/90 transition-colors duration-300 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:py-4 sm:text-2xl"
         data-menu-link
       >
         <span class="relative inline-block overflow-hidden">
@@ -157,14 +151,59 @@ const textAnimation =
             {contactItem.label}
           </span>
         </span>
+        <span aria-hidden="true" class="text-lg opacity-70">⌄</span>
       </a>
     </nav>
   </div>
 </div>
+</header>
 
 <style is:global>
   html {
     scrollbar-gutter: stable;
+  }
+
+  [data-menu-panel] {
+    clip-path: inset(0 0 100% 100% round 0.5rem);
+    transition: clip-path 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  [data-menu][aria-hidden="false"] [data-menu-panel] {
+    clip-path: inset(0 0 0 0 round 0.5rem);
+  }
+
+  .mobile-menu-line {
+    position: absolute;
+    left: 50%;
+    height: 1px;
+    background: currentColor;
+    transform: translate(-50%, -50%);
+    transition:
+      top 500ms cubic-bezier(0.22, 1, 0.36, 1),
+      width 500ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .mobile-menu-line:nth-child(1) { top: 30%; width: 1.25rem; }
+  .mobile-menu-line:nth-child(2) { top: 70%; width: 1.25rem; }
+
+  [data-menu-toggle][aria-expanded="true"] .mobile-menu-line {
+    top: 50%;
+  }
+
+  [data-menu-toggle][aria-expanded="true"] .mobile-menu-line:nth-child(1) {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  [data-menu-toggle][aria-expanded="true"] .mobile-menu-line:nth-child(2) {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-menu-panel],
+    .mobile-menu-line {
+      transition: none;
+    }
   }
 </style>
 
@@ -181,11 +220,9 @@ const textAnimation =
     const menu = document.querySelector<HTMLElement>("[data-menu]");
     const scrim = document.querySelector<HTMLElement>("[data-menu-scrim]");
     const panel = document.querySelector<HTMLElement>("[data-menu-panel]");
-    const lines = nav.querySelectorAll<HTMLElement>("[data-menu-line]");
     const links =
       document.querySelectorAll<HTMLAnchorElement>("[data-menu-link]");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const desktop = window.matchMedia("(min-width: 48rem)");
     const controller = new AbortController();
 
     if (!shell || !toggle || !menu || !scrim || !panel) return;
@@ -204,75 +241,7 @@ const textAnimation =
       signal: controller.signal,
     });
 
-    const tinyScroll = 4;
-    const stateThreshold = 24;
-
-    let previousScrollY = Math.max(window.scrollY, 0);
-    let accumulatedScroll = 0;
-    let previousDirection = 0;
-    let ticking = false;
     let hidePanelTimer: number | undefined;
-
-    const setNavbar = (isVisible: boolean) => {
-      const state = isVisible ? "visible" : "hidden";
-
-      if (shell.dataset.navState === state) return;
-
-      shell.dataset.navState = state;
-      shell.inert = !isVisible;
-
-      shell.classList.toggle("-translate-y-full", !isVisible);
-      shell.classList.toggle("translate-y-0", isVisible);
-    };
-
-    const updateNavbar = () => {
-      ticking = false;
-
-      if (desktop.matches) {
-        setNavbar(true);
-        return;
-      }
-
-      if (toggle.getAttribute("aria-expanded") === "true") return;
-
-      const currentScrollY = Math.max(window.scrollY, 0);
-      const delta = currentScrollY - previousScrollY;
-
-      if (currentScrollY === 0) {
-        previousScrollY = 0;
-        accumulatedScroll = 0;
-        previousDirection = 0;
-        setNavbar(false);
-        return;
-      }
-
-      if (Math.abs(delta) < tinyScroll) return;
-
-      const direction = delta > 0 ? 1 : -1;
-
-      accumulatedScroll =
-        direction === previousDirection
-          ? accumulatedScroll + Math.abs(delta)
-          : Math.abs(delta);
-
-      previousDirection = direction;
-      previousScrollY = currentScrollY;
-
-      if (accumulatedScroll < stateThreshold) return;
-
-      // Scroll up = show
-      // Scroll down = hide
-      setNavbar(direction < 0);
-
-      accumulatedScroll = 0;
-    };
-
-    const scheduleNavbarUpdate = () => {
-      if (ticking) return;
-
-      ticking = true;
-      requestAnimationFrame(updateNavbar);
-    };
 
     const setMenu = (isOpen: boolean) => {
       if (hidePanelTimer !== undefined) {
@@ -298,32 +267,14 @@ const textAnimation =
         panel.classList.add("visible");
       }
 
-      panel.classList.toggle("-translate-y-full", !isOpen);
-      panel.classList.toggle("translate-y-0", isOpen);
-
       if (!isOpen) {
-        // Always restore the initial hidden state, even when a transition is
-        // interrupted or disabled (for example with reduced motion).
-        const hidePanel = (event: TransitionEvent) => {
-          if (event.propertyName === "transform") {
-            panel.classList.add("invisible");
-            panel.classList.remove("visible");
-          }
-        };
-
-        panel.addEventListener("transitionend", hidePanel, { once: true });
         hidePanelTimer = window.setTimeout(() => {
+          hidePanelTimer = undefined;
+          if (toggle.getAttribute("aria-expanded") === "true") return;
           panel.classList.add("invisible");
           panel.classList.remove("visible");
-          hidePanelTimer = undefined;
         }, reduceMotion.matches ? 0 : 550);
       }
-
-      lines[0]?.classList.toggle("translate-y-[3px]", isOpen);
-      lines[0]?.classList.toggle("rotate-45", isOpen);
-
-      lines[1]?.classList.toggle("-translate-y-[3px]", isOpen);
-      lines[1]?.classList.toggle("-rotate-45", isOpen);
 
       if (isOpen) {
         links[0]?.focus({ preventScroll: true });
@@ -410,22 +361,10 @@ const textAnimation =
       { signal: controller.signal },
     );
 
-    window.addEventListener("scroll", scheduleNavbarUpdate, {
-      passive: true,
-      signal: controller.signal,
-    });
-
-    desktop.addEventListener("change", scheduleNavbarUpdate, {
-      signal: controller.signal,
-    });
-
     if (reduceMotion.matches) {
-      shell.classList.remove("transition-transform");
       scrim.classList.remove("transition-opacity");
-      panel.classList.remove("transition-transform");
     }
 
-    setNavbar(desktop.matches);
     setMenu(false);
   };
 
