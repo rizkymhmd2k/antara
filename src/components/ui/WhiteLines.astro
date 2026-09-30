@@ -112,10 +112,11 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
   @media (prefers-reduced-motion: no-preference) {
     .white-lines.is-scroll-lit .white-lines__svg {
       opacity: 0.22;
+      translate: 0 var(--ribbon-parallax-y, 0px);
     }
 
     .white-lines.is-scroll-lit.is-visible .white-lines__svg {
-      will-change: opacity;
+      will-change: opacity, translate;
     }
 
     .white-lines:not(.is-static) .white-lines__svg {
@@ -153,7 +154,11 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
 
   @media (max-width: 47.99rem) {
     .white-lines__svg {
-      translate: 30% 0;
+      translate: 30% var(--ribbon-parallax-y, 0px);
+    }
+
+    .white-lines.is-scroll-lit .white-lines__svg {
+      translate: 30% var(--ribbon-parallax-y, 0px);
     }
 
     .white-lines__anchor-text {
@@ -184,14 +189,22 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
     let start = 0;
     let distance = 1;
     let lastOpacity = -1;
+    let lastOffset = -1;
     const render = () => {
       frame = 0;
       if (!scrollLighten || reducedMotion.matches) return;
       const progress = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
       const opacity = Math.round((0.22 + progress * 0.78) * 1000) / 1000;
-      if (opacity === lastOpacity) return;
-      lastOpacity = opacity;
-      svg.style.opacity = String(opacity);
+      if (opacity !== lastOpacity) {
+        lastOpacity = opacity;
+        svg.style.opacity = String(opacity);
+      }
+      // Independent of brightness so the drift continues through Who.
+      const offset = Math.round(Math.min(120, Math.max(0, window.scrollY - start) * 0.06) * 10) / 10;
+      if (offset !== lastOffset) {
+        lastOffset = offset;
+        svg.style.setProperty("--ribbon-parallax-y", `${offset}px`);
+      }
     };
     const schedule = () => {
       if (!frame && visible && !document.hidden && !reducedMotion.matches) {
@@ -212,7 +225,9 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
       }
       if (reducedMotion.matches) {
         svg.style.removeProperty("opacity");
+        svg.style.removeProperty("--ribbon-parallax-y");
         lastOpacity = -1;
+        lastOffset = -1;
       } else schedule();
     };
     const observer = new IntersectionObserver(([entry]) => {
@@ -237,6 +252,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
       document.removeEventListener("visibilitychange", update);
       ribbon.classList.remove("is-visible");
       svg.style.removeProperty("opacity");
+      svg.style.removeProperty("--ribbon-parallax-y");
     };
   }
 

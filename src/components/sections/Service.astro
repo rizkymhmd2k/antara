@@ -98,7 +98,6 @@ const servicesText = (await getCollection("services"))
     const track = document.querySelector("[data-track]");
     const lineFill = document.querySelector("[data-line-fill]");
     if (!wrapper || !frame || !track) return;
-
     const desktop = window.matchMedia("(min-width: 768px)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const isDesktop = () => desktop.matches;

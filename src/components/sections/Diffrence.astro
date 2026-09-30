@@ -10,30 +10,30 @@ const items = (await getCollection("difference-items"))
 ---
 
 <section id="difference" class="difference-section">
-  <div class="difference-heading px-4 sm:px-8">
-    <SectionHeading class="difference-heading-content" eyebrow={heading.eyebrow} title={heading.title} />
-  </div>
-
   <div class="difference-scroll" data-difference-section>
-  <div class="difference-sticky">
-    <div class="difference-rails" aria-hidden="true"></div>
+    <div class="difference-sticky">
 
-    <div class="difference-viewport" data-difference-viewport>
-      <div class="difference-track" data-difference-track>
-        {
-          items.map((item) => (
-            <article class="difference-card">
-              <h2 class="difference-card__title">
-                <strong>{item.number}</strong>
-                <span>{item.title}</span>
-              </h2>
-              <p>{item.body}</p>
-            </article>
-          ))
-        }
+      <div class="difference-heading px-4 sm:px-8">
+        <SectionHeading class="difference-heading-content" eyebrow={heading.eyebrow} title={heading.title} />
       </div>
+
+      <div class="difference-viewport" data-difference-viewport>
+        <div class="difference-track" data-difference-track>
+          {
+            items.map((item) => (
+              <article class="difference-card">
+                <h3 class="difference-card__title">
+                  <strong>{item.number}</strong>
+                  <span>{item.title}</span>
+                </h3>
+                <p>{item.body}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+
     </div>
-  </div>
   </div>
 </section>
 
@@ -49,13 +49,11 @@ const items = (await getCollection("difference-items"))
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (!section || !viewport || !track) return;
     const cards = Array.from(track.querySelectorAll<HTMLElement>(".difference-card")).map((card, index) => {
-      const seed = Math.sin((index + 1) * 127.1) * 43758.5453;
-      const variation = seed - Math.floor(seed);
       return {
         card,
-        variation,
         direction: index % 2 === 0 ? 1 : -1,
-        phase: variation * Math.PI * 2,
+        rotation: [-3.5, 2.25, -1.75, 3, -2.5, 2][index % 6],
+        offsetY: [2.5, -2, 1, -1.5, 2, -1][index % 6],
         top: 0,
         height: 1,
         lastMobileProgress: Number.NaN,
@@ -75,9 +73,10 @@ const items = (await getCollection("difference-items"))
       track.style.removeProperty("transform");
       cards.forEach((entry) => {
         entry.card.style.removeProperty("--scroll-rotation");
-        entry.card.style.removeProperty("--card-tilt-x");
-        entry.card.style.removeProperty("--card-tilt-y");
         entry.card.style.removeProperty("--card-scale");
+        entry.card.style.removeProperty("--card-y");
+        entry.card.style.removeProperty("z-index");
+        entry.card.removeAttribute("data-active");
         entry.card.classList.remove("is-moving");
         entry.lastMobileProgress = Number.NaN;
       });
@@ -99,8 +98,6 @@ const items = (await getCollection("difference-items"))
           if (progress === entry.lastMobileProgress) return;
           entry.lastMobileProgress = progress;
           entry.card.classList.toggle("is-moving", Math.abs(progress) < 1);
-          entry.card.style.setProperty("--card-tilt-x", `${-progress * 9}deg`);
-          entry.card.style.setProperty("--card-tilt-y", `${progress * entry.direction * 5}deg`);
           entry.card.style.setProperty("--scroll-rotation", `${progress * entry.direction * 2}deg`);
           entry.card.style.setProperty("--card-scale", String(1 - Math.abs(progress) * 0.035));
         });
@@ -111,10 +108,16 @@ const items = (await getCollection("difference-items"))
       lastProgress = progress;
       const translateX = startX + (endX - startX) * progress;
       track.style.transform = `translate3d(${translateX}px, 0, 0)`;
-      cards.forEach(({ card, variation, direction, phase }) => {
-        const magnitude = 5 + variation * 1.2 + Math.sin(progress * Math.PI * 2 + phase) * 2.2;
-        const rotation = direction * magnitude;
-        card.style.setProperty("--scroll-rotation", `${rotation}deg`);
+      const activePosition = progress * Math.max(0, cards.length - 1);
+      const activeIndex = Math.round(activePosition);
+      cards.forEach(({ card, rotation, offsetY }, index) => {
+        const distance = Math.abs(index - activePosition);
+        const focus = 1 - Math.min(1, distance);
+        card.style.setProperty("--scroll-rotation", `${rotation * (1 - focus * 0.25)}deg`);
+        card.style.setProperty("--card-y", `${offsetY - focus * 1.5}vh`);
+        card.style.setProperty("--card-scale", String(1 + focus * 0.08));
+        card.style.zIndex = String(100 - Math.round(distance * 10));
+        card.toggleAttribute("data-active", index === activeIndex);
       });
     };
     const requestUpdate = () => {
@@ -144,8 +147,9 @@ const items = (await getCollection("difference-items"))
       if (!first || !last) return;
       viewportWidth = viewport.clientWidth;
       const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-      const animationEnd = sectionTop + section.offsetHeight - window.innerHeight * 0.7;
-      animationStart = sectionTop - window.innerHeight * 0.2;
+      const sticky = section.querySelector<HTMLElement>(".difference-sticky");
+      const animationEnd = sectionTop + section.offsetHeight - (sticky?.offsetHeight ?? window.innerHeight);
+      animationStart = sectionTop;
       scrollDistance = Math.max(1, animationEnd - animationStart);
       const trackLeft = track.offsetLeft;
       startX = viewportWidth * 0.5 - trackLeft - first.offsetLeft - first.offsetWidth / 2;
@@ -216,8 +220,8 @@ const items = (await getCollection("difference-items"))
 
   .difference-heading {
     position: relative;
-    z-index: 1;
-    padding-top: 0;
+    z-index: 2;
+    padding-top: 4rem;
     padding-bottom: 0;
     text-align: center;
   }
@@ -228,8 +232,8 @@ const items = (await getCollection("difference-items"))
   }
 
   .difference-heading :global(h2) {
-    max-width: 22ch;
-    font-size: clamp(2rem, 4.5vw, 4rem);
+    max-width: 24ch;
+    font-size: clamp(2rem, 4.8vw, 5rem);
     line-height: 1.08;
     letter-spacing: -0.035em;
   }
@@ -257,6 +261,7 @@ const items = (await getCollection("difference-items"))
 
   .difference-card {
     --hole-left: 1.5rem;
+    --fold-size: clamp(1.75rem, 3vw, 2.75rem);
     position: relative;
     display: flex;
     width: 85%;
@@ -266,7 +271,15 @@ const items = (await getCollection("difference-items"))
     justify-content: flex-start;
     padding: 2.75rem 1.5rem 3.25rem;
     color: var(--color-background);
-    background: white;
+    background: #faf9f4;
+    border-radius: 0.4rem;
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--fold-size)) 0,
+      100% var(--fold-size),
+      100% 100%,
+      0 100%
+    );
     mask-image: radial-gradient(
       circle at calc(var(--hole-left) + 7px) calc(1.25rem + 7px),
       transparent 6.5px,
@@ -274,34 +287,42 @@ const items = (await getCollection("difference-items"))
     );
   }
 
-  .difference-card::after {
+  .difference-card::before {
     content: "";
     position: absolute;
-    right: 1.5rem;
-    bottom: 1.25rem;
-    left: 1.5rem;
-    border-top: 1px solid currentColor;
+    top: 0;
+    right: 0;
+    width: var(--fold-size);
+    height: var(--fold-size);
+    background: #e2e4dc;
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+    pointer-events: none;
   }
 
   .difference-card__title {
     display: flex;
-    align-items: baseline;
-    gap: 0.65rem;
-    border-bottom: 1px solid currentColor;
-    padding-bottom: 0.45rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+    font-weight: 500;
     font-size: clamp(1.25rem, 2vw, 1.75rem);
     line-height: 1.05;
   }
 
   .difference-card__title strong {
-    font-weight: 700;
+    width: 100%;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1rem;
+    font-weight: 400;
+    font-size: clamp(2rem, 3.2vw, 3rem);
+    line-height: 0.85;
   }
 
   .difference-card p {
     max-width: 34ch;
-    padding-top: 0.75rem;
+    padding-top: 1.75rem;
     font-size: clamp(1rem, 1.25vw, 1.2rem);
-    line-height: 1.08;
+    line-height: 1.3;
   }
 
   @media (max-width: 47.999rem) {
@@ -318,10 +339,7 @@ const items = (await getCollection("difference-items"))
 
   @media (max-width: 47.999rem) and (prefers-reduced-motion: no-preference) {
     .difference-card {
-      transform: perspective(900px)
-        rotateX(var(--card-tilt-x, 0deg))
-        rotateY(var(--card-tilt-y, 0deg))
-        rotateZ(var(--scroll-rotation, 0deg))
+      transform: rotate(var(--scroll-rotation, 0deg))
         scale(var(--card-scale, 1));
       transform-origin: center;
       backface-visibility: hidden;
@@ -333,16 +351,30 @@ const items = (await getCollection("difference-items"))
   }
 
   @media (min-width: 48rem) {
+    .difference-heading :global(h2) {
+      max-width: none;
+      font-size: clamp(1.5rem, 3.5vw, 5rem);
+      white-space: nowrap;
+    }
+
     .difference-scroll {
-      height: 460vh;
+      height: 340vh;
     }
 
     .difference-sticky {
       position: sticky;
       top: 0;
       height: 100vh;
-      height: 100svh;
+      height: max(100svh, 48rem);
       overflow: hidden;
+    }
+
+    .difference-heading {
+      position: absolute;
+      top: 10%;
+      right: 0;
+      left: 0;
+      padding-top: 0;
     }
 
     .difference-rails {
@@ -355,15 +387,15 @@ const items = (await getCollection("difference-items"))
         linear-gradient(to bottom, var(--grid-line-color), var(--grid-line-color)),
         linear-gradient(to bottom, var(--grid-line-color), var(--grid-line-color));
       background-position:
-        0 40%,
-        0 78%;
+        0 43%,
+        0 82%;
       background-repeat: no-repeat;
       background-size: 100% 1px;
     }
 
     .difference-viewport {
       position: absolute;
-      inset: 0;
+      inset: 37% 0 14%;
       display: flex;
       align-items: center;
       overflow: visible;
@@ -378,43 +410,27 @@ const items = (await getCollection("difference-items"))
       width: max-content;
       flex-direction: row;
       align-items: center;
-      gap: 8vw;
+      gap: clamp(3rem, 4vw, 5rem);
       will-change: transform;
     }
 
     .difference-card {
-      width: 40vw;
-      min-width: 23rem;
-      max-width: 40rem;
-      min-height: clamp(17rem, 23vw, 21rem);
-      justify-content: center;
-      padding: clamp(1.35rem, 2vw, 2rem);
-      padding-top: clamp(2.75rem, 3.5vw, 3.5rem);
+      width: clamp(15rem, 20vw, 23rem);
+      min-width: 0;
+      max-width: none;
+      min-height: clamp(22rem, 26vw, 30rem);
+      justify-content: flex-start;
+      padding: 3.5rem clamp(1.35rem, 1.8vw, 2rem) 2rem;
       scroll-snap-align: none;
+      transform: translateY(var(--card-y, 0)) scale(var(--card-scale, 1)) rotate(var(--scroll-rotation, 0deg));
+      transform-origin: center;
       will-change: transform;
-    }
-
-    .difference-card:nth-child(3n + 1) {
-      transform: translateY(7vh) scale(1.08) rotate(var(--scroll-rotation, 0deg));
-    }
-
-    .difference-card:nth-child(3n + 2) {
-      transform: translateY(-6vh) scale(0.92) rotate(var(--scroll-rotation, 0deg));
-    }
-
-    .difference-card:nth-child(3n) {
-      transform: translateY(2vh) scale(1.02) rotate(var(--scroll-rotation, 0deg));
     }
 
     .difference-card {
       --hole-left: clamp(1.35rem, 2vw, 2rem);
     }
 
-    .difference-card::after {
-      right: clamp(1.35rem, 2vw, 2rem);
-      bottom: clamp(1.1rem, 1.4vw, 1.4rem);
-      left: clamp(1.35rem, 2vw, 2rem);
-    }
   }
 
   @media (min-width: 48rem) and (prefers-reduced-motion: reduce) {
@@ -430,6 +446,8 @@ const items = (await getCollection("difference-items"))
 
     .difference-heading {
       position: relative;
+      top: auto;
+      padding-top: 4rem;
       padding-bottom: 0;
     }
 
@@ -439,6 +457,7 @@ const items = (await getCollection("difference-items"))
 
     .difference-viewport {
       position: relative;
+      inset: auto;
       display: block;
       overflow-x: auto;
       padding: 1rem 1rem 3.5rem;
@@ -456,7 +475,10 @@ const items = (await getCollection("difference-items"))
       min-width: 0;
       min-height: 17rem;
       transform: none;
+      opacity: 1;
+      filter: none;
       scroll-snap-align: center;
     }
+
   }
 </style>
