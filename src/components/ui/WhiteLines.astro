@@ -109,8 +109,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
     overflow: visible;
   }
 
-  /* Phones keep one cached SVG image instead of compositing a viewport-sized
-     masked layer on every scroll frame. */
+  /* Phones keep fixed SVG geometry; scroll only changes coarse opacity. */
   .white-lines.is-scroll-lit .white-lines__svg {
     opacity: 0.62;
   }
@@ -202,7 +201,11 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
       (deviceMemory !== undefined && deviceMemory <= 4) ||
       (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 2) ||
       connection?.saveData === true;
-    const canAnimate = () =>
+    const canLighten = () =>
+      !reducedMotion.matches &&
+      connection?.saveData !== true &&
+      (compactViewport.matches || !lowPowerDevice);
+    const canParallax = () =>
       !reducedMotion.matches && !compactViewport.matches && !lowPowerDevice;
     let visible = false;
     let frame = 0;
@@ -213,22 +216,30 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
     let listeningForScroll = false;
     const render = () => {
       frame = 0;
-      if (!scrollLighten || !canAnimate()) return;
+      if (!scrollLighten || !canLighten()) return;
       const progress = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
-      const opacity = Math.round((0.22 + progress * 0.78) * 1000) / 1000;
+      // Fewer opacity writes on phones; CSS interpolation keeps result smooth.
+      const precision = compactViewport.matches ? 50 : 1000;
+      const opacity =
+        Math.round((0.22 + progress * 0.78) * precision) / precision;
       if (opacity !== lastOpacity) {
         lastOpacity = opacity;
         svg.style.opacity = String(opacity);
       }
-      // Independent of brightness so the drift continues through Who.
-      const offset = Math.round(Math.min(120, Math.max(0, window.scrollY - start) * 0.06) * 10) / 10;
-      if (offset !== lastOffset) {
-        lastOffset = offset;
-        svg.style.setProperty("--ribbon-parallax-y", `${offset}px`);
+      if (canParallax()) {
+        // Independent of brightness so the drift continues through Who.
+        const offset =
+          Math.round(
+            Math.min(120, Math.max(0, window.scrollY - start) * 0.06) * 10,
+          ) / 10;
+        if (offset !== lastOffset) {
+          lastOffset = offset;
+          svg.style.setProperty("--ribbon-parallax-y", `${offset}px`);
+        }
       }
     };
     const schedule = () => {
-      if (!frame && visible && !document.hidden && canAnimate()) {
+      if (!frame && visible && !document.hidden && canLighten()) {
         frame = requestAnimationFrame(render);
       }
     };
@@ -245,23 +256,26 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
       schedule();
     };
     const update = () => {
-      const animate = canAnimate();
+      const lighten = canLighten();
       ribbon.classList.toggle(
         "is-visible",
-        visible && !document.hidden && animate,
+        visible && !document.hidden && lighten,
       );
-      ribbon.classList.toggle("is-performance-static", !animate);
-      setScrollListener(visible && !document.hidden && animate);
-      if (!visible || document.hidden || !animate) {
+      ribbon.classList.toggle("is-performance-static", !lighten);
+      setScrollListener(visible && !document.hidden && lighten);
+      if (!visible || document.hidden || !lighten) {
         cancelAnimationFrame(frame);
         frame = 0;
       }
-      if (!animate) {
+      if (!lighten) {
         svg.style.removeProperty("opacity");
-        svg.style.removeProperty("--ribbon-parallax-y");
         lastOpacity = -1;
+      }
+      if (!canParallax()) {
+        svg.style.removeProperty("--ribbon-parallax-y");
         lastOffset = -1;
-      } else schedule();
+      }
+      if (lighten) schedule();
     };
     const observer = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
