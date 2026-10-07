@@ -49,6 +49,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
   style={`--white-lines-stroke:${strokeWidth};`}
   aria-hidden="true"
 >
+  <div class="white-lines__layer">
   <svg
     class="white-lines__svg"
     viewBox="0 0 700 312"
@@ -81,6 +82,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
       ))}
     </g>
   </svg>
+  </div>
   <p class="white-lines__anchor-text text-xs sm:text-sm">
     {data.anchorText.split("\n").map((line, index) => (
       <>
@@ -109,19 +111,33 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
     overflow: visible;
   }
 
-  /* Keep the masked ribbon static on phones to avoid scroll-time raster work. */
-  .white-lines.is-scroll-lit .white-lines__svg {
+  /* Fade an HTML layer while keeping the masked SVG geometry unchanged. */
+  .white-lines__layer {
+    position: absolute;
+    inset: 0;
+  }
+
+  .white-lines.is-scroll-lit .white-lines__layer {
     opacity: 0.62;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .white-lines.is-scroll-lit .white-lines__layer {
+      opacity: 0.22;
+    }
+
+    .white-lines.is-scroll-lit.is-visible .white-lines__layer {
+      will-change: opacity;
+    }
   }
 
   @media (min-width: 48rem) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
     .white-lines.is-scroll-lit .white-lines__svg {
-      opacity: 0.22;
       translate: 0 var(--ribbon-parallax-y, 0px);
     }
 
     .white-lines.is-scroll-lit.is-visible .white-lines__svg {
-      will-change: opacity, translate;
+      will-change: translate;
     }
 
     .white-lines:not(.is-static) .white-lines__svg {
@@ -130,12 +146,11 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
       transform-origin: center;
     }
 
-    .white-lines.is-visible .white-lines__svg {
+    .white-lines.is-visible:not(.is-performance-static) .white-lines__svg {
       animation-play-state: running;
     }
 
     .white-lines.is-performance-static .white-lines__svg {
-      opacity: 0.62;
       translate: 0 0;
       will-change: auto;
     }
@@ -186,8 +201,9 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
     const ribbon = document.querySelector<HTMLElement>(".white-lines");
     // The ribbon extends through both Hero and Who, beyond its SVG viewport.
     const region = ribbon?.parentElement?.parentElement;
+    const layer = ribbon?.querySelector<HTMLElement>(".white-lines__layer");
     const svg = ribbon?.querySelector<SVGSVGElement>("svg");
-    if (!ribbon || !region || !svg) return;
+    if (!ribbon || !region || !layer || !svg) return;
     const scrollLighten = ribbon.classList.contains("is-scroll-lit");
     if (!scrollLighten && ribbon.classList.contains("is-static")) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -201,10 +217,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
       (deviceMemory !== undefined && deviceMemory <= 4) ||
       (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 2) ||
       connection?.saveData === true;
-    const canLighten = () =>
-      !reducedMotion.matches &&
-      !compactViewport.matches &&
-      !lowPowerDevice;
+    const canLighten = () => !reducedMotion.matches;
     const canParallax = () =>
       !reducedMotion.matches && !compactViewport.matches && !lowPowerDevice;
     let visible = false;
@@ -222,7 +235,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
         Math.round((0.22 + progress * 0.78) * 1000) / 1000;
       if (opacity !== lastOpacity) {
         lastOpacity = opacity;
-        svg.style.opacity = String(opacity);
+        layer.style.opacity = String(opacity);
       }
       if (canParallax()) {
         // Independent of brightness so the drift continues through Who.
@@ -259,14 +272,14 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
         "is-visible",
         visible && !document.hidden && lighten,
       );
-      ribbon.classList.toggle("is-performance-static", !lighten);
+      ribbon.classList.toggle("is-performance-static", !canParallax());
       setScrollListener(visible && !document.hidden && lighten);
       if (!visible || document.hidden || !lighten) {
         cancelAnimationFrame(frame);
         frame = 0;
       }
       if (!lighten) {
-        svg.style.removeProperty("opacity");
+        layer.style.removeProperty("opacity");
         lastOpacity = -1;
       }
       if (!canParallax()) {
@@ -278,7 +291,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
     const observer = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
       update();
-    });
+    }, { rootMargin: "100px 0px" });
     observer.observe(region);
     const resizeObserver = new ResizeObserver(measure);
     resizeObserver.observe(region);
@@ -298,7 +311,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
       compactViewport.removeEventListener("change", update);
       document.removeEventListener("visibilitychange", update);
       ribbon.classList.remove("is-visible", "is-performance-static");
-      svg.style.removeProperty("opacity");
+      layer.style.removeProperty("opacity");
       svg.style.removeProperty("--ribbon-parallax-y");
     };
   }

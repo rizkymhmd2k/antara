@@ -41,6 +41,7 @@
     const numbers = root?.querySelector<HTMLElement>(".snapshot");
     const services = root?.querySelector<HTMLElement>("[data-services-section]");
     if (!root || !surface || !numbers || !services) return;
+    const themedSections = root.querySelectorAll<HTMLElement>(".snapshot, .serve");
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
     let enter = 0;
@@ -66,7 +67,7 @@
         (channel + (to[index] - channel) * amount).toFixed(2),
       ).join(" ");
       // Scope inherited colors to the two themed sections, not the whole page.
-      for (const section of [numbers, services]) {
+      for (const section of themedSections) {
         section.style.setProperty("--theme-ink", `rgb(${ink})`);
         section.style.setProperty("--theme-rule", `rgb(${ink} / 16%)`);
       }
@@ -104,7 +105,7 @@
       reduced.removeEventListener("change", sync);
       root.classList.remove("is-enabled");
       surface.style.opacity = "0";
-      for (const section of [numbers, services]) {
+      for (const section of themedSections) {
         section.style.removeProperty("--theme-ink");
         section.style.removeProperty("--theme-rule");
       }

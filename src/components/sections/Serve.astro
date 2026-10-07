@@ -327,6 +327,7 @@ const { theme = "light" } = Astro.props;
       while (!cancelled && queuedImage !== activeImage) {
         const next = queuedImage;
         if (reducedMotion.matches) {
+          setOpenRow(next);
           setImage(next);
           continue;
         }
@@ -338,10 +339,14 @@ const { theme = "light" } = Astro.props;
             await image.decode().catch(() => undefined);
           }
           if (cancelled || queuedImage !== next) continue;
+          const currentTiles = mobileTiles[activeImage];
+          if (currentTiles) await wipe(currentTiles, true);
+          if (cancelled) break;
+          // Cover the incoming image before its accordion panel opens.
+          nextTiles?.forEach((tile) => { tile.style.opacity = "1"; });
+          setOpenRow(next);
           setImage(next);
           if (nextTiles) {
-            await wipe(nextTiles, true);
-            if (cancelled) break;
             await wipe(nextTiles, false);
           }
           continue;
@@ -367,10 +372,11 @@ const { theme = "light" } = Astro.props;
       if (!button) return;
       const index = rows.indexOf(button.closest<HTMLElement>("[data-serve-row]")!);
       if (index < 0) return;
-      if (index === openRow) return;
+      if (index === queuedImage && transitioning) return;
+      if (index === openRow && !transitioning) return;
 
-      setOpenRow(index);
-      if (index !== activeImage) void selectImage(index);
+      if (desktop.matches || reducedMotion.matches) setOpenRow(index);
+      void selectImage(index);
     };
 
     setOpenRow(0);
