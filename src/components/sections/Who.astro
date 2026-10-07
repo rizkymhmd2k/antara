@@ -67,6 +67,11 @@ const data = who?.data as {
     let frame = 0;
     let visible = false;
     let lastFillHead = -1;
+    let headingTop = 0;
+    let start = 0;
+    let distance = 1;
+    let listeningForScroll = false;
+    let disposed = false;
     const fillTrail = 3;
     const opacities = new Array<number>(words.length).fill(-1);
 
@@ -82,12 +87,10 @@ const data = who?.data as {
         return;
       }
 
-      const rect = heading.getBoundingClientRect();
-      const start = window.innerHeight * 0.82;
-      const finish = window.innerHeight * 0.38;
+      // Geometry is cached on layout changes; scrolling only reads scrollY.
       const progress = Math.min(
         1,
-        Math.max(0, (start - rect.top) / (start - finish)),
+        Math.max(0, (start - headingTop + window.scrollY) / distance),
       );
       const fillHead = progress * (words.length + fillTrail);
       if (fillHead === lastFillHead) return;
@@ -111,34 +114,63 @@ const data = who?.data as {
       frame = requestAnimationFrame(update);
     };
 
+    const measure = () => {
+      headingTop = heading.getBoundingClientRect().top + window.scrollY;
+      start = window.innerHeight * 0.82;
+      distance = Math.max(1, window.innerHeight * 0.44);
+      requestUpdate();
+    };
+    const syncActivity = () => {
+      const active = visible && !reducedMotion.matches && !document.hidden;
+      heading.classList.toggle("scroll-fill-active", active);
+      if (active !== listeningForScroll) {
+        listeningForScroll = active;
+        if (active) window.addEventListener("scroll", requestUpdate, { passive: true });
+        else window.removeEventListener("scroll", requestUpdate);
+      }
+      if (active) requestUpdate();
+      else { cancelAnimationFrame(frame); frame = 0; }
+    };
+
     heading.classList.toggle("scroll-fill-ready", !reducedMotion.matches);
+    measure();
     update();
     const observer = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
-      if (visible) requestUpdate();
-      else if (frame) { cancelAnimationFrame(frame); frame = 0; }
-    });
+      syncActivity();
+    }, { rootMargin: "100px 0px" });
     observer.observe(heading);
+    const resizeObserver = new ResizeObserver(measure);
+    // The parent also catches layout shifts caused by the hero/font loading.
+    resizeObserver.observe(heading);
+    if (heading.parentElement?.parentElement) {
+      resizeObserver.observe(heading.parentElement.parentElement);
+    }
+    void document.fonts.ready.then(() => {
+      if (!disposed) measure();
+    });
     const onMotionChange = () => {
       if (frame) cancelAnimationFrame(frame);
       frame = 0;
       lastFillHead = -1;
       heading.classList.toggle("scroll-fill-ready", !reducedMotion.matches);
+      syncActivity();
       update();
     };
-    window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestUpdate);
+    window.addEventListener("resize", measure);
     reducedMotion.addEventListener("change", onMotionChange);
-    document.addEventListener("visibilitychange", requestUpdate);
+    document.addEventListener("visibilitychange", syncActivity);
 
     cleanupWhoFill = () => {
+      disposed = true;
       if (frame) cancelAnimationFrame(frame);
       observer.disconnect();
+      resizeObserver.disconnect();
       window.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestUpdate);
+      window.removeEventListener("resize", measure);
       reducedMotion.removeEventListener("change", onMotionChange);
-      document.removeEventListener("visibilitychange", requestUpdate);
-      heading.classList.remove("scroll-fill-ready");
+      document.removeEventListener("visibilitychange", syncActivity);
+      heading.classList.remove("scroll-fill-ready", "scroll-fill-active");
       words.forEach((word) =>
         word.style.removeProperty("opacity"),
       );
@@ -152,7 +184,12 @@ const data = who?.data as {
 
 <style>
   .scroll-fill-word {
+    display: inline-block;
     opacity: 1;
+  }
+
+  .scroll-fill-active .scroll-fill-word {
+    will-change: opacity;
   }
 
   .scroll-fill-ready .scroll-fill-word {

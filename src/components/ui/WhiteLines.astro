@@ -109,12 +109,12 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
     overflow: visible;
   }
 
-  /* Phones keep fixed SVG geometry; scroll only changes coarse opacity. */
+  /* Keep the masked ribbon static on phones to avoid scroll-time raster work. */
   .white-lines.is-scroll-lit .white-lines__svg {
     opacity: 0.62;
   }
 
-  @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
+  @media (min-width: 48rem) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
     .white-lines.is-scroll-lit .white-lines__svg {
       opacity: 0.22;
       translate: 0 var(--ribbon-parallax-y, 0px);
@@ -191,7 +191,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
     const scrollLighten = ribbon.classList.contains("is-scroll-lit");
     if (!scrollLighten && ribbon.classList.contains("is-static")) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const compactViewport = window.matchMedia("(max-width: 47.99rem)");
+    const compactViewport = window.matchMedia("(max-width: 47.99rem), (pointer: coarse)");
     const deviceMemory = (navigator as Navigator & { deviceMemory?: number })
       .deviceMemory;
     const connection = (
@@ -203,8 +203,8 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
       connection?.saveData === true;
     const canLighten = () =>
       !reducedMotion.matches &&
-      connection?.saveData !== true &&
-      (compactViewport.matches || !lowPowerDevice);
+      !compactViewport.matches &&
+      !lowPowerDevice;
     const canParallax = () =>
       !reducedMotion.matches && !compactViewport.matches && !lowPowerDevice;
     let visible = false;
@@ -218,10 +218,8 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
       frame = 0;
       if (!scrollLighten || !canLighten()) return;
       const progress = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
-      // Fewer opacity writes on phones; CSS interpolation keeps result smooth.
-      const precision = compactViewport.matches ? 50 : 1000;
       const opacity =
-        Math.round((0.22 + progress * 0.78) * precision) / precision;
+        Math.round((0.22 + progress * 0.78) * 1000) / 1000;
       if (opacity !== lastOpacity) {
         lastOpacity = opacity;
         svg.style.opacity = String(opacity);

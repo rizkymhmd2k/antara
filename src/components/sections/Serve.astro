@@ -88,6 +88,7 @@ const { theme = "light" } = Astro.props;
                     sizes="(max-width: 899px) calc(100vw - 2rem), 1px"
                     loading="lazy"
                   />
+                  <div class="serve-mobile-pixels" data-serve-mobile-pixels aria-hidden="true"></div>
                 </div>
               </div>
             </div>
@@ -171,7 +172,8 @@ const { theme = "light" } = Astro.props;
     object-fit: cover;
   }
 
-  .serve-pixels {
+  .serve-pixels,
+  .serve-mobile-pixels {
     position: absolute;
     z-index: 3;
     inset: 0;
@@ -181,7 +183,8 @@ const { theme = "light" } = Astro.props;
     pointer-events: none;
   }
 
-  .serve-pixels :global(span) {
+  .serve-pixels :global(span),
+  .serve-mobile-pixels :global(span) {
     background: var(--serve-pixels);
     opacity: 0;
   }
@@ -249,7 +252,7 @@ const { theme = "light" } = Astro.props;
     .serve-rows::before, .serve-row::after { display: none; }
     .serve-title { font-size: clamp(1.4rem, 4vw, 1.85rem); }
     .serve-panel p { margin-right: 0; }
-    .serve-mobile-image { display: block; max-width: 18rem; margin: 0 0 1.75rem; aspect-ratio: 1.15; overflow: hidden; background: var(--color-background); }
+    .serve-mobile-image { position: relative; display: block; max-width: 18rem; margin: 0 0 1.75rem; aspect-ratio: 1.15; overflow: hidden; background: var(--color-background); }
     .serve-mobile-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
   }
 
@@ -271,11 +274,13 @@ const { theme = "light" } = Astro.props;
     const pixels = section.querySelector<HTMLElement>("[data-serve-pixels]");
     if (!pixels) return;
 
-    const tiles = Array.from({ length: 100 }, () => {
-      const tile = document.createElement("span");
-      pixels.append(tile);
-      return tile;
-    });
+    const createTiles = (container: HTMLElement) => Array.from({ length: 100 }, () => {
+        const tile = document.createElement("span");
+        container.append(tile);
+        return tile;
+      });
+    const tiles = createTiles(pixels);
+    const mobileTiles = Array.from(section.querySelectorAll<HTMLElement>("[data-serve-mobile-pixels]"), createTiles);
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const desktop = window.matchMedia("(min-width: 900px)");
     const animations = new Set<Animation>();
@@ -300,7 +305,7 @@ const { theme = "light" } = Astro.props;
       activeImage = index;
     };
 
-    const wipe = (cover: boolean) => Promise.all(tiles.map((tile, index) => {
+    const wipe = (wipeTiles: HTMLElement[], cover: boolean) => Promise.all(wipeTiles.map((tile, index) => {
       const col = index % 10;
       const row = Math.floor(index / 10);
       const animation = tile.animate(
@@ -321,8 +326,24 @@ const { theme = "light" } = Astro.props;
       transitioning = true;
       while (!cancelled && queuedImage !== activeImage) {
         const next = queuedImage;
-        if (!desktop.matches || reducedMotion.matches) {
+        if (reducedMotion.matches) {
           setImage(next);
+          continue;
+        }
+        if (!desktop.matches) {
+          const nextTiles = mobileTiles[next];
+          const image = rows[next]?.querySelector<HTMLImageElement>(".serve-mobile-image img");
+          if (image) {
+            image.loading = "eager";
+            await image.decode().catch(() => undefined);
+          }
+          if (cancelled || queuedImage !== next) continue;
+          setImage(next);
+          if (nextTiles) {
+            await wipe(nextTiles, true);
+            if (cancelled) break;
+            await wipe(nextTiles, false);
+          }
           continue;
         }
         const image = images[next]?.querySelector("img");
@@ -331,10 +352,10 @@ const { theme = "light" } = Astro.props;
           await image.decode().catch(() => undefined);
         }
         if (cancelled || queuedImage !== next) continue;
-        await wipe(true);
+        await wipe(tiles, true);
         if (cancelled) break;
         setImage(next);
-        await wipe(false);
+        await wipe(tiles, false);
       }
       transitioning = false;
     };
@@ -360,6 +381,7 @@ const { theme = "light" } = Astro.props;
       section.removeEventListener("click", onClick);
       animations.forEach((animation) => animation.cancel());
       tiles.forEach((tile) => tile.remove());
+      mobileTiles.flat().forEach((tile) => tile.remove());
     };
   }
 

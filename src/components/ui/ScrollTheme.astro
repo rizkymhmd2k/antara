@@ -16,11 +16,10 @@
   }
   .scroll-theme__content { position: relative; z-index: 1; }
 
-  .scroll-theme.is-enabled { color: var(--theme-ink, white); }
   .scroll-theme.is-enabled :global(.snapshot),
   .scroll-theme.is-enabled :global(.serve) {
     background: transparent;
-    color: inherit;
+    color: var(--theme-ink, white);
     --grid-line-color: var(--theme-rule);
     --serve-rule: var(--theme-rule);
     --serve-plus-border: var(--theme-rule);
@@ -66,8 +65,11 @@
       const ink = from.map((channel, index) =>
         (channel + (to[index] - channel) * amount).toFixed(2),
       ).join(" ");
-      root.style.setProperty("--theme-ink", `rgb(${ink})`);
-      root.style.setProperty("--theme-rule", `rgb(${ink} / 16%)`);
+      // Scope inherited colors to the two themed sections, not the whole page.
+      for (const section of [numbers, services]) {
+        section.style.setProperty("--theme-ink", `rgb(${ink})`);
+        section.style.setProperty("--theme-rule", `rgb(${ink} / 16%)`);
+      }
     };
     const schedule = () => {
       if (!frame && !reduced.matches && !document.hidden) frame = requestAnimationFrame(update);
@@ -102,6 +104,10 @@
       reduced.removeEventListener("change", sync);
       root.classList.remove("is-enabled");
       surface.style.opacity = "0";
+      for (const section of [numbers, services]) {
+        section.style.removeProperty("--theme-ink");
+        section.style.removeProperty("--theme-rule");
+      }
     };
   }
   initScrollTheme();
