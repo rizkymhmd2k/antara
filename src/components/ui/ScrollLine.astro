@@ -36,11 +36,16 @@ const instanceId = `scroll-line-${Math.random().toString(36).slice(2, 10)}`;
     let ticking = false;
     let revealRect = null;
     let revealWidth = 0;
+    let lastProgress = -1;
     const canvas = line.querySelector(".scroll-line__canvas");
 
     const clamp = (value) => Math.min(1, Math.max(0, value));
 
     const applyProgress = (value) => {
+      // Offscreen/completed lines keep the same progress on every scroll.
+      // Rewriting their clip rect still invalidates SVG layout and paint.
+      if (value === lastProgress) return;
+      lastProgress = value;
       line.style.setProperty("--scroll-line-progress", value.toString());
 
       if (revealRect instanceof SVGRectElement) {

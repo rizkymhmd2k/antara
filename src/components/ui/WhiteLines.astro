@@ -50,6 +50,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
   aria-hidden="true"
 >
   <div class="white-lines__layer">
+  <div class="white-lines__motion">
   <svg
     class="white-lines__svg"
     viewBox="0 0 700 312"
@@ -83,6 +84,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
     </g>
   </svg>
   </div>
+  </div>
   <p class="white-lines__anchor-text text-xs sm:text-sm">
     {data.anchorText.split("\n").map((line, index) => (
       <>
@@ -112,7 +114,8 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
   }
 
   /* Fade an HTML layer while keeping the masked SVG geometry unchanged. */
-  .white-lines__layer {
+  .white-lines__layer,
+  .white-lines__motion {
     position: absolute;
     inset: 0;
   }
@@ -132,25 +135,21 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
   }
 
   @media (min-width: 48rem) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .white-lines.is-scroll-lit .white-lines__svg {
-      translate: 0 var(--ribbon-parallax-y, 0px);
+    .white-lines.is-scroll-lit.is-visible:not(.is-performance-static) .white-lines__layer {
+      will-change: opacity, translate;
     }
 
-    .white-lines.is-scroll-lit.is-visible .white-lines__svg {
-      will-change: translate;
-    }
-
-    .white-lines:not(.is-static) .white-lines__svg {
+    .white-lines:not(.is-static) .white-lines__motion {
       animation: ribbon-drift 14s ease-in-out infinite alternate;
       animation-play-state: paused;
       transform-origin: center;
     }
 
-    .white-lines.is-visible:not(.is-performance-static) .white-lines__svg {
+    .white-lines.is-visible:not(.is-performance-static) .white-lines__motion {
       animation-play-state: running;
     }
 
-    .white-lines.is-performance-static .white-lines__svg {
+    .white-lines.is-performance-static .white-lines__layer {
       translate: 0 0;
       will-change: auto;
     }
@@ -202,8 +201,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
     // The ribbon extends through both Hero and Who, beyond its SVG viewport.
     const region = ribbon?.parentElement?.parentElement;
     const layer = ribbon?.querySelector<HTMLElement>(".white-lines__layer");
-    const svg = ribbon?.querySelector<SVGSVGElement>("svg");
-    if (!ribbon || !region || !layer || !svg) return;
+    if (!ribbon || !region || !layer) return;
     const scrollLighten = ribbon.classList.contains("is-scroll-lit");
     if (!scrollLighten && ribbon.classList.contains("is-static")) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -245,7 +243,8 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
           ) / 10;
         if (offset !== lastOffset) {
           lastOffset = offset;
-          svg.style.setProperty("--ribbon-parallax-y", `${offset}px`);
+          // Move the cached HTML layer, not the non-scaling SVG strokes.
+          layer.style.translate = `0 ${offset}px`;
         }
       }
     };
@@ -283,7 +282,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
         lastOpacity = -1;
       }
       if (!canParallax()) {
-        svg.style.removeProperty("--ribbon-parallax-y");
+        layer.style.removeProperty("translate");
         lastOffset = -1;
       }
       if (lighten) schedule();
@@ -312,7 +311,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, index) => ({
       document.removeEventListener("visibilitychange", update);
       ribbon.classList.remove("is-visible", "is-performance-static");
       layer.style.removeProperty("opacity");
-      svg.style.removeProperty("--ribbon-parallax-y");
+      layer.style.removeProperty("translate");
     };
   }
 
