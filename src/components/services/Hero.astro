@@ -1,8 +1,5 @@
 ---
-import Eyebrow from "../ui/Eyebrow.astro";
 import Button from "../ui/Button.astro";
-import ScrollLine from "../ui/ScrollLine.astro";
-import scrollLineUrl from "../../assets/lines/scroll-line-2.svg?url";
 import { getEntry } from "astro:content";
 
 const page = await getEntry("site", "services-page");
@@ -16,34 +13,19 @@ const data = page?.data as {
 ---
 
 <section class="hero-padding relative flex h-dvh overflow-hidden ">
-  <!-- <ScrollLine
-    src={scrollLineUrl}
-    mobileEndOffset={0.86}
-    class="pointer-events-none absolute inset-x-0 top-[16%] h-[82vh] w-full opacity-80 sm:top-[10%] sm:h-[92vh]"
-    imgClass="h-full w-full max-w-none"
-  /> -->
-
-  <!-- <div
-    aria-hidden="true"
-    class="absolute bottom-0 left-4 right-4 z-0 h-px bg-white/35 sm:left-8 sm:right-8"
-  >
-  </div> -->
-
   <div class="relative z-10 flex h-full w-full flex-col justify-between ">
-    <div class="grid min-w-0 gap-8 md:grid-cols-3 md:gap-8 ">
-      <!-- <Eyebrow text={data.eyebrow} /> -->
-      <p class="caption-text w-full max-w-[20rem] md:col-start-3">
-        Planning, investment, reporting, legacy, and liquidity held in one field
-        of view.
-      </p>
-    </div>
+    <div aria-hidden="true"></div>
 
     <div class="flex min-w-0 items-end ">
       <h1 class="max-w-[10.8ch] text-6xl leading-[0.9] tracking-tight [overflow-wrap:anywhere] sm:max-w-6xl sm:text-7xl md:text-8xl">
         {data.headline.split(" ").slice(0, 4).join(" ")}
         <br class="hidden sm:block" />
         <span class="">
-          {data.headline.split(" ").slice(4).join(" ")}
+          {data.headline.split(" ").slice(4).join(" ").split(/(Forward)/).map((part) =>
+            part === "Forward" ? (
+              <span class="forward-word" data-forward-word><span class="forward-initial">F</span><span class="forward-rest">orward</span></span>
+            ) : part
+          )}
         </span>
       </h1>
     </div>
@@ -67,3 +49,69 @@ const data = page?.data as {
     </div>
   </div>
 </section>
+
+<script>
+  for (const word of document.querySelectorAll<HTMLElement>("[data-forward-word]")) {
+    const hero = word.closest("section");
+    if (!hero) continue;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let frame = 0;
+
+    const render = () => {
+      frame = 0;
+      // Reach full stretch while the headline is still visible.
+      const progress = reducedMotion.matches ? 0 : Math.min(1, Math.max(0,
+        -hero.getBoundingClientRect().top / (hero.offsetHeight * 0.35),
+      ));
+      word.style.setProperty("--forward-stretch", String(1 + progress * 0.45));
+      word.style.setProperty("--forward-compression", String(1 - progress * 0.09));
+    };
+
+    const scheduleRender = () => {
+      if (!frame) frame = requestAnimationFrame(render);
+    };
+
+    window.addEventListener("scroll", scheduleRender, { passive: true });
+    window.addEventListener("resize", scheduleRender);
+    reducedMotion.addEventListener("change", scheduleRender);
+    scheduleRender();
+
+    document.addEventListener("astro:before-swap", () => {
+      window.removeEventListener("resize", scheduleRender);
+      window.removeEventListener("scroll", scheduleRender);
+      reducedMotion.removeEventListener("change", scheduleRender);
+      cancelAnimationFrame(frame);
+    }, { once: true });
+  }
+</script>
+
+<style>
+  .forward-word {
+    display: inline-flex;
+    white-space: nowrap;
+  }
+
+  /* Transforms redistribute space without changing the headline's layout. */
+  .forward-initial,
+  .forward-rest {
+    display: inline-block;
+  }
+
+  .forward-initial {
+    transform-origin: left center;
+    transform: scaleX(var(--forward-stretch, 1));
+  }
+
+  .forward-rest {
+    transform-origin: right center;
+    transform: scaleX(var(--forward-compression, 1));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .forward-initial,
+    .forward-rest {
+      transform: none !important;
+    }
+  }
+</style>

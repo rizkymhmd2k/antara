@@ -1,9 +1,9 @@
 ---
 import { Image } from "astro:assets";
-import foundersImage from "../../assets/images/serve-founders-v2.png";
-import familyImage from "../../assets/images/serve-families-v2.png";
-import sportsImage from "../../assets/images/serve-sports-v2.png";
-import executivesImage from "../../assets/images/serve-executives-v2.png";
+import foundersImage from "../../assets/images/serve-founders-v4.png";
+import familyImage from "../../assets/images/serve-families-v4.png";
+import sportsImage from "../../assets/images/serve-sports-v4.png";
+import executivesImage from "../../assets/images/serve-executives-v4.png";
 import Eyebrow from "../ui/Eyebrow.astro";
 import { getCollection, getEntry } from "astro:content";
 
@@ -154,7 +154,7 @@ const { theme = "light" } = Astro.props;
     aspect-ratio: 1;
     overflow: hidden;
     border-radius: .35rem;
-    background: var(--color-background);
+    background: white;
   }
 
   .serve-image {
@@ -165,11 +165,15 @@ const { theme = "light" } = Astro.props;
 
   .serve-image.is-active { opacity: 1; }
 
-  .serve-image img {
+  .serve-image img,
+  .serve-mobile-image img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* Crop the white margin baked into the portrait artwork. */
+    transform: scale(1.1);
+    transform-origin: center top;
   }
 
   .serve-pixels,
@@ -232,10 +236,11 @@ const { theme = "light" } = Astro.props;
 
   .serve-button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
   .serve-title { font-size: clamp(1.3rem, 1.5vw, 1.85rem); line-height: 1.2; letter-spacing: -.025em; text-wrap: balance; }
-  .serve-plus { position: relative; width: 2rem; height: 2rem; border: 1px solid var(--serve-plus-border); border-radius: .25rem; background: var(--serve-plus-background); transition: transform 350ms ease; }
-  .serve-plus::before, .serve-plus::after { content: ""; position: absolute; top: 50%; left: 50%; width: .75rem; height: 1px; background: currentColor; transform: translate(-50%, -50%); }
+  .serve-plus { position: relative; width: 2rem; height: 2rem; border: 1px solid var(--serve-plus-border); border-radius: .25rem; background: var(--serve-plus-background); }
+  .serve-plus::before, .serve-plus::after { content: ""; position: absolute; top: 50%; left: 50%; width: .75rem; height: 1px; background: currentColor; transform: translate(-50%, -50%); transition: transform 350ms ease; }
   .serve-plus::after { transform: translate(-50%, -50%) rotate(90deg); }
-  .serve-row.is-active .serve-plus { transform: rotate(45deg); }
+  .serve-row.is-active .serve-plus::before { transform: translate(-50%, -50%) rotate(45deg); }
+  .serve-row.is-active .serve-plus::after { transform: translate(-50%, -50%) rotate(135deg); }
   .serve-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 450ms cubic-bezier(.76, 0, .24, 1); }
   .serve-row.is-active .serve-panel { grid-template-rows: 1fr; }
   .serve-panel-inner { min-height: 0; overflow: hidden; }
@@ -252,12 +257,11 @@ const { theme = "light" } = Astro.props;
     .serve-rows::before, .serve-row::after { display: none; }
     .serve-title { font-size: clamp(1.4rem, 4vw, 1.85rem); }
     .serve-panel p { margin-right: 0; }
-    .serve-mobile-image { position: relative; display: block; max-width: 18rem; margin: 0 0 1.75rem; aspect-ratio: 1.15; overflow: hidden; background: var(--color-background); }
-    .serve-mobile-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .serve-mobile-image { position: relative; display: block; max-width: 18rem; margin: 0 0 1.75rem; aspect-ratio: 1; overflow: hidden; border-radius: .35rem; background: white; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .serve-plus, .serve-panel { transition: none; }
+    .serve-plus::before, .serve-plus::after, .serve-panel { transition: none; }
   }
 </style>
 
